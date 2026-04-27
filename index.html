@@ -563,6 +563,19 @@ Meu WhatsApp: ${telefone}
 
 Podem me chamar? 😊`;
 
+  // Salvar lead no Supabase
+  try {
+    fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/legaci-chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU'},
+      body: JSON.stringify({
+        messages: [],
+        sessionId: 'lead_' + Date.now(),
+        leadData: { nome, email, telefone, paraQuem, plano: currentPlan }
+      })
+    });
+  } catch(e) { console.log(e); }
+
   // Salvar lead localmente (para quando tiver Supabase)
   console.log('Lead:', { nome, email, telefone, paraQuem, plano: currentPlan });
 
@@ -680,12 +693,13 @@ async function sendMessage() {
   chatHistory.push({role:'user',content:text});
   isTyping=true; showTyping();
   try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SOFIA_SYSTEM,messages:chatHistory})
+    const res=await fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/legaci-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU'},
+      body:JSON.stringify({messages:chatHistory,sessionId:sessionId})
     });
     const data=await res.json();
-    const reply=data.content[0].text;
+    const reply=data.reply;
     chatHistory.push({role:'assistant',content:reply});
     removeTyping(); addMessage(reply,'sofia');
   } catch(e) {
