@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legaci · Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0E0C;
+  --surface: #1A1916;
+  --surface2: #222018;
+  --border: rgba(255,255,255,0.07);
+  --ink: #F0EDE8;
+  --ink2: #9A9488;
+  --ink3: #5A5650;
+  --accent: #C17F4A;
+  --accent2: #1A3C34;
+  --green: #2D6E4E;
+  --green-pale: rgba(45,110,78,0.15);
+  --rose: #8C3D3D;
+  --rose-pale: rgba(140,61,61,0.15);
+  --gold: #C17F4A;
+  --gold-pale: rgba(193,127,74,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* LOGIN */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg);
+  position: relative;
+}
+
+.login-screen::before {
+  content: 'Legaci';
+  position: absolute;
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(80px, 20vw, 200px);
+  font-weight: 700;
+  color: rgba(193,127,74,0.04);
+  pointer-events: none;
+  letter-spacing: -4px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-logo {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.5px;
+}
+
+.login-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink2);
+  margin-bottom: 6px;
+}
+
+.login-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--ink);
+  outline: none;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+.login-input:focus { border-color: var(--accent); }
+
+.login-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.login-btn:hover { background: #A86C3A; transform: translateY(-1px); }
+
+.login-error {
+  font-size: 12px;
+  color: #E05252;
+  text-align: center;
+  margin-top: 0.75rem;
+  display: none;
+}
+
+/* DASHBOARD */
+.dashboard { display: none; }
+
+/* SIDEBAR */
+.layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 0 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.sidebar-logo {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.sidebar-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-top: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 1.25rem;
+  font-size: 13px;
+  color: var(--ink2);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Outfit', sans-serif;
+}
+.nav-item:hover { color: var(--ink); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--accent); background: var(--gold-pale); }
+.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.logout-btn {
+  font-size: 12px;
+  color: var(--ink3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  transition: color 0.15s;
+}
+.logout-btn:hover { color: var(--rose); }
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* PAGE HEADER */
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: var(--ink3);
+  margin-top: 4px;
+}
+
+.refresh-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--ink2);
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* STATS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -1px;
+}
+
+.stat-value.accent { color: var(--accent); }
+.stat-value.green { color: #4ADE80; }
+
+/* TABLE */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.table-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.table-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+  background: var(--surface2);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding: 10px 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+td {
+  padding: 12px 1.5rem;
+  font-size: 13px;
+  color: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.badge-green { background: var(--green-pale); color: #4ADE80; }
+.badge-gold { background: var(--gold-pale); color: var(--accent); }
+.badge-rose { background: var(--rose-pale); color: #F87171; }
+
+/* CONVERSATION MODAL */
+.conv-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.conv-overlay.open { display: flex; }
+
+.conv-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.conv-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.conv-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.conv-close {
+  background: var(--surface2);
+  border: none;
+  border-radius: 50%;
+  width: 30px; height: 30px;
+  cursor: pointer;
+  color: var(--ink3);
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.conv-close:hover { color: var(--ink); }
+
+.conv-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.conv-msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.conv-msg.user { flex-direction: row-reverse; }
+
+.conv-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; flex-shrink: 0;
+}
+.conv-msg.sofia .conv-avatar { background: var(--green-pale); color: #4ADE80; }
+.conv-msg.user .conv-avatar { background: var(--gold-pale); color: var(--accent); }
+
+.conv-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.conv-msg.sofia .conv-bubble { background: var(--surface2); color: var(--ink2); border-bottom-left-radius: 4px; }
+.conv-msg.user .conv-bubble { background: var(--gold-pale); color: var(--ink); border-bottom-right-radius: 4px; }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--ink3);
+}
+.empty-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
+.empty-title { font-family: 'Libre Baskerville', serif; font-size: 18px; color: var(--ink2); margin-bottom: 0.5rem; }
+.empty-sub { font-size: 13px; line-height: 1.6; }
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--ink3);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+/* MOBILE */
+@media(max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 1.25rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .page-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <p class="login-logo">Legaci</p>
+    <p class="login-sub">Painel Administrativo</p>
+    <label class="login-label">Senha de acesso</label>
+    <input class="login-input" id="loginPassword" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <p class="login-error" id="loginError">Senha incorreta.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <p class="sidebar-logo">Legaci</p>
+        <p class="sidebar-tag">Admin Panel</p>
+      </div>
+      <button class="nav-item active" onclick="goTo('leads', this)">
+        <span class="nav-icon">👥</span> Leads
+      </button>
+      <button class="nav-item" onclick="goTo('conversations', this)">
+        <span class="nav-icon">💬</span> Conversas Sofia
+      </button>
+      <button class="nav-item" onclick="goTo('overview', this)">
+        <span class="nav-icon">📊</span> Visão Geral
+      </button>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="doLogout()">← Sair</button>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- LEADS PAGE -->
+      <div class="page active" id="page-leads">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Leads</h1>
+            <p class="page-sub">Pessoas que demonstraram interesse</p>
+          </div>
+          <button class="refresh-btn" onclick="loadLeads()">↻ Atualizar</button>
+        </div>
+
+        <div class="stats-grid" id="leads-stats">
+          <div class="stat-card"><p class="stat-label">Total de leads</p><p class="stat-value accent" id="stat-total">—</p></div>
+          <div class="stat-card"><p class="stat-label">Hoje</p><p class="stat-value green" id="stat-hoje">—</p></div>
+          <div class="stat-card"><p class="stat-label">Plano mais popular</p><p class="stat-value" style="font-size:18px;padding-top:6px" id="stat-plano">—</p></div>
+          <div class="stat-card"><p class="stat-label">Esta semana</p><p class="stat-value accent" id="stat-semana">—</p></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <p class="table-title">Todos os leads</p>
+            <span class="table-count" id="leads-count">0</span>
+          </div>
+          <div id="leads-table-container">
+            <div class="loading">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONVERSATIONS PAGE -->
+      <div class="page" id="page-conversations">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Conversas Sofia</h1>
+            <p class="page-sub">Histórico completo de atendimentos</p>
+          </div>
+          <button class="refresh-btn" onclick="loadConversations()">↻ Atualizar</button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <p class="table-title">Todas as conversas</p>
+            <span class="table-count" id="conv-count">0</span>
+          </div>
+          <div id="conv-table-container">
+            <div class="loading">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW PAGE -->
+      <div class="page" id="page-overview">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Visão Geral</h1>
+            <p class="page-sub">Resumo do desempenho da Legaci</p>
+          </div>
+          <button class="refresh-btn" onclick="loadOverview()">↻ Atualizar</button>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)" id="overview-stats">
+          <div class="stat-card"><p class="stat-label">Total leads</p><p class="stat-value accent" id="ov-leads">—</p></div>
+          <div class="stat-card"><p class="stat-label">Conversas Sofia</p><p class="stat-value" id="ov-convs">—</p></div>
+          <div class="stat-card"><p class="stat-label">Leads hoje</p><p class="stat-value green" id="ov-hoje">—</p></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header"><p class="table-title">Distribuição por plano</p></div>
+          <div id="overview-planos"><div class="loading">Carregando...</div></div>
+        </div>
+
+        <div class="table-card" style="margin-top:1rem">
+          <div class="table-header"><p class="table-title">Distribuição por destinatário</p></div>
+          <div id="overview-paraquem"><div class="loading">Carregando...</div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- CONVERSATION MODAL -->
+<div class="conv-overlay" id="convOverlay" onclick="closeConvModal(event)">
+  <div class="conv-modal">
+    <div class="conv-header">
+      <p class="conv-title" id="convModalTitle">Conversa</p>
+      <button class="conv-close" onclick="closeConv()">×</button>
+    </div>
+    <div class="conv-messages" id="convMessages"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
+const ADMIN_PASSWORD = 'legaci2026';
+
+// ── AUTH ──
+function doLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  if (pwd === ADMIN_PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadLeads();
+    loadConversations();
+    loadOverview();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginPassword').value = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeConv();
+});
+
+// ── NAVIGATION ──
+function goTo(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── SUPABASE FETCH ──
+async function supaFetch(table, params = '') {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
+    headers: {
+      'apikey': ANON_KEY,
+      'Authorization': 'Bearer ' + ANON_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'count=exact'
+    }
+  });
+  const count = res.headers.get('content-range')?.split('/')[1] || '0';
+  const data = await res.json();
+  return { data, count: parseInt(count) };
+}
+
+// ── FORMAT DATE ──
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+}
+
+function fmtAgo(iso) {
+  if (!iso) return '—';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'agora mesmo';
+  if (m < 60) return m + 'min atrás';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h atrás';
+  return Math.floor(h / 24) + 'd atrás';
+}
+
+function planoBadge(plano) {
+  if (!plano) return '<span class="badge badge-rose">—</span>';
+  if (plano.includes('Legado')) return '<span class="badge badge-green">' + plano + '</span>';
+  if (plano.includes('Completa') || plano.includes('História')) return '<span class="badge badge-gold">' + plano + '</span>';
+  return '<span class="badge" style="background:rgba(255,255,255,0.06);color:var(--ink2)">' + plano + '</span>';
+}
+
+// ── LEADS ──
+async function loadLeads() {
+  document.getElementById('leads-table-container').innerHTML = '<div class="loading">Carregando leads...</div>';
+
+  const { data: leads, count } = await supaFetch('legaci_leads', '?order=created_at.desc&limit=100');
+  document.getElementById('leads-count').textContent = count || leads.length;
+
+  // Stats
+  const hoje = leads.filter(l => {
+    const d = new Date(l.created_at);
+    const now = new Date();
+    return d.toDateString() === now.toDateString();
+  });
+
+  const semana = leads.filter(l => {
+    const d = new Date(l.created_at);
+    const now = new Date();
+    return (now - d) < 7 * 24 * 60 * 60 * 1000;
+  });
+
+  // Plano mais popular
+  const planoCount = {};
+  leads.forEach(l => { if (l.plano) planoCount[l.plano] = (planoCount[l.plano] || 0) + 1; });
+  const topPlano = Object.entries(planoCount).sort((a,b) => b[1]-a[1])[0];
+
+  document.getElementById('stat-total').textContent = leads.length;
+  document.getElementById('stat-hoje').textContent = hoje.length;
+  document.getElementById('stat-semana').textContent = semana.length;
+  document.getElementById('stat-plano').textContent = topPlano ? topPlano[0].split(' ')[0] : '—';
+
+  if (!leads.length) {
+    document.getElementById('leads-table-container').innerHTML = `
+      <div class="empty-state">
+        <span class="empty-icon">👥</span>
+        <p class="empty-title">Nenhum lead ainda</p>
+        <p class="empty-sub">Os leads aparecerão aqui quando alguém preencher o formulário ou a Sofia capturar dados.</p>
+      </div>`;
+    return;
+  }
+
+  const rows = leads.map(l => `
+    <tr>
+      <td style="color:var(--ink);font-weight:500">${l.nome || '—'}</td>
+      <td>${l.email || '—'}</td>
+      <td>${l.telefone || '—'}</td>
+      <td>${l.para_quem || '—'}</td>
+      <td>${planoBadge(l.plano)}</td>
+      <td style="color:var(--ink3);font-size:12px">${fmtAgo(l.created_at)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('leads-table-container').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Nome</th><th>Email</th><th>WhatsApp</th>
+        <th>Para quem</th><th>Plano</th><th>Quando</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── CONVERSATIONS ──
+async function loadConversations() {
+  document.getElementById('conv-table-container').innerHTML = '<div class="loading">Carregando conversas...</div>';
+
+  const { data: convs, count } = await supaFetch('legaci_conversations', '?order=updated_at.desc&limit=100');
+  document.getElementById('conv-count').textContent = count || convs.length;
+
+  if (!convs.length) {
+    document.getElementById('conv-table-container').innerHTML = `
+      <div class="empty-state">
+        <span class="empty-icon">💬</span>
+        <p class="empty-title">Nenhuma conversa ainda</p>
+        <p class="empty-sub">As conversas da Sofia aparecerão aqui em tempo real.</p>
+      </div>`;
+    return;
+  }
+
+  const rows = convs.map(c => {
+    const msgs = c.messages || [];
+    const lastMsg = msgs[msgs.length - 1];
+    const preview = lastMsg ? lastMsg.content.substring(0, 60) + (lastMsg.content.length > 60 ? '...' : '') : '—';
+    const userMsgs = msgs.filter(m => m.role === 'user').length;
+
+    return `
+      <tr>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)">${c.session_id?.substring(0,16)}...</td>
+        <td>${userMsgs} mensagens</td>
+        <td style="max-width:200px;color:var(--ink3);font-size:12px">${preview}</td>
+        <td style="color:var(--ink3);font-size:12px">${fmtAgo(c.updated_at)}</td>
+        <td>
+          <button onclick="openConv(${JSON.stringify(c).replace(/"/g,'&quot;')})"
+            style="background:var(--gold-pale);border:none;border-radius:6px;padding:5px 12px;font-size:11px;color:var(--accent);cursor:pointer;font-family:'Outfit',sans-serif">
+            Ver conversa
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('conv-table-container').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Session ID</th><th>Mensagens</th>
+        <th>Último conteúdo</th><th>Quando</th><th></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── OVERVIEW ──
+async function loadOverview() {
+  const [leadsRes, convsRes] = await Promise.all([
+    supaFetch('legaci_leads', '?order=created_at.desc'),
+    supaFetch('legaci_conversations', '?order=created_at.desc')
+  ]);
+
+  const leads = leadsRes.data;
+  const convs = convsRes.data;
+
+  const hoje = leads.filter(l => new Date(l.created_at).toDateString() === new Date().toDateString());
+
+  document.getElementById('ov-leads').textContent = leads.length;
+  document.getElementById('ov-convs').textContent = convs.length;
+  document.getElementById('ov-hoje').textContent = hoje.length;
+
+  // Planos
+  const planoCount = {};
+  leads.forEach(l => { if (l.plano) planoCount[l.plano] = (planoCount[l.plano] || 0) + 1; });
+  const planoRows = Object.entries(planoCount)
+    .sort((a,b) => b[1]-a[1])
+    .map(([plano, n]) => {
+      const pct = leads.length ? Math.round(n / leads.length * 100) : 0;
+      return `<tr>
+        <td>${planoBadge(plano)}</td>
+        <td style="color:var(--ink)">${n} leads</td>
+        <td>
+          <div style="background:var(--surface2);border-radius:4px;height:6px;width:100%;overflow:hidden">
+            <div style="background:var(--accent);height:100%;width:${pct}%;border-radius:4px"></div>
+          </div>
+        </td>
+        <td style="color:var(--ink3);font-size:12px">${pct}%</td>
+      </tr>`;
+    }).join('');
+
+  document.getElementById('overview-planos').innerHTML = planoRows ? `
+    <table><thead><tr><th>Plano</th><th>Leads</th><th style="width:40%">Proporção</th><th>%</th></tr></thead>
+    <tbody>${planoRows}</tbody></table>`
+    : '<div class="loading">Sem dados</div>';
+
+  // Para quem
+  const paraCount = {};
+  leads.forEach(l => { if (l.para_quem) paraCount[l.para_quem] = (paraCount[l.para_quem] || 0) + 1; });
+  const paraRows = Object.entries(paraCount)
+    .sort((a,b) => b[1]-a[1])
+    .map(([para, n]) => `<tr>
+      <td style="color:var(--ink)">${para}</td>
+      <td style="color:var(--ink3)">${n} leads</td>
+    </tr>`).join('');
+
+  document.getElementById('overview-paraquem').innerHTML = paraRows ? `
+    <table><thead><tr><th>Para quem</th><th>Leads</th></tr></thead>
+    <tbody>${paraRows}</tbody></table>`
+    : '<div class="loading">Sem dados</div>';
+}
+
+// ── CONVERSATION MODAL ──
+function openConv(conv) {
+  const msgs = conv.messages || [];
+  document.getElementById('convModalTitle').textContent =
+    'Conversa · ' + (msgs.length) + ' mensagens · ' + fmtDate(conv.updated_at);
+
+  const html = msgs.map(m => {
+    const isSofia = m.role === 'assistant';
+    return `
+      <div class="conv-msg ${isSofia ? 'sofia' : 'user'}">
+        <div class="conv-avatar">${isSofia ? 'S' : 'V'}</div>
+        <div class="conv-bubble">${m.content}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('convMessages').innerHTML = html || '<p style="color:var(--ink3);text-align:center">Sem mensagens</p>';
+  document.getElementById('convOverlay').classList.add('open');
+}
+
+function closeConv() {
+  document.getElementById('convOverlay').classList.remove('open');
+}
+
+function closeConvModal(e) {
+  if (e.target.id === 'convOverlay') closeConv();
+}
+</script>
+</body>
+</html>
