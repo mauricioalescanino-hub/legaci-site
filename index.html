@@ -786,6 +786,7 @@ async function sendMessage() {
   chatHistory.push({role:'user',content:text});
   isTyping=true; showTyping();
   try {
+    console.log('Sofia: chamando Edge Function...');
     const res=await fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/bright-function',{
       method:'POST',
       headers:{
@@ -795,8 +796,11 @@ async function sendMessage() {
       },
       body:JSON.stringify({messages:chatHistory,sessionId:sessionId})
     });
-    if(!res.ok) { const errText=await res.text(); console.error('Edge Function error:',res.status,errText); throw new Error('Edge error: '+res.status); }
-    const data=await res.json();
+    console.log('Sofia: status =', res.status);
+    const rawText = await res.text();
+    console.log('Sofia: resposta =', rawText);
+    if(!res.ok) { throw new Error('Edge error: '+res.status+' '+rawText); }
+    const data = JSON.parse(rawText);
     const reply=data.reply;
     chatHistory.push({role:'assistant',content:reply});
     removeTyping(); addMessage(reply,'sofia');
