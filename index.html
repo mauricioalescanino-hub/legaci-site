@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- Legaci v1777330037 -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -621,7 +621,6 @@ let currentWaText = '';
 function openModal(planName, planPrice) {
   currentPlan = planName;
   currentPlanPrice = planPrice;
-  currentWaText = waText;
   document.getElementById('modalPlanName').textContent = planName + ' · ' + planPrice;
   document.getElementById('modalOverlay').classList.add('open');
   document.getElementById('modalError').style.display = 'none';
