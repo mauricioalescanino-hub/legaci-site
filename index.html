@@ -565,7 +565,7 @@ Podem me chamar? 😊`;
 
   // Salvar lead no Supabase
   try {
-    fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/legaci-chat', {
+    fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/bright-function', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU'},
       body: JSON.stringify({
@@ -693,7 +693,7 @@ async function sendMessage() {
   chatHistory.push({role:'user',content:text});
   isTyping=true; showTyping();
   try {
-    const res=await fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/legaci-chat',{
+    const res=await fetch('https://kbkexacjvnzaxipedjow.supabase.co/functions/v1/bright-function',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU'},
       body:JSON.stringify({messages:chatHistory,sessionId:sessionId})
