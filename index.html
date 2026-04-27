@@ -571,7 +571,7 @@ footer{background:var(--ink);padding:2.5rem;display:flex;justify-content:space-b
   <span class="overline" style="position:relative;z-index:1">É agora</span>
   <h2 class="section-title" style="position:relative;z-index:1">Essa história está<br>esperando<br><em>por você.</em></h2>
   <p>Existe alguém na sua vida com uma história que merece ser contada. A gente te ajuda a fazer isso acontecer — com cuidado, com calma e com muito carinho.</p>
-  <a href="https://wa.me/5511974460005?text=Olá! Quero saber mais sobre a Legaci." class="btn-dark" target="_blank" style="position:relative;z-index:1">Falar com a Legaci pelo WhatsApp</a>
+  <a href="https://api.whatsapp.com/send?phone=5511974460005?text=Olá! Quero saber mais sobre a Legaci." class="btn-dark" target="_blank" style="position:relative;z-index:1">Falar com a Legaci pelo WhatsApp</a>
 </section>
 
 <!-- FOOTER -->
@@ -677,7 +677,7 @@ Podem me chamar? 😊`;
 
   // Fechar modal e abrir WhatsApp imediatamente
   closeModal();
-  window.open('https://wa.me/5511974460005?text=' + encodeURIComponent(msg), '_blank');
+  window.open('https://api.whatsapp.com/send?phone=5511974460005&text=' + encodeURIComponent(msg), '_blank');
 }
 
 // Fechar com ESC
@@ -743,7 +743,7 @@ const SOFIA_SYSTEM = `Você é Sofia, consultora da Legaci — serviço premium 
 PLANOS SOLO: Essencial R$790 / Memória Completa R$1.490 / Legado da Família R$2.900
 PLANOS CASAL: Casal Essencial R$1.190 / Nossa História R$1.990 / Legado do Casal R$3.490
 Tom: caloroso, empático, emocional. Máx 3 parágrafos curtos.
-Quando demonstrar interesse real: direcione para https://wa.me/5511974460005
+Quando demonstrar interesse real: direcione para https://api.whatsapp.com/send?phone=5511974460005
 Você é a Sofia da Legaci.`;
 
 let chatOpen=false, chatHistory=[], isTyping=false;
@@ -802,7 +802,7 @@ async function sendMessage() {
     removeTyping(); addMessage(reply,'sofia');
   } catch(e) {
     removeTyping();
-    addMessage('Desculpe, tive um problema. Fale conosco pelo WhatsApp 💚 https://wa.me/5511974460005','sofia');
+    addMessage('Desculpe, tive um problema. Fale conosco pelo WhatsApp 💚 https://api.whatsapp.com/send?phone=5511974460005','sofia');
   }
   isTyping=false;
 }
