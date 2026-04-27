@@ -747,6 +747,7 @@ Quando demonstrar interesse real: direcione para https://api.whatsapp.com/send?p
 Você é a Sofia da Legaci.`;
 
 let chatOpen=false, chatHistory=[], isTyping=false;
+const sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
 
 function toggleChat() {
   chatOpen = !chatOpen;
