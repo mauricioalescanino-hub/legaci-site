@@ -358,6 +358,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
               <th>Data</th>
               <th>Saldo</th>
               <th>Descrição</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody id="capital-body"></tbody>
@@ -903,6 +904,7 @@ function renderClientes() {
       <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
       <td class="actions-cell">
         <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
+        <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background: rgba(220,38,38,0.1); color: var(--danger); border-color: rgba(220,38,38,0.2);">Excluir</button>
       </td>
     </tr>
   `).join('');
@@ -937,6 +939,35 @@ function editarCliente(id) {
   form.querySelector('[name="notas"]').value = cliente.notas || '';
   
   document.getElementById('modal-cliente').classList.add('active');
+}
+
+async function deletarCliente(id) {
+  const cliente = clientes.find(c => c.id === id);
+  if(!cliente) return;
+  
+  if(!confirm(`Tem certeza que deseja excluir o cliente "${cliente.nome}"?\n\nEsta ação não pode ser desfeita.`)) return;
+  
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    if(res.ok) {
+      alert('Cliente excluído com sucesso!');
+      loadClientes();
+      loadVisaoGeral();
+      loadFinanceiro();
+    } else {
+      alert('Erro ao excluir cliente');
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao excluir cliente');
+  }
 }
 
 // Visão Geral
@@ -1130,13 +1161,14 @@ async function loadFinanceiro() {
     // Tabela Capital
     const capitalBody = document.getElementById('capital-body');
     if(capital.length === 0) {
-      capitalBody.innerHTML = '<tr><td colspan="3"><div class="empty"><div class="empty-icon">💵</div><div class="empty-title">Nenhum registro de capital</div></div></td></tr>';
+      capitalBody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">💵</div><div class="empty-title">Nenhum registro de capital</div></div></td></tr>';
     } else {
       capitalBody.innerHTML = capital.map(c => `
         <tr>
           <td>${new Date(c.data).toLocaleDateString('pt-BR')}</td>
           <td>R$ ${c.saldo.toLocaleString('pt-BR')}</td>
           <td>${c.descricao || '—'}</td>
+          <td><button class="btn btn-small btn-secondary" onclick="deletarCapital('${c.id}')">Excluir</button></td>
         </tr>
       `).join('');
     }
@@ -1437,6 +1469,19 @@ async function deletarDespesa(id) {
   if(!confirm('Excluir esta despesa?')) return;
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    loadFinanceiro();
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+async function deletarCapital(id) {
+  if(!confirm('Excluir este registro de capital?')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/legaci_capital?id=eq.${id}`, {
       method: 'DELETE',
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
