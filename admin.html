@@ -208,43 +208,113 @@ tr:hover{background:rgba(193,127,74,0.02)}
   <div class="screen" id="screen-financeiro">
     <div class="header">
       <h1 class="header-title">Financeiro</h1>
-      <p class="header-sub">Controle de receitas e pagamentos</p>
+      <p class="header-sub">Receitas, despesas e lucro líquido</p>
     </div>
 
     <div class="cards">
       <div class="card">
-        <div class="card-label">Total Faturado</div>
-        <div class="card-value" id="fin-faturado">—</div>
-        <div class="card-detail">Contratos fechados no mês</div>
+        <div class="card-label">Receitas do Mês</div>
+        <div class="card-value" id="fin-receitas">—</div>
+        <div class="card-detail">Clientes + Extras</div>
       </div>
       <div class="card">
-        <div class="card-label">Total Recebido</div>
-        <div class="card-value" id="fin-recebido">—</div>
-        <div class="card-detail">Pagamentos confirmados</div>
+        <div class="card-label">Despesas do Mês</div>
+        <div class="card-value" id="fin-despesas">—</div>
+        <div class="card-detail">Fixas + Variáveis</div>
       </div>
       <div class="card">
-        <div class="card-label">A Receber</div>
-        <div class="card-value" id="fin-receber">—</div>
-        <div class="card-detail">Pagamentos pendentes</div>
+        <div class="card-label">Lucro Líquido</div>
+        <div class="card-value" id="fin-lucro">—</div>
+        <div class="card-detail">Receitas - Despesas</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Capital de Giro</div>
+        <div class="card-value" id="fin-capital">—</div>
+        <div class="card-detail">Saldo disponível</div>
       </div>
     </div>
 
+    <!-- RECEITAS -->
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Pagamentos</h2>
+        <h2 class="section-title">Receitas</h2>
+        <button class="btn btn-small" onclick="openNovaReceita()">+ Adicionar Receita</button>
       </div>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>Cliente</th>
+              <th>Descrição</th>
               <th>Valor</th>
-              <th>Forma</th>
-              <th>Status</th>
               <th>Data</th>
+              <th>Ações</th>
             </tr>
           </thead>
-          <tbody id="financeiro-body"></tbody>
+          <tbody id="receitas-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DESPESAS FIXAS -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Despesas Fixas</h2>
+        <button class="btn btn-small" onclick="openNovaDespesa('fixa')">+ Adicionar</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Categoria</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="despesas-fixas-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DESPESAS VARIÁVEIS -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Despesas Variáveis</h2>
+        <button class="btn btn-small" onclick="openNovaDespesa('variavel')">+ Adicionar</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Categoria</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="despesas-variaveis-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CAPITAL -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Capital de Giro</h2>
+        <button class="btn btn-small" onclick="openNovoCapital()">+ Atualizar Capital</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Saldo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody id="capital-body"></tbody>
         </table>
       </div>
     </div>
@@ -404,6 +474,131 @@ tr:hover{background:rgba(193,127,74,0.02)}
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
         <button type="submit" class="btn">Salvar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL RECEITA -->
+<div class="modal-overlay" id="modal-receita">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalReceita()">×</button>
+    <h2 class="modal-title">Nova Receita</h2>
+    <p class="modal-sub">Adicione uma receita extra além dos clientes</p>
+    
+    <form id="form-receita" onsubmit="salvarReceita(event)">
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input type="text" class="form-input" name="descricao" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" step="0.01" class="form-input" name="valor" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" class="form-input" name="data" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select class="form-select" name="categoria">
+          <option value="servico_extra">Serviço Extra</option>
+          <option value="consultoria">Consultoria</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModalReceita()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DESPESA -->
+<div class="modal-overlay" id="modal-despesa">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDespesa()">×</button>
+    <h2 class="modal-title" id="modal-despesa-title">Nova Despesa</h2>
+    <p class="modal-sub">Adicione uma despesa fixa ou variável</p>
+    
+    <form id="form-despesa" onsubmit="salvarDespesa(event)">
+      <input type="hidden" name="tipo" id="despesa-tipo">
+      
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input type="text" class="form-input" name="descricao" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" step="0.01" class="form-input" name="valor" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" class="form-input" name="data" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select class="form-select" name="categoria">
+          <option value="apis">APIs (Whisper, Claude, ElevenLabs)</option>
+          <option value="marketing">Marketing</option>
+          <option value="infraestrutura">Infraestrutura (Supabase, Domínio)</option>
+          <option value="operacional">Operacional</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" name="recorrente" style="width:auto">
+          <span class="form-label" style="margin:0">Despesa recorrente (mensal)</span>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModalDespesa()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL CAPITAL -->
+<div class="modal-overlay" id="modal-capital">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalCapital()">×</button>
+    <h2 class="modal-title">Atualizar Capital de Giro</h2>
+    <p class="modal-sub">Registre o saldo atual disponível</p>
+    
+    <form id="form-capital" onsubmit="salvarCapital(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Saldo (R$)</label>
+          <input type="number" step="0.01" class="form-input" name="saldo" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" class="form-input" name="data" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Descrição (opcional)</label>
+        <input type="text" class="form-input" name="descricao" placeholder="Ex: Aporte inicial, Retirada...">
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModalCapital()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
       </div>
     </form>
   </div>
@@ -645,39 +840,125 @@ async function loadVisaoGeral() {
   }
 }
 
-// Financeiro
+// Financeiro COMPLETO
 async function loadFinanceiro() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    const clientes = await res.json();
-
     const now = new Date();
-    const mesAtual = clientes.filter(c => {
-      if(!c.data_fechamento) return false;
-      const d = new Date(c.data_fechamento);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    });
+    const primeiroDia = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    const ultimoDia = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
-    const faturado = mesAtual.reduce((sum, c) => sum + (c.valor || 0), 0);
-    const recebido = mesAtual.filter(c => c.pagamento_status === 'pago').reduce((sum, c) => sum + (c.valor || 0), 0);
-    const receber = mesAtual.filter(c => c.pagamento_status === 'pendente').reduce((sum, c) => sum + (c.valor || 0), 0);
+    const [clientesRes, receitasRes, despesasRes, capitalRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&data_fechamento=gte.${primeiroDia}&data_fechamento=lte.${ultimoDia}`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?select=*&data=gte.${primeiroDia}&data=lte.${ultimoDia}&order=data.desc`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?select=*&data=gte.${primeiroDia}&data=lte.${ultimoDia}&order=data.desc`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_capital?select=*&order=data.desc&limit=5`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      })
+    ]);
 
-    document.getElementById('fin-faturado').textContent = `R$ ${faturado.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-recebido').textContent = `R$ ${recebido.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-receber').textContent = `R$ ${receber.toLocaleString('pt-BR')}`;
+    const clientes = await clientesRes.json();
+    const receitas = await receitasRes.json();
+    const despesas = await despesasRes.json();
+    const capital = await capitalRes.json();
 
-    const tbody = document.getElementById('financeiro-body');
-    tbody.innerHTML = mesAtual.map(c => `
-      <tr>
-        <td>${c.nome}</td>
-        <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
-        <td>${c.pagamento_forma}</td>
-        <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
-        <td>${c.data_fechamento ? new Date(c.data_fechamento).toLocaleDateString('pt-BR') : '—'}</td>
-      </tr>
-    `).join('');
+    // Calcular valores
+    const receitaClientes = clientes.filter(c => c.status === 'fechado').reduce((sum, c) => sum + (c.valor || 0), 0);
+    const receitaExtras = receitas.reduce((sum, r) => sum + (r.valor || 0), 0);
+    const totalReceitas = receitaClientes + receitaExtras;
+
+    const totalDespesas = despesas.reduce((sum, d) => sum + (d.valor || 0), 0);
+    const lucro = totalReceitas - totalDespesas;
+    const capitalAtual = capital.length > 0 ? capital[0].saldo : 0;
+
+    // Atualizar cards
+    document.getElementById('fin-receitas').textContent = `R$ ${totalReceitas.toLocaleString('pt-BR')}`;
+    document.getElementById('fin-despesas').textContent = `R$ ${totalDespesas.toLocaleString('pt-BR')}`;
+    document.getElementById('fin-lucro').textContent = `R$ ${lucro.toLocaleString('pt-BR')}`;
+    document.getElementById('fin-lucro').style.color = lucro >= 0 ? 'var(--success)' : 'var(--danger)';
+    document.getElementById('fin-capital').textContent = `R$ ${capitalAtual.toLocaleString('pt-BR')}`;
+
+    // Tabela Receitas
+    const receitasBody = document.getElementById('receitas-body');
+    const todasReceitas = [
+      ...clientes.filter(c => c.status === 'fechado').map(c => ({
+        id: c.id,
+        descricao: `Cliente: ${c.nome}`,
+        valor: c.valor,
+        data: c.data_fechamento,
+        tipo: 'cliente'
+      })),
+      ...receitas.map(r => ({...r, tipo: 'extra'}))
+    ].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    if(todasReceitas.length === 0) {
+      receitasBody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">💰</div><div class="empty-title">Nenhuma receita no mês</div></div></td></tr>';
+    } else {
+      receitasBody.innerHTML = todasReceitas.map(r => `
+        <tr>
+          <td>${r.descricao}</td>
+          <td>R$ ${r.valor.toLocaleString('pt-BR')}</td>
+          <td>${new Date(r.data).toLocaleDateString('pt-BR')}</td>
+          <td>
+            ${r.tipo === 'extra' ? `<button class="btn btn-small btn-secondary" onclick="deletarReceita('${r.id}')">Excluir</button>` : '—'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Tabela Despesas Fixas
+    const despesasFixas = despesas.filter(d => d.tipo === 'fixa');
+    const fixasBody = document.getElementById('despesas-fixas-body');
+    if(despesasFixas.length === 0) {
+      fixasBody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nenhuma despesa fixa</div></div></td></tr>';
+    } else {
+      fixasBody.innerHTML = despesasFixas.map(d => `
+        <tr>
+          <td>${d.descricao} ${d.recorrente ? '🔁' : ''}</td>
+          <td>R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td>${d.categoria}</td>
+          <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
+          <td><button class="btn btn-small btn-secondary" onclick="deletarDespesa('${d.id}')">Excluir</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // Tabela Despesas Variáveis
+    const despesasVariaveis = despesas.filter(d => d.tipo === 'variavel');
+    const variaveisBody = document.getElementById('despesas-variaveis-body');
+    if(despesasVariaveis.length === 0) {
+      variaveisBody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nenhuma despesa variável</div></div></td></tr>';
+    } else {
+      variaveisBody.innerHTML = despesasVariaveis.map(d => `
+        <tr>
+          <td>${d.descricao}</td>
+          <td>R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td>${d.categoria}</td>
+          <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
+          <td><button class="btn btn-small btn-secondary" onclick="deletarDespesa('${d.id}')">Excluir</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // Tabela Capital
+    const capitalBody = document.getElementById('capital-body');
+    if(capital.length === 0) {
+      capitalBody.innerHTML = '<tr><td colspan="3"><div class="empty"><div class="empty-icon">💵</div><div class="empty-title">Nenhum registro de capital</div></div></td></tr>';
+    } else {
+      capitalBody.innerHTML = capital.map(c => `
+        <tr>
+          <td>${new Date(c.data).toLocaleDateString('pt-BR')}</td>
+          <td>R$ ${c.saldo.toLocaleString('pt-BR')}</td>
+          <td>${c.descricao || '—'}</td>
+        </tr>
+      `).join('');
+    }
+
   } catch(err) {
     console.error(err);
   }
@@ -758,6 +1039,174 @@ function getPagamentoLabel(status) {
     parcelado: 'Parcelado'
   };
   return labels[status] || status;
+}
+
+// Modais Financeiro
+function openNovaReceita() {
+  document.getElementById('form-receita').reset();
+  document.getElementById('modal-receita').classList.add('active');
+}
+
+function closeModalReceita() {
+  document.getElementById('modal-receita').classList.remove('active');
+}
+
+function openNovaDespesa(tipo) {
+  document.getElementById('form-despesa').reset();
+  document.getElementById('despesa-tipo').value = tipo;
+  document.getElementById('modal-despesa-title').textContent = tipo === 'fixa' ? 'Nova Despesa Fixa' : 'Nova Despesa Variável';
+  document.getElementById('modal-despesa').classList.add('active');
+}
+
+function closeModalDespesa() {
+  document.getElementById('modal-despesa').classList.remove('active');
+}
+
+function openNovoCapital() {
+  document.getElementById('form-capital').reset();
+  const inputs = document.getElementById('form-capital').querySelectorAll('[name="data"]');
+  if(inputs.length > 0) inputs[0].value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-capital').classList.add('active');
+}
+
+function closeModalCapital() {
+  document.getElementById('modal-capital').classList.remove('active');
+}
+
+// Salvar Receita
+async function salvarReceita(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = {
+    descricao: formData.get('descricao'),
+    valor: parseFloat(formData.get('valor')),
+    data: formData.get('data'),
+    categoria: formData.get('categoria')
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if(res.ok) {
+      closeModalReceita();
+      loadFinanceiro();
+      alert('Receita adicionada!');
+    } else {
+      alert('Erro ao adicionar receita');
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao adicionar receita');
+  }
+}
+
+// Salvar Despesa
+async function salvarDespesa(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = {
+    descricao: formData.get('descricao'),
+    valor: parseFloat(formData.get('valor')),
+    tipo: formData.get('tipo'),
+    categoria: formData.get('categoria'),
+    data: formData.get('data'),
+    recorrente: formData.get('recorrente') === 'on'
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if(res.ok) {
+      closeModalDespesa();
+      loadFinanceiro();
+      alert('Despesa adicionada!');
+    } else {
+      alert('Erro ao adicionar despesa');
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao adicionar despesa');
+  }
+}
+
+// Salvar Capital
+async function salvarCapital(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = {
+    saldo: parseFloat(formData.get('saldo')),
+    data: formData.get('data'),
+    descricao: formData.get('descricao')
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_capital`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if(res.ok) {
+      closeModalCapital();
+      loadFinanceiro();
+      alert('Capital atualizado!');
+    } else {
+      alert('Erro ao atualizar capital');
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao atualizar capital');
+  }
+}
+
+// Deletar itens
+async function deletarReceita(id) {
+  if(!confirm('Excluir esta receita?')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    loadFinanceiro();
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+async function deletarDespesa(id) {
+  if(!confirm('Excluir esta despesa?')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    loadFinanceiro();
+  } catch(err) {
+    console.error(err);
+  }
 }
 
 // Init
