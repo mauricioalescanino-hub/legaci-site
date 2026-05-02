@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · Legaci</title>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--forest:#1A3C34;--copper:#C17F4A;--cream:#F8F6F2;--white:#FFFFFF;--ink:#111010;--ink2:#3A3835;--ink3:#8A8480;--border:rgba(17,16,16,0.08);--success:#2D7A4F;--warning:#D97706;--danger:#DC2626}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -95,6 +96,9 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <div class="nav-item active" onclick="showScreen('visao-geral')">
       <span class="nav-icon">📊</span><span>Visão Geral</span>
     </div>
+    <div class="nav-item" onclick="showScreen('dashboard')">
+      <span class="nav-icon">📈</span><span>Dashboard</span>
+    </div>
     <div class="nav-item" onclick="showScreen('clientes')">
       <span class="nav-icon">👥</span><span>Clientes</span>
     </div>
@@ -106,6 +110,9 @@ tr:hover{background:rgba(193,127,74,0.02)}
     </div>
     <div class="nav-item" onclick="showScreen('leads-sofia')">
       <span class="nav-icon">💬</span><span>Leads Sofia</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('relatorios')">
+      <span class="nav-icon">📄</span><span>Relatórios</span>
     </div>
   </nav>
 </div>
@@ -152,6 +159,37 @@ tr:hover{background:rgba(193,127,74,0.02)}
           <div class="empty-title">Nenhum cliente ainda</div>
           <div class="empty-text">Adicione seu primeiro cliente para começar</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="screen-dashboard">
+    <div class="header">
+      <h1 class="header-title">Dashboard</h1>
+      <p class="header-sub">Análise visual dos últimos 6 meses</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Receitas vs Despesas</h2>
+      </div>
+      <canvas id="chart-receitas-despesas" style="max-height: 300px;"></canvas>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Evolução de Clientes</h2>
+        </div>
+        <canvas id="chart-clientes"></canvas>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Faturamento Mensal</h2>
+        </div>
+        <canvas id="chart-faturamento"></canvas>
       </div>
     </div>
   </div>
@@ -544,6 +582,56 @@ tr:hover{background:rgba(193,127,74,0.02)}
       </div>
     </form>
   </div>
+  </div>
+
+  <!-- RELATÓRIOS -->
+  <div class="screen" id="screen-relatorios">
+    <div class="header">
+      <h1 class="header-title">Relatórios</h1>
+      <p class="header-sub">Exporte dados para análise externa</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Relatórios Disponíveis</h2>
+      </div>
+      
+      <div style="display: grid; gap: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Relatório Financeiro Mensal</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Receitas, despesas, lucro e fluxo de caixa do mês atual</p>
+          </div>
+          <button class="btn" onclick="exportarRelatorioFinanceiro()">📄 Gerar PDF</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Lista de Clientes</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Todos os clientes com status, plano e valores em Excel</p>
+          </div>
+          <button class="btn" onclick="exportarClientesExcel()">📊 Gerar Excel</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Agenda de Entrevistas</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Todas as entrevistas agendadas em formato CSV</p>
+          </div>
+          <button class="btn" onclick="exportarAgendaCSV()">📅 Gerar CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Notificações e Lembretes</h2>
+      </div>
+      
+      <div id="notificacoes-container"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- MODAL RECEITA -->
@@ -692,10 +780,12 @@ function showScreen(screenName) {
   event.target.closest('.nav-item').classList.add('active');
   
   if(screenName === 'visao-geral') loadVisaoGeral();
+  if(screenName === 'dashboard') loadDashboard();
   if(screenName === 'clientes') loadClientes();
   if(screenName === 'financeiro') loadFinanceiro();
   if(screenName === 'agenda') loadAgenda();
   if(screenName === 'leads-sofia') loadLeadsSofia();
+  if(screenName === 'relatorios') loadNotificacoes();
 }
 
 // Atualizar valor automaticamente
@@ -1350,6 +1440,252 @@ async function deletarDespesa(id) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
     loadFinanceiro();
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+// ========== RELATÓRIOS E NOTIFICAÇÕES ==========
+
+function exportarRelatorioFinanceiro() {
+  alert('Relatório PDF em desenvolvimento! Por enquanto, tire um print da tela Financeiro 📸');
+}
+
+function exportarClientesExcel() {
+  // Gerar CSV (abre no Excel)
+  const csv = [
+    ['Nome', 'Email', 'WhatsApp', 'Modo', 'Plano', 'Valor', 'Status', 'Pagamento'].join(','),
+    ...clientes.map(c => [
+      c.nome,
+      c.email || '',
+      c.whatsapp || '',
+      c.modo,
+      c.plano,
+      c.valor,
+      c.status,
+      c.pagamento_status
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `clientes_legaci_${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+}
+
+function exportarAgendaCSV() {
+  const clientesComAgenda = clientes.filter(c => c.sessao1_agendada || c.sessao2_agendada);
+  
+  const csv = [
+    ['Cliente', 'Plano', 'Sessão 1', 'Sessão 2'].join(','),
+    ...clientesComAgenda.map(c => [
+      c.nome,
+      c.plano,
+      c.sessao1_agendada || '',
+      c.sessao2_agendada || ''
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `agenda_legaci_${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+}
+
+async function loadNotificacoes() {
+  const container = document.getElementById('notificacoes-container');
+  const notifs = [];
+
+  // Entrevistas próximas (próximas 48h)
+  const agora = new Date();
+  const em48h = new Date(agora.getTime() + (48 * 60 * 60 * 1000));
+  
+  clientes.forEach(c => {
+    if(c.sessao1_agendada) {
+      const d = new Date(c.sessao1_agendada);
+      if(d > agora && d < em48h) {
+        const horas = Math.floor((d - agora) / (1000 * 60 * 60));
+        notifs.push({
+          tipo: 'entrevista',
+          urgencia: horas < 24 ? 'alta' : 'media',
+          mensagem: `Entrevista com <strong>${c.nome}</strong> em ${horas}h`,
+          data: d
+        });
+      }
+    }
+    if(c.sessao2_agendada) {
+      const d = new Date(c.sessao2_agendada);
+      if(d > agora && d < em48h) {
+        const horas = Math.floor((d - agora) / (1000 * 60 * 60));
+        notifs.push({
+          tipo: 'entrevista',
+          urgencia: horas < 24 ? 'alta' : 'media',
+          mensagem: `Sessão 2 com <strong>${c.nome}</strong> em ${horas}h`,
+          data: d
+        });
+      }
+    }
+  });
+
+  // Pagamentos pendentes há mais de 7 dias
+  const ha7dias = new Date(agora.getTime() - (7 * 24 * 60 * 60 * 1000));
+  clientes.forEach(c => {
+    if(c.pagamento_status === 'pendente' && c.data_fechamento) {
+      const d = new Date(c.data_fechamento);
+      if(d < ha7dias) {
+        const dias = Math.floor((agora - d) / (1000 * 60 * 60 * 24));
+        notifs.push({
+          tipo: 'pagamento',
+          urgencia: 'alta',
+          mensagem: `<strong>${c.nome}</strong> com pagamento pendente há ${dias} dias`,
+          data: d
+        });
+      }
+    }
+  });
+
+  if(notifs.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Nenhuma notificação no momento</div><div class="empty-text">Tudo em dia!</div></div>';
+  } else {
+    container.innerHTML = notifs.map(n => `
+      <div style="padding: 1rem; margin-bottom: 1rem; background: ${n.urgencia === 'alta' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)'}; border-left: 3px solid ${n.urgencia === 'alta' ? '#DC2626' : '#D97706'}; border-radius: 8px;">
+        <div style="font-size: 14px; color: var(--ink2);">${n.tipo === 'entrevista' ? '📅' : '💰'} ${n.mensagem}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ========== DASHBOARD ==========
+let chartReceitasDespesas, chartClientes, chartFaturamento;
+
+async function loadDashboard() {
+  try {
+    // Buscar dados dos últimos 6 meses
+    const hoje = new Date();
+    const meses = [];
+    const labels = [];
+    
+    for(let i = 5; i >= 0; i--) {
+      const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+      meses.push(d);
+      labels.push(d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }));
+    }
+
+    const [clientesRes, receitasRes, despesasRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      })
+    ]);
+
+    const clientes = await clientesRes.json();
+    const receitas = await receitasRes.json();
+    const despesas = await despesasRes.json();
+
+    // Calcular receitas e despesas por mês
+    const receitasPorMes = meses.map(mes => {
+      const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
+      const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
+      
+      const clientesMes = clientes.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim);
+      const receitasMes = receitas.filter(r => r.data >= inicio && r.data <= fim);
+      
+      return clientesMes.reduce((sum, c) => sum + (c.valor || 0), 0) + 
+             receitasMes.reduce((sum, r) => sum + (r.valor || 0), 0);
+    });
+
+    const despesasPorMes = meses.map(mes => {
+      const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
+      const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
+      
+      const despesasMes = despesas.filter(d => d.data >= inicio && d.data <= fim);
+      return despesasMes.reduce((sum, d) => sum + (d.valor || 0), 0);
+    });
+
+    const clientesPorMes = meses.map(mes => {
+      const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
+      const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
+      return clientes.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim).length;
+    });
+
+    // Gráfico Receitas vs Despesas
+    const ctx1 = document.getElementById('chart-receitas-despesas');
+    if(chartReceitasDespesas) chartReceitasDespesas.destroy();
+    chartReceitasDespesas = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Receitas',
+          data: receitasPorMes,
+          borderColor: '#2D7A4F',
+          backgroundColor: 'rgba(45,122,79,0.1)',
+          tension: 0.4,
+          fill: true
+        }, {
+          label: 'Despesas',
+          data: despesasPorMes,
+          borderColor: '#DC2626',
+          backgroundColor: 'rgba(220,38,38,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'top' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Gráfico Clientes
+    const ctx2 = document.getElementById('chart-clientes');
+    if(chartClientes) chartClientes.destroy();
+    chartClientes = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Clientes Fechados',
+          data: clientesPorMes,
+          backgroundColor: '#C17F4A'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+
+    // Gráfico Faturamento
+    const ctx3 = document.getElementById('chart-faturamento');
+    if(chartFaturamento) chartFaturamento.destroy();
+    chartFaturamento = new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Faturamento',
+          data: receitasPorMes,
+          backgroundColor: '#1A3C34'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
   } catch(err) {
     console.error(err);
   }
