@@ -318,6 +318,65 @@ tr:hover{background:rgba(193,127,74,0.02)}
         </table>
       </div>
     </div>
+
+    <!-- FLUXO DE CAIXA -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Fluxo de Caixa do Mês</h2>
+      </div>
+      
+      <div class="cards" style="margin-bottom: 2rem;">
+        <div class="card">
+          <div class="card-label">Entradas</div>
+          <div class="card-value" id="caixa-entradas">—</div>
+          <div class="card-detail">Pagamentos recebidos</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Saídas</div>
+          <div class="card-value" id="caixa-saidas">—</div>
+          <div class="card-detail">Despesas pagas</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Saldo do Mês</div>
+          <div class="card-value" id="caixa-saldo">—</div>
+          <div class="card-detail">Entradas - Saídas</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <div>
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 1rem; color: var(--ink);">Entradas</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="caixa-entradas-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 1rem; color: var(--ink);">Saídas</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="caixa-saidas-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- AGENDA -->
@@ -971,6 +1030,65 @@ async function loadFinanceiro() {
           <td>${new Date(c.data).toLocaleDateString('pt-BR')}</td>
           <td>R$ ${c.saldo.toLocaleString('pt-BR')}</td>
           <td>${c.descricao || '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ========== FLUXO DE CAIXA ==========
+    
+    // Entradas = Clientes PAGOS no mês + Receitas extras
+    const clientesPagos = clientes.filter(c => c.pagamento_status === 'pago');
+    const entradasCaixa = clientesPagos.reduce((sum, c) => sum + (c.valor || 0), 0) + receitaExtras;
+    
+    // Saídas = Todas as despesas do mês
+    const saidasCaixa = totalDespesas;
+    
+    // Saldo do mês
+    const saldoCaixa = entradasCaixa - saidasCaixa;
+
+    // Atualizar cards do caixa
+    document.getElementById('caixa-entradas').textContent = `R$ ${entradasCaixa.toLocaleString('pt-BR')}`;
+    document.getElementById('caixa-saidas').textContent = `R$ ${saidasCaixa.toLocaleString('pt-BR')}`;
+    document.getElementById('caixa-saldo').textContent = `R$ ${saldoCaixa.toLocaleString('pt-BR')}`;
+    document.getElementById('caixa-saldo').style.color = saldoCaixa >= 0 ? 'var(--success)' : 'var(--danger)';
+
+    // Tabela Entradas
+    const entradasBody = document.getElementById('caixa-entradas-body');
+    const todasEntradas = [
+      ...clientesPagos.map(c => ({
+        descricao: `Cliente: ${c.nome}`,
+        valor: c.valor,
+        data: c.data_fechamento
+      })),
+      ...receitas.map(r => ({
+        descricao: r.descricao,
+        valor: r.valor,
+        data: r.data
+      }))
+    ].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    if(todasEntradas.length === 0) {
+      entradasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding: 2rem;"><div class="empty-icon" style="font-size: 32px;">💰</div><div class="empty-title" style="font-size: 14px;">Nenhuma entrada</div></div></td></tr>';
+    } else {
+      entradasBody.innerHTML = todasEntradas.map(e => `
+        <tr>
+          <td>${e.descricao}</td>
+          <td style="color: var(--success); font-weight: 600;">+ R$ ${e.valor.toLocaleString('pt-BR')}</td>
+          <td>${new Date(e.data).toLocaleDateString('pt-BR')}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Tabela Saídas
+    const saidasBody = document.getElementById('caixa-saidas-body');
+    if(despesas.length === 0) {
+      saidasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding: 2rem;"><div class="empty-icon" style="font-size: 32px;">📊</div><div class="empty-title" style="font-size: 14px;">Nenhuma saída</div></div></td></tr>';
+    } else {
+      saidasBody.innerHTML = despesas.sort((a, b) => new Date(b.data) - new Date(a.data)).map(d => `
+        <tr>
+          <td>${d.descricao}</td>
+          <td style="color: var(--danger); font-weight: 600;">- R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
         </tr>
       `).join('');
     }
