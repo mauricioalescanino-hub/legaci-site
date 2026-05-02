@@ -3,892 +3,766 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legaci · Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Admin · Legaci</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0F0E0C;
-  --surface: #1A1916;
-  --surface2: #222018;
-  --border: rgba(255,255,255,0.07);
-  --ink: #F0EDE8;
-  --ink2: #9A9488;
-  --ink3: #5A5650;
-  --accent: #C17F4A;
-  --accent2: #1A3C34;
-  --green: #2D6E4E;
-  --green-pale: rgba(45,110,78,0.15);
-  --rose: #8C3D3D;
-  --rose-pale: rgba(140,61,61,0.15);
-  --gold: #C17F4A;
-  --gold-pale: rgba(193,127,74,0.12);
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Outfit', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-}
-
-/* LOGIN */
-.login-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: var(--bg);
-  position: relative;
-}
-
-.login-screen::before {
-  content: 'Legaci';
-  position: absolute;
-  font-family: 'Libre Baskerville', serif;
-  font-size: clamp(80px, 20vw, 200px);
-  font-weight: 700;
-  color: rgba(193,127,74,0.04);
-  pointer-events: none;
-  letter-spacing: -4px;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
-}
-
-.login-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 380px;
-  position: relative;
-  z-index: 1;
-}
-
-.login-logo {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 28px;
-  font-weight: 400;
-  color: var(--accent);
-  text-align: center;
-  margin-bottom: 0.25rem;
-  letter-spacing: -0.5px;
-}
-
-.login-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ink3);
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.login-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink2);
-  margin-bottom: 6px;
-}
-
-.login-input {
-  width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-family: 'Outfit', sans-serif;
-  color: var(--ink);
-  outline: none;
-  margin-bottom: 1rem;
-  transition: border-color 0.2s;
-}
-.login-input:focus { border-color: var(--accent); }
-
-.login-btn {
-  width: 100%;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 100px;
-  padding: 13px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.login-btn:hover { background: #A86C3A; transform: translateY(-1px); }
-
-.login-error {
-  font-size: 12px;
-  color: #E05252;
-  text-align: center;
-  margin-top: 0.75rem;
-  display: none;
-}
-
-/* DASHBOARD */
-.dashboard { display: none; }
-
-/* SIDEBAR */
-.layout { display: flex; min-height: 100vh; }
-
-.sidebar {
-  width: 220px;
-  min-width: 220px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 1.5rem 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-brand {
-  padding: 0 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 1rem;
-}
-
-.sidebar-logo {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 20px;
-  color: var(--accent);
-  font-weight: 400;
-}
-
-.sidebar-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-top: 2px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 1.25rem;
-  font-size: 13px;
-  color: var(--ink2);
-  cursor: pointer;
-  border-radius: 0;
-  transition: all 0.15s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: 'Outfit', sans-serif;
-}
-.nav-item:hover { color: var(--ink); background: rgba(255,255,255,0.03); }
-.nav-item.active { color: var(--accent); background: var(--gold-pale); }
-.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-
-.sidebar-footer {
-  margin-top: auto;
-  padding: 1rem 1.25rem;
-  border-top: 1px solid var(--border);
-}
-
-.logout-btn {
-  font-size: 12px;
-  color: var(--ink3);
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-family: 'Outfit', sans-serif;
-  transition: color 0.15s;
-}
-.logout-btn:hover { color: var(--rose); }
-
-/* MAIN */
-.main {
-  flex: 1;
-  padding: 2rem 2.5rem;
-  overflow-y: auto;
-}
-
-.page { display: none; }
-.page.active { display: block; }
-
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.page-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 28px;
-  font-weight: 400;
-  color: var(--ink);
-  letter-spacing: -0.5px;
-}
-
-.page-sub {
-  font-size: 13px;
-  color: var(--ink3);
-  margin-top: 4px;
-}
-
-.refresh-btn {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 12px;
-  color: var(--ink2);
-  cursor: pointer;
-  font-family: 'Outfit', sans-serif;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-/* STATS */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.25rem;
-}
-
-.stat-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 32px;
-  font-weight: 400;
-  color: var(--ink);
-  letter-spacing: -1px;
-}
-
-.stat-value.accent { color: var(--accent); }
-.stat-value.green { color: #4ADE80; }
-
-/* TABLE */
-.table-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-
-.table-header {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.table-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-}
-
-.table-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--ink3);
-  background: var(--surface2);
-  padding: 3px 10px;
-  border-radius: 100px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--ink3);
-  padding: 10px 1.5rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface2);
-}
-
-td {
-  padding: 12px 1.5rem;
-  font-size: 13px;
-  color: var(--ink2);
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(255,255,255,0.02); }
-
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.badge-green { background: var(--green-pale); color: #4ADE80; }
-.badge-gold { background: var(--gold-pale); color: var(--accent); }
-.badge-rose { background: var(--rose-pale); color: #F87171; }
-
-/* CONVERSATION MODAL */
-.conv-overlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(4px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-.conv-overlay.open { display: flex; }
-
-.conv-modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.conv-header {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.conv-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 16px;
-  color: var(--ink);
-}
-
-.conv-close {
-  background: var(--surface2);
-  border: none;
-  border-radius: 50%;
-  width: 30px; height: 30px;
-  cursor: pointer;
-  color: var(--ink3);
-  font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-}
-.conv-close:hover { color: var(--ink); }
-
-.conv-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.conv-msg {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.conv-msg.user { flex-direction: row-reverse; }
-
-.conv-avatar {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; flex-shrink: 0;
-}
-.conv-msg.sofia .conv-avatar { background: var(--green-pale); color: #4ADE80; }
-.conv-msg.user .conv-avatar { background: var(--gold-pale); color: var(--accent); }
-
-.conv-bubble {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-.conv-msg.sofia .conv-bubble { background: var(--surface2); color: var(--ink2); border-bottom-left-radius: 4px; }
-.conv-msg.user .conv-bubble { background: var(--gold-pale); color: var(--ink); border-bottom-right-radius: 4px; }
-
-/* EMPTY STATE */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--ink3);
-}
-.empty-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
-.empty-title { font-family: 'Libre Baskerville', serif; font-size: 18px; color: var(--ink2); margin-bottom: 0.5rem; }
-.empty-sub { font-size: 13px; line-height: 1.6; }
-
-/* LOADING */
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: var(--ink3);
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-/* MOBILE */
-@media(max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 1.25rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .page-title { font-size: 22px; }
-}
+:root{--forest:#1A3C34;--copper:#C17F4A;--cream:#F8F6F2;--white:#FFFFFF;--ink:#111010;--ink2:#3A3835;--ink3:#8A8480;--border:rgba(17,16,16,0.08);--success:#2D7A4F;--warning:#D97706;--danger:#DC2626}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--white);border-right:1px solid var(--border);padding:2rem 0;z-index:100}
+.logo-area{padding:0 1.5rem 2rem;border-bottom:1px solid var(--border)}
+.logo{font-family:'Libre Baskerville',serif;font-size:24px;color:var(--copper);margin-bottom:0.25rem}
+.logo-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)}
+.nav{padding:1.5rem 0}
+.nav-item{display:flex;align-items:center;gap:12px;padding:0.875rem 1.5rem;color:var(--ink2);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(193,127,74,0.05);color:var(--copper)}
+.nav-item.active{background:rgba(193,127,74,0.08);color:var(--forest);border-left-color:var(--copper)}
+.nav-icon{font-size:18px;width:20px;text-align:center}
+.main{margin-left:260px;min-height:100vh;padding:3rem}
+.header{margin-bottom:3rem}
+.header-title{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:400;color:var(--ink);margin-bottom:0.5rem;letter-spacing:-0.5px}
+.header-sub{font-size:15px;color:var(--ink3);font-weight:300}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:3rem}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.75rem;transition:all 0.2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.card-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:0.75rem}
+.card-value{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:400;color:var(--ink);margin-bottom:0.5rem}
+.card-detail{font-size:13px;color:var(--ink3)}
+.card-trend{display:inline-block;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;margin-top:0.5rem}
+.card-trend.up{background:rgba(45,122,79,0.1);color:var(--success)}
+.card-trend.neutral{background:rgba(138,132,128,0.1);color:var(--ink3)}
+.section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.section-title{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:400;color:var(--ink)}
+.btn{background:var(--forest);color:var(--white);border:none;border-radius:10px;padding:0.75rem 1.5rem;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn:hover{background:var(--copper);transform:translateY(-1px)}
+.btn-secondary{background:var(--white);color:var(--ink);border:1.5px solid var(--border)}
+.btn-secondary:hover{background:rgba(193,127,74,0.05);border-color:var(--copper);color:var(--copper)}
+.btn-small{padding:0.5rem 1rem;font-size:13px}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);padding:0.75rem 1rem;border-bottom:1px solid var(--border)}
+td{padding:1.25rem 1rem;border-bottom:1px solid var(--border);font-size:14px;color:var(--ink2)}
+tr:hover{background:rgba(193,127,74,0.02)}
+.client-name{font-weight:600;color:var(--ink);margin-bottom:2px}
+.client-contact{font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace}
+.badge{display:inline-block;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.badge-lead{background:rgba(138,132,128,0.15);color:var(--ink3)}
+.badge-proposta{background:rgba(217,119,6,0.15);color:var(--warning)}
+.badge-fechado{background:rgba(45,122,79,0.15);color:var(--success)}
+.badge-producao{background:rgba(26,60,52,0.15);color:var(--forest)}
+.badge-entregue{background:rgba(193,127,74,0.15);color:var(--copper)}
+.badge-pendente{background:rgba(220,38,38,0.15);color:var(--danger)}
+.badge-pago{background:rgba(45,122,79,0.15);color:var(--success)}
+.badge-parcelado{background:rgba(217,119,6,0.15);color:var(--warning)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,16,16,0.5);backdrop-filter:blur(4px);z-index:1000;padding:2rem;overflow-y:auto}
+.modal-overlay.active{display:flex;align-items:center;justify-content:center}
+.modal{background:var(--white);border-radius:20px;max-width:600px;width:100%;padding:2.5rem;position:relative;animation:modalSlide 0.3s ease}
+@keyframes modalSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:1.5rem;right:1.5rem;background:var(--border);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;color:var(--ink2);transition:all 0.2s}
+.modal-close:hover{background:var(--ink3);color:var(--white)}
+.modal-title{font-family:'Libre Baskerville',serif;font-size:24px;color:var(--ink);margin-bottom:0.5rem}
+.modal-sub{font-size:14px;color:var(--ink3);margin-bottom:2rem}
+.form-group{margin-bottom:1.5rem}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.5rem}
+.form-input,.form-select,.form-textarea{width:100%;padding:0.875rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--ink);background:var(--white);transition:all 0.2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(193,127,74,0.1)}
+.form-textarea{resize:vertical;min-height:100px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-actions{display:flex;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.empty{text-align:center;padding:4rem 2rem}
+.empty-icon{font-size:48px;margin-bottom:1rem;opacity:0.3}
+.empty-title{font-family:'Libre Baskerville',serif;font-size:20px;color:var(--ink);margin-bottom:0.5rem}
+.empty-text{font-size:14px;color:var(--ink3);margin-bottom:1.5rem}
+.filters{display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.filter-btn{background:var(--white);border:1.5px solid var(--border);border-radius:100px;padding:0.5rem 1.25rem;font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all 0.2s}
+.filter-btn:hover{border-color:var(--copper);color:var(--copper)}
+.filter-btn.active{background:var(--forest);border-color:var(--forest);color:var(--white)}
+.screen{display:none}
+.screen.active{display:block}
+.actions-cell{display:flex;gap:0.5rem}
+@media(max-width:768px){.sidebar{width:100%;height:auto;position:relative}.main{margin-left:0;padding:2rem 1rem}.cards{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <p class="login-logo">Legaci</p>
-    <p class="login-sub">Painel Administrativo</p>
-    <label class="login-label">Senha de acesso</label>
-    <input class="login-input" id="loginPassword" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
-    <button class="login-btn" onclick="doLogin()">Entrar</button>
-    <p class="login-error" id="loginError">Senha incorreta.</p>
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo">Legaci</div>
+    <div class="logo-sub">Painel Admin</div>
   </div>
-</div>
-
-<!-- DASHBOARD -->
-<div class="dashboard" id="dashboard">
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <nav class="sidebar">
-      <div class="sidebar-brand">
-        <p class="sidebar-logo">Legaci</p>
-        <p class="sidebar-tag">Admin Panel</p>
-      </div>
-      <button class="nav-item active" onclick="goTo('leads', this)">
-        <span class="nav-icon">👥</span> Leads
-      </button>
-      <button class="nav-item" onclick="goTo('conversations', this)">
-        <span class="nav-icon">💬</span> Conversas Sofia
-      </button>
-      <button class="nav-item" onclick="goTo('overview', this)">
-        <span class="nav-icon">📊</span> Visão Geral
-      </button>
-      <div class="sidebar-footer">
-        <button class="logout-btn" onclick="doLogout()">← Sair</button>
-      </div>
-    </nav>
-
-    <!-- MAIN -->
-    <main class="main">
-
-      <!-- LEADS PAGE -->
-      <div class="page active" id="page-leads">
-        <div class="page-header">
-          <div>
-            <h1 class="page-title">Leads</h1>
-            <p class="page-sub">Pessoas que demonstraram interesse</p>
-          </div>
-          <button class="refresh-btn" onclick="loadLeads()">↻ Atualizar</button>
-        </div>
-
-        <div class="stats-grid" id="leads-stats">
-          <div class="stat-card"><p class="stat-label">Total de leads</p><p class="stat-value accent" id="stat-total">—</p></div>
-          <div class="stat-card"><p class="stat-label">Hoje</p><p class="stat-value green" id="stat-hoje">—</p></div>
-          <div class="stat-card"><p class="stat-label">Plano mais popular</p><p class="stat-value" style="font-size:18px;padding-top:6px" id="stat-plano">—</p></div>
-          <div class="stat-card"><p class="stat-label">Esta semana</p><p class="stat-value accent" id="stat-semana">—</p></div>
-        </div>
-
-        <div class="table-card">
-          <div class="table-header">
-            <p class="table-title">Todos os leads</p>
-            <span class="table-count" id="leads-count">0</span>
-          </div>
-          <div id="leads-table-container">
-            <div class="loading">Carregando...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONVERSATIONS PAGE -->
-      <div class="page" id="page-conversations">
-        <div class="page-header">
-          <div>
-            <h1 class="page-title">Conversas Sofia</h1>
-            <p class="page-sub">Histórico completo de atendimentos</p>
-          </div>
-          <button class="refresh-btn" onclick="loadConversations()">↻ Atualizar</button>
-        </div>
-
-        <div class="table-card">
-          <div class="table-header">
-            <p class="table-title">Todas as conversas</p>
-            <span class="table-count" id="conv-count">0</span>
-          </div>
-          <div id="conv-table-container">
-            <div class="loading">Carregando...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- OVERVIEW PAGE -->
-      <div class="page" id="page-overview">
-        <div class="page-header">
-          <div>
-            <h1 class="page-title">Visão Geral</h1>
-            <p class="page-sub">Resumo do desempenho da Legaci</p>
-          </div>
-          <button class="refresh-btn" onclick="loadOverview()">↻ Atualizar</button>
-        </div>
-
-        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)" id="overview-stats">
-          <div class="stat-card"><p class="stat-label">Total leads</p><p class="stat-value accent" id="ov-leads">—</p></div>
-          <div class="stat-card"><p class="stat-label">Conversas Sofia</p><p class="stat-value" id="ov-convs">—</p></div>
-          <div class="stat-card"><p class="stat-label">Leads hoje</p><p class="stat-value green" id="ov-hoje">—</p></div>
-        </div>
-
-        <div class="table-card">
-          <div class="table-header"><p class="table-title">Distribuição por plano</p></div>
-          <div id="overview-planos"><div class="loading">Carregando...</div></div>
-        </div>
-
-        <div class="table-card" style="margin-top:1rem">
-          <div class="table-header"><p class="table-title">Distribuição por destinatário</p></div>
-          <div id="overview-paraquem"><div class="loading">Carregando...</div></div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-</div>
-
-<!-- CONVERSATION MODAL -->
-<div class="conv-overlay" id="convOverlay" onclick="closeConvModal(event)">
-  <div class="conv-modal">
-    <div class="conv-header">
-      <p class="conv-title" id="convModalTitle">Conversa</p>
-      <button class="conv-close" onclick="closeConv()">×</button>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showScreen('visao-geral')">
+      <span class="nav-icon">📊</span><span>Visão Geral</span>
     </div>
-    <div class="conv-messages" id="convMessages"></div>
+    <div class="nav-item" onclick="showScreen('clientes')">
+      <span class="nav-icon">👥</span><span>Clientes</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('financeiro')">
+      <span class="nav-icon">💰</span><span>Financeiro</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('agenda')">
+      <span class="nav-icon">📅</span><span>Agenda</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('leads-sofia')">
+      <span class="nav-icon">💬</span><span>Leads Sofia</span>
+    </div>
+  </nav>
+</div>
+
+<div class="main">
+
+  <!-- VISÃO GERAL -->
+  <div class="screen active" id="screen-visao-geral">
+    <div class="header">
+      <h1 class="header-title">Visão Geral</h1>
+      <p class="header-sub">Acompanhe os principais indicadores do negócio</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-label">Leads do Mês</div>
+        <div class="card-value" id="total-leads">—</div>
+        <div class="card-detail">Novos contatos via site</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Clientes Ativos</div>
+        <div class="card-value" id="total-clientes">—</div>
+        <div class="card-detail">Fechados + Em Produção</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Faturamento do Mês</div>
+        <div class="card-value" id="total-faturamento">—</div>
+        <div class="card-detail">Total de contratos fechados</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Taxa de Conversão</div>
+        <div class="card-value" id="taxa-conversao">—</div>
+        <div class="card-detail">Leads → Clientes fechados</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Últimos Clientes</h2>
+      </div>
+      <div class="table-wrapper" id="ultimos-clientes">
+        <div class="empty">
+          <div class="empty-icon">👥</div>
+          <div class="empty-title">Nenhum cliente ainda</div>
+          <div class="empty-text">Adicione seu primeiro cliente para começar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="screen" id="screen-clientes">
+    <div class="header">
+      <h1 class="header-title">Clientes</h1>
+      <p class="header-sub">Gerencie todos os clientes e leads</p>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterClientes('todos')">Todos</button>
+      <button class="filter-btn" onclick="filterClientes('lead')">Leads</button>
+      <button class="filter-btn" onclick="filterClientes('fechado')">Fechados</button>
+      <button class="filter-btn" onclick="filterClientes('em_producao')">Em Produção</button>
+      <button class="filter-btn" onclick="filterClientes('entregue')">Entregues</button>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Lista de Clientes</h2>
+        <button class="btn" onclick="openNovoCliente()">+ Adicionar Cliente</button>
+      </div>
+      <div class="table-wrapper">
+        <table id="clientes-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Plano</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Pagamento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-body">
+            <tr>
+              <td colspan="6">
+                <div class="empty">
+                  <div class="empty-icon">👥</div>
+                  <div class="empty-title">Nenhum cliente cadastrado</div>
+                  <div class="empty-text">Clique em "Adicionar Cliente" para começar</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINANCEIRO -->
+  <div class="screen" id="screen-financeiro">
+    <div class="header">
+      <h1 class="header-title">Financeiro</h1>
+      <p class="header-sub">Controle de receitas e pagamentos</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-label">Total Faturado</div>
+        <div class="card-value" id="fin-faturado">—</div>
+        <div class="card-detail">Contratos fechados no mês</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Total Recebido</div>
+        <div class="card-value" id="fin-recebido">—</div>
+        <div class="card-detail">Pagamentos confirmados</div>
+      </div>
+      <div class="card">
+        <div class="card-label">A Receber</div>
+        <div class="card-value" id="fin-receber">—</div>
+        <div class="card-detail">Pagamentos pendentes</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Pagamentos</h2>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Valor</th>
+              <th>Forma</th>
+              <th>Status</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="financeiro-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="screen" id="screen-agenda">
+    <div class="header">
+      <h1 class="header-title">Agenda</h1>
+      <p class="header-sub">Entrevistas agendadas</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Próximas Entrevistas</h2>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Plano</th>
+              <th>Sessão 1</th>
+              <th>Sessão 2</th>
+            </tr>
+          </thead>
+          <tbody id="agenda-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADS SOFIA -->
+  <div class="screen" id="screen-leads-sofia">
+    <div class="header">
+      <h1 class="header-title">Leads Sofia</h1>
+      <p class="header-sub">Conversas capturadas pela Sofia no site</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Últimos Leads</h2>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefone</th>
+              <th>Para Quem</th>
+              <th>Plano</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="sofia-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL CLIENTE -->
+<div class="modal-overlay" id="modal-cliente">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 class="modal-title" id="modal-cliente-title">Novo Cliente</h2>
+    <p class="modal-sub">Preencha os dados do cliente</p>
+    
+    <form id="form-cliente" onsubmit="salvarCliente(event)">
+      <div class="form-group">
+        <label class="form-label">Nome Completo</label>
+        <input type="text" class="form-input" name="nome" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" name="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" class="form-input" name="whatsapp">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Modo</label>
+          <select class="form-select" name="modo" onchange="updateValor()">
+            <option value="solo">Solo</option>
+            <option value="casal">Casal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Plano</label>
+          <select class="form-select" name="plano" onchange="updateValor()">
+            <option value="1sessao">1 Sessão</option>
+            <option value="2sessoes">2 Sessões</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" class="form-input" name="valor" id="valor-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" name="status">
+            <option value="lead">Lead</option>
+            <option value="proposta">Proposta Enviada</option>
+            <option value="fechado">Fechado</option>
+            <option value="em_producao">Em Produção</option>
+            <option value="entregue">Entregue</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Status Pagamento</label>
+          <select class="form-select" name="pagamento_status">
+            <option value="pendente">Pendente</option>
+            <option value="pago">Pago</option>
+            <option value="parcelado">Parcelado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Forma de Pagamento</label>
+          <select class="form-select" name="pagamento_forma">
+            <option value="pix">Pix</option>
+            <option value="transferencia">Transferência</option>
+            <option value="cartao">Cartão</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Sessão 1 (Opcional)</label>
+          <input type="datetime-local" class="form-input" name="sessao1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sessão 2 (Opcional)</label>
+          <input type="datetime-local" class="form-input" name="sessao2">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notas</label>
+        <textarea class="form-textarea" name="notas"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn">Salvar Cliente</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
-const ADMIN_PASSWORD = 'legaci2026';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
 
-// ── AUTH ──
-function doLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (pwd === ADMIN_PASSWORD) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    loadLeads();
-    loadConversations();
-    loadOverview();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
+const precos = {
+  solo: { '1sessao': 790, '2sessoes': 1490 },
+  casal: { '1sessao': 1190, '2sessoes': 1990 }
+};
+
+let clientes = [];
+let currentFilter = 'todos';
+let editingId = null;
+
+// Navegação
+function showScreen(screenName) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`screen-${screenName}`).classList.add('active');
+  event.target.closest('.nav-item').classList.add('active');
+  
+  if(screenName === 'visao-geral') loadVisaoGeral();
+  if(screenName === 'clientes') loadClientes();
+  if(screenName === 'financeiro') loadFinanceiro();
+  if(screenName === 'agenda') loadAgenda();
+  if(screenName === 'leads-sofia') loadLeadsSofia();
+}
+
+// Atualizar valor automaticamente
+function updateValor() {
+  const modo = document.querySelector('[name="modo"]').value;
+  const plano = document.querySelector('[name="plano"]').value;
+  document.getElementById('valor-input').value = precos[modo][plano];
+}
+
+// Modal
+function openNovoCliente() {
+  editingId = null;
+  document.getElementById('modal-cliente-title').textContent = 'Novo Cliente';
+  document.getElementById('form-cliente').reset();
+  updateValor();
+  document.getElementById('modal-cliente').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal-cliente').classList.remove('active');
+}
+
+// Salvar cliente
+async function salvarCliente(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = {
+    nome: formData.get('nome'),
+    email: formData.get('email'),
+    whatsapp: formData.get('whatsapp'),
+    modo: formData.get('modo'),
+    plano: formData.get('plano'),
+    valor: parseFloat(formData.get('valor')),
+    status: formData.get('status'),
+    pagamento_status: formData.get('pagamento_status'),
+    pagamento_forma: formData.get('pagamento_forma'),
+    sessao1_agendada: formData.get('sessao1') || null,
+    sessao2_agendada: formData.get('sessao2') || null,
+    notas: formData.get('notas'),
+    data_fechamento: formData.get('status') === 'fechado' ? new Date().toISOString().split('T')[0] : null
+  };
+
+  try {
+    const url = editingId 
+      ? `${SUPABASE_URL}/rest/v1/legaci_clientes?id=eq.${editingId}`
+      : `${SUPABASE_URL}/rest/v1/legaci_clientes`;
+    
+    const method = editingId ? 'PATCH' : 'POST';
+    
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if(res.ok) {
+      closeModal();
+      loadClientes();
+      loadVisaoGeral();
+      alert('Cliente salvo com sucesso!');
+    } else {
+      alert('Erro ao salvar cliente');
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao salvar cliente');
   }
 }
 
-function doLogout() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('loginPassword').value = '';
+// Carregar clientes
+async function loadClientes() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    clientes = await res.json();
+    renderClientes();
+  } catch(err) {
+    console.error(err);
+  }
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeConv();
-});
+function renderClientes() {
+  const tbody = document.getElementById('clientes-body');
+  const filtered = currentFilter === 'todos' 
+    ? clientes 
+    : clientes.filter(c => c.status === currentFilter);
 
-// ── NAVIGATION ──
-function goTo(page, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ── SUPABASE FETCH ──
-async function supaFetch(table, params = '') {
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + params, {
-    headers: {
-      'apikey': ANON_KEY,
-      'Authorization': 'Bearer ' + ANON_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': 'count=exact'
-    }
-  });
-  const count = res.headers.get('content-range')?.split('/')[1] || '0';
-  const data = await res.json();
-  return { data, count: parseInt(count) };
-}
-
-// ── FORMAT DATE ──
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-}
-
-function fmtAgo(iso) {
-  if (!iso) return '—';
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return 'agora mesmo';
-  if (m < 60) return m + 'min atrás';
-  const h = Math.floor(m / 60);
-  if (h < 24) return h + 'h atrás';
-  return Math.floor(h / 24) + 'd atrás';
-}
-
-function planoBadge(plano) {
-  if (!plano) return '<span class="badge badge-rose">—</span>';
-  if (plano.includes('Legado')) return '<span class="badge badge-green">' + plano + '</span>';
-  if (plano.includes('Completa') || plano.includes('História')) return '<span class="badge badge-gold">' + plano + '</span>';
-  return '<span class="badge" style="background:rgba(255,255,255,0.06);color:var(--ink2)">' + plano + '</span>';
-}
-
-// ── LEADS ──
-async function loadLeads() {
-  document.getElementById('leads-table-container').innerHTML = '<div class="loading">Carregando leads...</div>';
-
-  const { data: leads, count } = await supaFetch('legaci_leads', '?order=created_at.desc&limit=100');
-  document.getElementById('leads-count').textContent = count || leads.length;
-
-  // Stats
-  const hoje = leads.filter(l => {
-    const d = new Date(l.created_at);
-    const now = new Date();
-    return d.toDateString() === now.toDateString();
-  });
-
-  const semana = leads.filter(l => {
-    const d = new Date(l.created_at);
-    const now = new Date();
-    return (now - d) < 7 * 24 * 60 * 60 * 1000;
-  });
-
-  // Plano mais popular
-  const planoCount = {};
-  leads.forEach(l => { if (l.plano) planoCount[l.plano] = (planoCount[l.plano] || 0) + 1; });
-  const topPlano = Object.entries(planoCount).sort((a,b) => b[1]-a[1])[0];
-
-  document.getElementById('stat-total').textContent = leads.length;
-  document.getElementById('stat-hoje').textContent = hoje.length;
-  document.getElementById('stat-semana').textContent = semana.length;
-  document.getElementById('stat-plano').textContent = topPlano ? topPlano[0].split(' ')[0] : '—';
-
-  if (!leads.length) {
-    document.getElementById('leads-table-container').innerHTML = `
-      <div class="empty-state">
-        <span class="empty-icon">👥</span>
-        <p class="empty-title">Nenhum lead ainda</p>
-        <p class="empty-sub">Os leads aparecerão aqui quando alguém preencher o formulário ou a Sofia capturar dados.</p>
-      </div>`;
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente encontrado</div></div></td></tr>`;
     return;
   }
 
-  const rows = leads.map(l => `
+  tbody.innerHTML = filtered.map(c => `
     <tr>
-      <td style="color:var(--ink);font-weight:500">${l.nome || '—'}</td>
-      <td>${l.email || '—'}</td>
-      <td>${l.telefone || '—'}</td>
-      <td>${l.para_quem || '—'}</td>
-      <td>${planoBadge(l.plano)}</td>
-      <td style="color:var(--ink3);font-size:12px">${fmtAgo(l.created_at)}</td>
+      <td>
+        <div class="client-name">${c.nome}</div>
+        <div class="client-contact">${c.email || c.whatsapp || '—'}</div>
+      </td>
+      <td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
+      <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+      <td><span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span></td>
+      <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
+      <td class="actions-cell">
+        <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
+      </td>
     </tr>
   `).join('');
-
-  document.getElementById('leads-table-container').innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Nome</th><th>Email</th><th>WhatsApp</th>
-        <th>Para quem</th><th>Plano</th><th>Quando</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
 }
 
-// ── CONVERSATIONS ──
-async function loadConversations() {
-  document.getElementById('conv-table-container').innerHTML = '<div class="loading">Carregando conversas...</div>';
+function filterClientes(status) {
+  currentFilter = status;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderClientes();
+}
 
-  const { data: convs, count } = await supaFetch('legaci_conversations', '?order=updated_at.desc&limit=100');
-  document.getElementById('conv-count').textContent = count || convs.length;
+function editarCliente(id) {
+  const cliente = clientes.find(c => c.id === id);
+  if(!cliente) return;
 
-  if (!convs.length) {
-    document.getElementById('conv-table-container').innerHTML = `
-      <div class="empty-state">
-        <span class="empty-icon">💬</span>
-        <p class="empty-title">Nenhuma conversa ainda</p>
-        <p class="empty-sub">As conversas da Sofia aparecerão aqui em tempo real.</p>
-      </div>`;
-    return;
+  editingId = id;
+  document.getElementById('modal-cliente-title').textContent = 'Editar Cliente';
+  
+  const form = document.getElementById('form-cliente');
+  form.querySelector('[name="nome"]').value = cliente.nome || '';
+  form.querySelector('[name="email"]').value = cliente.email || '';
+  form.querySelector('[name="whatsapp"]').value = cliente.whatsapp || '';
+  form.querySelector('[name="modo"]').value = cliente.modo || 'solo';
+  form.querySelector('[name="plano"]').value = cliente.plano || '1sessao';
+  form.querySelector('[name="valor"]').value = cliente.valor || '';
+  form.querySelector('[name="status"]').value = cliente.status || 'lead';
+  form.querySelector('[name="pagamento_status"]').value = cliente.pagamento_status || 'pendente';
+  form.querySelector('[name="pagamento_forma"]').value = cliente.pagamento_forma || 'pix';
+  form.querySelector('[name="sessao1"]').value = cliente.sessao1_agendada ? cliente.sessao1_agendada.slice(0,16) : '';
+  form.querySelector('[name="sessao2"]').value = cliente.sessao2_agendada ? cliente.sessao2_agendada.slice(0,16) : '';
+  form.querySelector('[name="notas"]').value = cliente.notas || '';
+  
+  document.getElementById('modal-cliente').classList.add('active');
+}
+
+// Visão Geral
+async function loadVisaoGeral() {
+  try {
+    const [clientesRes, leadsRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/legaci_leads?select=*&order=created_at.desc`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      })
+    ]);
+
+    const clientesData = await clientesRes.json();
+    const leadsData = await leadsRes.json();
+
+    const now = new Date();
+    const thisMonth = leadsData.filter(l => {
+      const d = new Date(l.created_at);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+
+    const ativos = clientesData.filter(c => c.status === 'fechado' || c.status === 'em_producao');
+    const faturamentoMes = clientesData
+      .filter(c => c.data_fechamento && new Date(c.data_fechamento).getMonth() === now.getMonth())
+      .reduce((sum, c) => sum + (c.valor || 0), 0);
+    
+    const conversao = thisMonth.length > 0 
+      ? ((clientesData.filter(c => c.status === 'fechado').length / thisMonth.length) * 100).toFixed(0)
+      : 0;
+
+    document.getElementById('total-leads').textContent = thisMonth.length;
+    document.getElementById('total-clientes').textContent = ativos.length;
+    document.getElementById('total-faturamento').textContent = `R$ ${faturamentoMes.toLocaleString('pt-BR')}`;
+    document.getElementById('taxa-conversao').textContent = `${conversao}%`;
+
+    // Últimos clientes
+    const ultimos = clientesData.slice(0, 5);
+    const container = document.getElementById('ultimos-clientes');
+    if(ultimos.length === 0) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente ainda</div></div>';
+    } else {
+      container.innerHTML = `
+        <table>
+          <thead><tr><th>Cliente</th><th>Plano</th><th>Status</th><th>Valor</th></tr></thead>
+          <tbody>
+            ${ultimos.map(c => `
+              <tr>
+                <td><div class="client-name">${c.nome}</div></td>
+                <td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
+                <td><span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span></td>
+                <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+  } catch(err) {
+    console.error(err);
   }
+}
 
-  const rows = convs.map(c => {
-    const msgs = c.messages || [];
-    const lastMsg = msgs[msgs.length - 1];
-    const preview = lastMsg ? lastMsg.content.substring(0, 60) + (lastMsg.content.length > 60 ? '...' : '') : '—';
-    const userMsgs = msgs.filter(m => m.role === 'user').length;
+// Financeiro
+async function loadFinanceiro() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const clientes = await res.json();
 
-    return `
+    const now = new Date();
+    const mesAtual = clientes.filter(c => {
+      if(!c.data_fechamento) return false;
+      const d = new Date(c.data_fechamento);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+
+    const faturado = mesAtual.reduce((sum, c) => sum + (c.valor || 0), 0);
+    const recebido = mesAtual.filter(c => c.pagamento_status === 'pago').reduce((sum, c) => sum + (c.valor || 0), 0);
+    const receber = mesAtual.filter(c => c.pagamento_status === 'pendente').reduce((sum, c) => sum + (c.valor || 0), 0);
+
+    document.getElementById('fin-faturado').textContent = `R$ ${faturado.toLocaleString('pt-BR')}`;
+    document.getElementById('fin-recebido').textContent = `R$ ${recebido.toLocaleString('pt-BR')}`;
+    document.getElementById('fin-receber').textContent = `R$ ${receber.toLocaleString('pt-BR')}`;
+
+    const tbody = document.getElementById('financeiro-body');
+    tbody.innerHTML = mesAtual.map(c => `
       <tr>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)">${c.session_id?.substring(0,16)}...</td>
-        <td>${userMsgs} mensagens</td>
-        <td style="max-width:200px;color:var(--ink3);font-size:12px">${preview}</td>
-        <td style="color:var(--ink3);font-size:12px">${fmtAgo(c.updated_at)}</td>
-        <td>
-          <button onclick="openConv(${JSON.stringify(c).replace(/"/g,'&quot;')})"
-            style="background:var(--gold-pale);border:none;border-radius:6px;padding:5px 12px;font-size:11px;color:var(--accent);cursor:pointer;font-family:'Outfit',sans-serif">
-            Ver conversa
-          </button>
-        </td>
+        <td>${c.nome}</td>
+        <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+        <td>${c.pagamento_forma}</td>
+        <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
+        <td>${c.data_fechamento ? new Date(c.data_fechamento).toLocaleDateString('pt-BR') : '—'}</td>
       </tr>
-    `;
-  }).join('');
-
-  document.getElementById('conv-table-container').innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Session ID</th><th>Mensagens</th>
-        <th>Último conteúdo</th><th>Quando</th><th></th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+    `).join('');
+  } catch(err) {
+    console.error(err);
+  }
 }
 
-// ── OVERVIEW ──
-async function loadOverview() {
-  const [leadsRes, convsRes] = await Promise.all([
-    supaFetch('legaci_leads', '?order=created_at.desc'),
-    supaFetch('legaci_conversations', '?order=created_at.desc')
-  ]);
+// Agenda
+async function loadAgenda() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&or=(sessao1_agendada.not.is.null,sessao2_agendada.not.is.null)&order=sessao1_agendada.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const clientes = await res.json();
 
-  const leads = leadsRes.data;
-  const convs = convsRes.data;
+    const tbody = document.getElementById('agenda-body');
+    if(clientes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Nenhuma entrevista agendada</div></div></td></tr>';
+      return;
+    }
 
-  const hoje = leads.filter(l => new Date(l.created_at).toDateString() === new Date().toDateString());
-
-  document.getElementById('ov-leads').textContent = leads.length;
-  document.getElementById('ov-convs').textContent = convs.length;
-  document.getElementById('ov-hoje').textContent = hoje.length;
-
-  // Planos
-  const planoCount = {};
-  leads.forEach(l => { if (l.plano) planoCount[l.plano] = (planoCount[l.plano] || 0) + 1; });
-  const planoRows = Object.entries(planoCount)
-    .sort((a,b) => b[1]-a[1])
-    .map(([plano, n]) => {
-      const pct = leads.length ? Math.round(n / leads.length * 100) : 0;
-      return `<tr>
-        <td>${planoBadge(plano)}</td>
-        <td style="color:var(--ink)">${n} leads</td>
-        <td>
-          <div style="background:var(--surface2);border-radius:4px;height:6px;width:100%;overflow:hidden">
-            <div style="background:var(--accent);height:100%;width:${pct}%;border-radius:4px"></div>
-          </div>
-        </td>
-        <td style="color:var(--ink3);font-size:12px">${pct}%</td>
-      </tr>`;
-    }).join('');
-
-  document.getElementById('overview-planos').innerHTML = planoRows ? `
-    <table><thead><tr><th>Plano</th><th>Leads</th><th style="width:40%">Proporção</th><th>%</th></tr></thead>
-    <tbody>${planoRows}</tbody></table>`
-    : '<div class="loading">Sem dados</div>';
-
-  // Para quem
-  const paraCount = {};
-  leads.forEach(l => { if (l.para_quem) paraCount[l.para_quem] = (paraCount[l.para_quem] || 0) + 1; });
-  const paraRows = Object.entries(paraCount)
-    .sort((a,b) => b[1]-a[1])
-    .map(([para, n]) => `<tr>
-      <td style="color:var(--ink)">${para}</td>
-      <td style="color:var(--ink3)">${n} leads</td>
-    </tr>`).join('');
-
-  document.getElementById('overview-paraquem').innerHTML = paraRows ? `
-    <table><thead><tr><th>Para quem</th><th>Leads</th></tr></thead>
-    <tbody>${paraRows}</tbody></table>`
-    : '<div class="loading">Sem dados</div>';
+    tbody.innerHTML = clientes.map(c => `
+      <tr>
+        <td>${c.nome}</td>
+        <td>${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
+        <td>${c.sessao1_agendada ? new Date(c.sessao1_agendada).toLocaleString('pt-BR') : '—'}</td>
+        <td>${c.sessao2_agendada ? new Date(c.sessao2_agendada).toLocaleString('pt-BR') : '—'}</td>
+      </tr>
+    `).join('');
+  } catch(err) {
+    console.error(err);
+  }
 }
 
-// ── CONVERSATION MODAL ──
-function openConv(conv) {
-  const msgs = conv.messages || [];
-  document.getElementById('convModalTitle').textContent =
-    'Conversa · ' + (msgs.length) + ' mensagens · ' + fmtDate(conv.updated_at);
+// Leads Sofia
+async function loadLeadsSofia() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_leads?select=*&order=created_at.desc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const leads = await res.json();
 
-  const html = msgs.map(m => {
-    const isSofia = m.role === 'assistant';
-    return `
-      <div class="conv-msg ${isSofia ? 'sofia' : 'user'}">
-        <div class="conv-avatar">${isSofia ? 'S' : 'V'}</div>
-        <div class="conv-bubble">${m.content}</div>
-      </div>`;
-  }).join('');
+    const tbody = document.getElementById('sofia-body');
+    if(leads.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">💬</div><div class="empty-title">Nenhum lead capturado ainda</div></div></td></tr>';
+      return;
+    }
 
-  document.getElementById('convMessages').innerHTML = html || '<p style="color:var(--ink3);text-align:center">Sem mensagens</p>';
-  document.getElementById('convOverlay').classList.add('open');
+    tbody.innerHTML = leads.map(l => `
+      <tr>
+        <td>${l.nome || '—'}</td>
+        <td>${l.email || '—'}</td>
+        <td>${l.telefone || '—'}</td>
+        <td>${l.para_quem || '—'}</td>
+        <td>${l.plano || '—'}</td>
+        <td>${new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
+      </tr>
+    `).join('');
+  } catch(err) {
+    console.error(err);
+  }
 }
 
-function closeConv() {
-  document.getElementById('convOverlay').classList.remove('open');
+// Helpers
+function getStatusLabel(status) {
+  const labels = {
+    lead: 'Lead',
+    proposta: 'Proposta',
+    fechado: 'Fechado',
+    em_producao: 'Em Produção',
+    entregue: 'Entregue'
+  };
+  return labels[status] || status;
 }
 
-function closeConvModal(e) {
-  if (e.target.id === 'convOverlay') closeConv();
+function getPagamentoLabel(status) {
+  const labels = {
+    pendente: 'Pendente',
+    pago: 'Pago',
+    parcelado: 'Parcelado'
+  };
+  return labels[status] || status;
 }
+
+// Init
+loadVisaoGeral();
 </script>
+
 </body>
 </html>
