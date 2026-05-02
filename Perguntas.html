@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro de Entrevistas · Legaci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #1A3C34;
+  --copper: #C17F4A;
+  --cream: #F8F6F2;
+  --ink: #111010;
+  --ink2: #3A3835;
+  --ink3: #8A8480;
+  --border: rgba(17,16,16,0.08);
+  --hover: rgba(193,127,74,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  color: var(--copper);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink3);
+  font-family: 'DM Mono', monospace;
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.step.active .step-num {
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.step.completed .step-num {
+  background: var(--copper);
+  color: var(--cream);
+}
+
+.step-arrow {
+  color: var(--border);
+  font-size: 16px;
+}
+
+.screen {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.screen-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+
+.screen-sub {
+  font-size: 14px;
+  color: var(--ink3);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn:hover {
+  border-color: var(--copper);
+  background: var(--hover);
+  transform: translateY(-1px);
+}
+
+.btn-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.btn-name {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.btn-desc {
+  font-size: 12px;
+  color: var(--ink3);
+  font-weight: 300;
+}
+
+.btn-arrow {
+  font-size: 18px;
+  color: var(--copper);
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+
+.btn:hover .btn-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.session-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.session-card:hover {
+  border-color: var(--copper);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.session-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--copper);
+  font-weight: 500;
+}
+
+.session-time {
+  font-size: 12px;
+  color: var(--ink3);
+  font-family: 'DM Mono', monospace;
+}
+
+.session-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.3px;
+}
+
+.session-desc {
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.6;
+}
+
+.question-header {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.timer-display {
+  font-family: 'DM Mono', monospace;
+  font-size: 24px;
+  color: var(--forest);
+  font-weight: 500;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.timer-btn {
+  background: var(--forest);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.timer-btn:hover {
+  background: var(--copper);
+}
+
+.timer-btn.secondary {
+  background: var(--border);
+  color: var(--ink2);
+}
+
+.timer-btn.secondary:hover {
+  background: var(--ink3);
+  color: white;
+}
+
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.block {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.block-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(193,127,74,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.block-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.block-time {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.question {
+  padding-left: 1rem;
+  border-left: 2px solid var(--border);
+  transition: all 0.2s;
+}
+
+.question:hover {
+  border-color: var(--copper);
+}
+
+.q-text {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+.principle-box {
+  background: rgba(26,60,52,0.04);
+  border: 1px solid rgba(26,60,52,0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.principle-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--forest);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.principle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.principle-item {
+  font-size: 13px;
+  color: var(--ink2);
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.principle-item::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--forest);
+  font-weight: bold;
+}
+
+.back-btn {
+  margin-top: 2rem;
+  background: var(--border);
+  color: var(--ink2);
+  border: none;
+  border-radius: 100px;
+  padding: 12px 24px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.back-btn:hover {
+  background: var(--ink3);
+  color: white;
+}
+
+@media(max-width: 600px) {
+  .container { padding: 2rem 1rem; }
+  .screen-title { font-size: 24px; }
+  .steps { flex-wrap: wrap; gap: 0.5rem; }
+  .step { font-size: 11px; }
+  .timer { flex-direction: column; gap: 1rem; }
+  .timer-display { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1 class="logo">Legaci</h1>
+    <p class="tagline">Roteiro de Entrevistas</p>
+  </div>
+
+  <div class="steps">
+    <div class="step" id="step1">
+      <span class="step-num">1</span>
+      <span>Modo</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step" id="step2">
+      <span class="step-num">2</span>
+      <span>Plano</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step" id="step3">
+      <span class="step-num">3</span>
+      <span>Perguntas</span>
+    </div>
+  </div>
+
+  <div class="screen active" id="screen-modo">
+    <h2 class="screen-title">Escolha o modo da entrevista</h2>
+    <p class="screen-sub">Isso define a estrutura das perguntas e o foco da narrativa.</p>
+    <div class="btn-group">
+      <button class="btn" onclick="selectMode('solo')">
+        <div class="btn-label">
+          <span class="btn-name">Solo</span>
+          <span class="btn-desc">Uma pessoa, uma história</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </button>
+      <button class="btn" onclick="selectMode('casal')">
+        <div class="btn-label">
+          <span class="btn-name">Casal</span>
+          <span class="btn-desc">Duas vozes, uma jornada</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-plano">
+    <h2 class="screen-title">Escolha o plano</h2>
+    <p class="screen-sub">Cada plano tem uma duração e profundidade diferentes.</p>
+    <div class="btn-group" id="plano-buttons"></div>
+  </div>
+
+  <div class="screen" id="screen-sessoes">
+    <h2 class="screen-title" id="sessoes-title">Sessões da entrevista</h2>
+    <p class="screen-sub" id="sessoes-sub">Clique em cada sessão para ver as perguntas.</p>
+    <div class="session-list" id="session-list"></div>
+    <button class="back-btn" onclick="goTo('screen-plano', 2)">← Voltar</button>
+  </div>
+
+  <div class="screen" id="screen-perguntas">
+    <div class="question-header">
+      <h2 class="screen-title" id="q-session-title">Sessão 1</h2>
+      <p class="screen-sub" id="q-session-desc">Raízes</p>
+      <div class="timer">
+        <div class="timer-display" id="timer-display">00:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn" id="timer-start" onclick="startTimer()">Iniciar</button>
+          <button class="timer-btn secondary" id="timer-reset" onclick="resetTimer()">Resetar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle-box" id="principles-box"></div>
+
+    <div class="blocks" id="blocks-container"></div>
+
+    <button class="back-btn" onclick="goTo('screen-sessoes', 3)">← Voltar para sessões</button>
+  </div>
+</div>
+
+<script>
+let mode = '';
+let plan = '';
+let timerInterval = null;
+let seconds = 0;
+
+const plans = {
+  solo: [
+    { id: '1sessao', name: '1 Sessão', desc: '90 minutos · R$ 790', sessions: 1 },
+    { id: '2sessoes', name: '2 Sessões', desc: '180 minutos total · R$ 1.490', sessions: 2 }
+  ],
+  casal: [
+    { id: '1sessao', name: '1 Sessão', desc: '90 minutos · R$ 1.190', sessions: 1 },
+    { id: '2sessoes', name: '2 Sessões', desc: '180 minutos total · R$ 1.990', sessions: 2 }
+  ]
+};
+
+const roteiros = {
+  solo: {
+    '1sessao': {
+      sessions: [{
+        num: 'Sessão Única',
+        title: 'Uma Vida em 90 Minutos',
+        time: '90 min',
+        desc: 'Da infância ao legado — uma narrativa completa e objetiva',
+        principles: [
+          'Mantenha o ritmo — perguntas diretas mas com espaço para emoção',
+          'Silencie quando ela falar — não interrompa',
+          'Quando emocionar, dê tempo — mas não perca o fio',
+          'Se ela fugir muito do tema, gentilmente redirecione'
+        ],
+        blocks: [
+          {
+            icon: '👋',
+            title: 'Abertura',
+            time: '5 min',
+            questions: [
+              'Como você está se sentindo hoje?',
+              'O que você mais quer que seus netos saibam sobre você?'
+            ]
+          },
+          {
+            icon: '🎈',
+            title: 'Raízes',
+            time: '15 min',
+            questions: [
+              'Qual é a sua primeira lembrança da vida?',
+              'Como era a casa onde você cresceu?',
+              'Me fala dos seus pais — como eles eram?',
+              'Qual a história da sua infância que você nunca esqueceu?'
+            ]
+          },
+          {
+            icon: '🎓',
+            title: 'Juventude',
+            time: '10 min',
+            questions: [
+              'Qual era o seu sonho quando era jovem?',
+              'Qual foi o seu primeiro trabalho?',
+              'Como era a sua vida antes de conhecer a pessoa que mudou tudo?'
+            ]
+          },
+          {
+            icon: '❤️',
+            title: 'Amor',
+            time: '20 min',
+            questions: [
+              'Como você conheceu a pessoa mais importante da sua vida?',
+              'Me conta o dia que vocês se conheceram.',
+              'Quando você soube que era para sempre?',
+              'Me fala do casamento — como foi aquele dia?',
+              'Como foi quando soube que ia ter filhos?'
+            ]
+          },
+          {
+            icon: '💼',
+            title: 'Conquistas',
+            time: '15 min',
+            questions: [
+              'Do que você mais se orgulha na sua vida?',
+              'Qual foi o momento mais difícil? Como você superou?',
+              'Olhando para trás, qual foi o dia que mudou tudo?'
+            ]
+          },
+          {
+            icon: '📚',
+            title: 'Sabedoria',
+            time: '15 min',
+            questions: [
+              'O que você aprendeu que ninguém te ensinou?',
+              'Se pudesse falar com você mais jovem, o que diria?',
+              'O que é o amor para você, depois de tudo que viveu?',
+              'O que realmente importa no final das contas?'
+            ]
+          },
+          {
+            icon: '🌿',
+            title: 'Legado',
+            time: '10 min',
+            questions: [
+              'Como você quer ser lembrada?',
+              'O que você quer deixar para as próximas gerações?',
+              'Completando a frase: "Eu vivi uma vida..."'
+            ]
+          }
+        ]
+      }]
+    },
+    '2sessoes': {
+      sessions: [
+        {
+          num: 'Sessão 1',
+          title: 'Raízes e Juventude',
+          time: '90 min',
+          desc: 'Infância, família, primeiros passos no mundo',
+          principles: [
+            'Explore profundamente — você tem tempo',
+            'Silencie completamente quando ela estiver falando',
+            'Deixe pausas naturais — não preencha rapidamente',
+            'Se ela fugir do tema, deixe — às vezes o desvio é a melhor história',
+            'Não corrija datas ou nomes — anote e confirma depois'
+          ],
+          blocks: [
+            {
+              icon: '👋',
+              title: 'Abertura',
+              time: '5 min',
+              questions: [
+                'Como você está se sentindo hoje?',
+                'Você já imaginou como seria contar a sua história assim?',
+                'O que você mais quer que seus netos e bisnetos saibam sobre você?'
+              ]
+            },
+            {
+              icon: '🎈',
+              title: 'Primeiras Memórias',
+              time: '20 min',
+              questions: [
+                'Qual é a sua primeira lembrança da vida? O que você vê quando fecha os olhos e volta lá?',
+                'Como era a casa onde você cresceu? Me leva pelos cômodos.',
+                'Que cheiros e sons você lembra da infância?',
+                'Tinha algum lugar onde você se escondia ou brincava?',
+                'Como era o bairro? A vizinhança?'
+              ]
+            },
+            {
+              icon: '👨‍👩‍👧‍👦',
+              title: 'A Família',
+              time: '25 min',
+              questions: [
+                'Me fala do seu pai. Como ele era? O que ele fazia?',
+                'E a sua mãe? Que tipo de pessoa ela era?',
+                'Tinha irmãos? Como era a relação de vocês?',
+                'Vocês tinham algum ritual em família? Algo que sempre faziam juntos?',
+                'Qual a história da sua família que você mais gosta de contar?',
+                'Teve algum familiar que te marcou muito? Me conta sobre essa pessoa.'
+              ]
+            },
+            {
+              icon: '🎓',
+              title: 'Descobertas e Sonhos',
+              time: '20 min',
+              questions: [
+                'Do que você mais gostava de fazer quando criança?',
+                'Como era a escola? Você gostava de estudar?',
+                'Tinha algum professor ou pessoa que te marcou?',
+                'Qual era o seu sonho grande? O que você queria ser?',
+                'Lembra de algum dia especial da infância? Me conta.',
+                'O que te fazia feliz naquela época?'
+              ]
+            },
+            {
+              icon: '🚀',
+              title: 'Primeiros Passos',
+              time: '20 min',
+              questions: [
+                'Qual foi o seu primeiro trabalho? Como você conseguiu?',
+                'Como era a vida de jovem? O que você fazia?',
+                'Tinha amigos próximos? Me conta sobre eles.',
+                'Como você imaginava que seria sua vida quando crescesse?',
+                'Teve algum momento que te fez crescer de repente?'
+              ]
+            }
+          ]
+        },
+        {
+          num: 'Sessão 2',
+          title: 'Amor, Conquistas e Legado',
+          time: '90 min',
+          desc: 'A vida que você construiu e a sabedoria que conquistou',
+          principles: [
+            'Explore as emoções — não só os fatos',
+            'Quando ela disser "aí eu conheci ele/ela", pare tudo e aprofunde',
+            'Pergunte sobre dificuldades também — histórias reais têm altos e baixos',
+            'Peça detalhes sensoriais: cheiros, sons, cores',
+            'Termine de forma leve e esperançosa'
+          ],
+          blocks: [
+            {
+              icon: '❤️',
+              title: 'Amor',
+              time: '30 min',
+              questions: [
+                'Como você conheceu a pessoa mais importante da sua vida?',
+                'Me conta o dia que vocês se conheceram — onde foi, como foi, o que você estava vestindo?',
+                'O que você pensou quando viu pela primeira vez?',
+                'Quando você soube que era especial? Teve um momento?',
+                'Como foi a época de namoro? Onde vocês iam?',
+                'As famílias aprovaram logo ou teve resistência?',
+                'Quem pediu em casamento? Como foi?',
+                'Me fala do dia do casamento. Como foi acordar naquele dia?',
+                'O que você sentiu caminhando até o altar?'
+              ]
+            },
+            {
+              icon: '🏡',
+              title: 'Construindo uma Vida',
+              time: '20 min',
+              questions: [
+                'Como foi montar a primeira casa de vocês?',
+                'Como foi quando soube que ia ter filhos?',
+                'Lembra do dia que nasceu o primeiro? Me conta.',
+                'Como vocês escolheram os nomes?',
+                'Qual foi a parte mais difícil de ser mãe/pai?',
+                'E a mais gratificante?',
+                'Como vocês educaram os filhos? Tinham alguma regra?'
+              ]
+            },
+            {
+              icon: '🌊',
+              title: 'Altos e Baixos',
+              time: '15 min',
+              questions: [
+                'Olhando para trás, qual foi o dia que mudou tudo na sua vida?',
+                'Me conta uma história que pouca gente sabe sobre você.',
+                'Teve alguma escolha muito difícil que você precisou fazer?',
+                'Como você lidou com as perdas mais dolorosas?',
+                'O que te fez seguir em frente nos momentos mais difíceis?'
+              ]
+            },
+            {
+              icon: '📚',
+              title: 'Sabedoria',
+              time: '15 min',
+              questions: [
+                'O que você aprendeu sobre a vida que ninguém te ensinou?',
+                'Qual o melhor conselho que já recebeu? E de quem?',
+                'O que você gostaria de ter sabido mais cedo?',
+                'Se pudesse falar com você mais jovem, o que diria?',
+                'O que é o amor para você, depois de tudo que viveu?',
+                'O que realmente importa no final das contas?'
+              ]
+            },
+            {
+              icon: '🌿',
+              title: 'Legado',
+              time: '10 min',
+              questions: [
+                'Como você quer ser lembrada?',
+                'O que você quer que seus netos e bisnetos saibam sobre você?',
+                'Se pudesse deixar uma mensagem para as próximas gerações, qual seria?',
+                'Quando você olha para a sua vida, do que você mais se orgulha?',
+                'Completando a frase: "Eu vivi uma vida..."'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  casal: {
+    '1sessao': {
+      sessions: [{
+        num: 'Sessão Única',
+        title: 'A História de Vocês',
+        time: '90 min',
+        desc: 'Antes de se conhecerem, o encontro, e a vida que construíram juntos',
+        principles: [
+          'Deixe os dois falarem — não privilegie um',
+          'Quando um falar do outro, observe a reação',
+          'Pausas são ouro — eles costumam se completar',
+          'Permita que discordem com carinho',
+          'Mantenha o ritmo mas dê espaço para emoção'
+        ],
+        blocks: [
+          {
+            icon: '👋',
+            title: 'Abertura',
+            time: '5 min',
+            questions: [
+              'Como vocês estão se sentindo hoje?',
+              'O que vocês mais querem que as próximas gerações saibam sobre vocês?'
+            ]
+          },
+          {
+            icon: '🎈',
+            title: 'Antes de Nós',
+            time: '15 min',
+            questions: [
+              '[Para cada um] Qual a sua primeira lembrança da vida?',
+              '[Para cada um] Como era a sua família? Me conta rapidamente.',
+              '[Para cada um] Como era a sua vida antes de se conhecerem?',
+              'Vocês eram muito diferentes naquela época?'
+            ]
+          },
+          {
+            icon: '💕',
+            title: 'O Encontro',
+            time: '30 min',
+            questions: [
+              'Como vocês se conheceram? Quem conta essa história melhor?',
+              '[Para cada um] O que você pensou quando viu pela primeira vez?',
+              'Quem deu o primeiro passo?',
+              '[Para cada um] Quando você soube que era para sempre?',
+              'Me falem do casamento. Como foi aquele dia?',
+              '[Para cada um] O que você sentiu na cerimônia?'
+            ]
+          },
+          {
+            icon: '🏡',
+            title: 'Construindo Juntos',
+            time: '20 min',
+            questions: [
+              'Como foi montar a primeira casa de vocês?',
+              'Como foi quando souberam que iam ter filhos?',
+              'Qual foi o momento mais feliz de vocês como casal?',
+              'E o mais difícil? Como superaram?',
+              'O que vocês aprenderam um com o outro?'
+            ]
+          },
+          {
+            icon: '📚',
+            title: 'Sabedoria',
+            time: '15 min',
+            questions: [
+              'Qual o segredo de tantos anos juntos?',
+              'O que é o amor para vocês, depois de tudo que viveram?',
+              '[Para cada um] O que você admira no outro?',
+              'Como vocês querem ser lembrados como casal?'
+            ]
+          },
+          {
+            icon: '💫',
+            title: 'Legado',
+            time: '5 min',
+            questions: [
+              'O que vocês construíram juntos que vai ficar?',
+              'Completem a frase: "Nós construímos juntos..."'
+            ]
+          }
+        ]
+      }]
+    },
+'2sessoes': {
+      sessions: [
+        {
+          num: 'Sessão 1',
+          title: 'Antes de Nós e O Encontro',
+          time: '90 min',
+          desc: 'As histórias individuais e como vocês se encontraram',
+          principles: [
+            'Alterne conscientemente entre os dois',
+            'Quando um falar, observe o outro ouvindo',
+            'Incentive que comentem as histórias um do outro',
+            'Crie espaço para diferenças nas memórias',
+            'Explore profundamente — você tem tempo'
+          ],
+          blocks: [
+            {
+              icon: '👋',
+              title: 'Abertura',
+              time: '5 min',
+              questions: [
+                'Como vocês estão?',
+                'Vocês já imaginaram contar a história de vocês assim?',
+                'O que vocês mais querem que a família saiba?'
+              ]
+            },
+            {
+              icon: '🎈',
+              title: 'Infâncias',
+              time: '25 min',
+              questions: [
+                '[Para cada um] Qual a sua primeira lembrança da vida?',
+                '[Para cada um] Como era a casa onde você cresceu?',
+                '[Para cada um] Me fala da sua família. Como era?',
+                '[Para cada um] Do que você mais gostava quando criança?',
+                '[Para cada um] Tinha algum sonho grande?',
+                'As infâncias de vocês foram parecidas ou muito diferentes?'
+              ]
+            },
+            {
+              icon: '💼',
+              title: 'Juventude',
+              time: '20 min',
+              questions: [
+                '[Para cada um] Como era a sua vida antes de se conhecerem?',
+                '[Para cada um] O que você estava fazendo? Trabalhando onde?',
+                '[Para cada um] Como você imaginava que seria sua vida?',
+                'Quem de vocês era mais namorador?',
+                '[Para cada um] Você já tinha namorado antes? Como foi?'
+              ]
+            },
+            {
+              icon: '💕',
+              title: 'O Encontro',
+              time: '35 min',
+              questions: [
+                'Como vocês se conheceram? Onde foi?',
+                '[Para cada um] O que você pensou quando viu pela primeira vez?',
+                'Quem deu o primeiro passo?',
+                '[Para cada um] Quando você soube que era especial? Teve um momento?',
+                'Como foi o namoro? O que vocês faziam juntos?',
+                'As famílias aprovaram logo ou teve resistência?',
+                '[Para cada um] Quando você soube que queria casar?',
+                'Quem pediu em casamento? Como foi?'
+              ]
+            },
+            {
+              icon: '✨',
+              title: 'O Destino',
+              time: '5 min',
+              questions: [
+                'Vocês acham que era para se encontrar?',
+                'O que vocês acham que o destino preparou para vocês?'
+              ]
+            }
+          ]
+        },
+        {
+          num: 'Sessão 2',
+          title: 'A Vida que Construímos',
+          time: '90 min',
+          desc: 'Casamento, conquistas, desafios e o legado de vocês',
+          principles: [
+            'Permita interrupções carinhosas — quando um completa a frase do outro é lindo',
+            'Quando um corrigir o outro, deixe — é autêntico',
+            'Explore as diferenças de perspectiva',
+            'Pergunte como cada um se sentiu nos mesmos momentos',
+            'Deixe silêncios — as melhores respostas vêm depois da pausa'
+          ],
+          blocks: [
+            {
+              icon: '💒',
+              title: 'O Casamento',
+              time: '20 min',
+              questions: [
+                'Me falem do dia do casamento. Como foi acordar naquele dia?',
+                '[Para cada um] O que você sentiu na hora da cerimônia?',
+                'Teve alguma coisa que deu errado e virou história?',
+                'Como foi a festa? Dançaram muito?',
+                'Lembram da lua de mel? Onde foram? Como foi?'
+              ]
+            },
+            {
+              icon: '🏡',
+              title: 'Construindo Juntos',
+              time: '25 min',
+              questions: [
+                'Como foi montar a primeira casa de vocês?',
+                'Como vocês dividiam as tarefas? Quem fazia o quê?',
+                'Como foi quando souberam que iam ter filhos?',
+                '[Para cada um] O que você sentiu quando soube?',
+                'Lembram do dia que nasceu o primeiro filho?',
+                'Vocês concordavam sobre como criar os filhos ou brigavam?',
+                'Como foi ver os filhos crescendo?'
+              ]
+            },
+            {
+              icon: '🌊',
+              title: 'Altos e Baixos',
+              time: '20 min',
+              questions: [
+                'Qual foi o momento mais feliz de vocês como casal?',
+                'E o mais difícil? Como vocês superaram?',
+                'Já pensaram em desistir? O que segurou?',
+                'Como vocês lidaram com as perdas juntos?',
+                '[Para cada um] O que o outro fez que você nunca vai esquecer?',
+                'Se pudessem voltar, fariam tudo de novo?'
+              ]
+            },
+            {
+              icon: '📚',
+              title: 'Sabedoria',
+              time: '15 min',
+              questions: [
+                'O que vocês aprenderam um com o outro nesses anos todos?',
+                'Qual o segredo de tantos anos juntos?',
+                'O que vocês gostariam de ter sabido mais cedo?',
+                '[Para cada um] O que você admira no outro?',
+                'Como o amor de vocês mudou com o tempo?',
+                'O que é o amor para vocês, depois de tudo que viveram juntos?'
+              ]
+            },
+            {
+              icon: '🌿',
+              title: 'Legado',
+              time: '10 min',
+              questions: [
+                'O que vocês construíram juntos que vai ficar?',
+                'Como vocês querem ser lembrados como casal?',
+                'O que vocês querem que os netos saibam sobre vocês?',
+                'Se pudessem deixar uma mensagem para a família, qual seria?',
+                'Completem a frase: "Nós construímos juntos..."'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+};
+
+function selectMode(m) {
+  mode = m;
+  document.getElementById('step1').classList.add('completed');
+  document.getElementById('step2').classList.add('active');
+  renderPlans();
+  goTo('screen-plano', 2);
+}
+
+function renderPlans() {
+  const container = document.getElementById('plano-buttons');
+  container.innerHTML = '';
+  plans[mode].forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.onclick = () => selectPlan(p.id);
+    btn.innerHTML = `
+      <div class="btn-label">
+        <span class="btn-name">${p.name}</span>
+        <span class="btn-desc">${p.desc}</span>
+      </div>
+      <span class="btn-arrow">→</span>
+    `;
+    container.appendChild(btn);
+  });
+}
+
+function selectPlan(p) {
+  plan = p;
+  document.getElementById('step2').classList.add('completed');
+  document.getElementById('step3').classList.add('active');
+  renderSessions();
+  goTo('screen-sessoes', 3);
+}
+
+function renderSessions() {
+  const container = document.getElementById('session-list');
+  container.innerHTML = '';
+  const sessions = roteiros[mode][plan].sessions;
+  sessions.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'session-card';
+    card.onclick = () => openSession(i);
+    card.innerHTML = `
+      <div class="session-header">
+        <span class="session-num">${s.num}</span>
+        <span class="session-time">${s.time}</span>
+      </div>
+      <h3 class="session-title">${s.title}</h3>
+      <p class="session-desc">${s.desc}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openSession(idx) {
+  const session = roteiros[mode][plan].sessions[idx];
+  document.getElementById('q-session-title').textContent = session.num;
+  document.getElementById('q-session-desc').textContent = session.title + ' · ' + session.time;
+
+  const principlesBox = document.getElementById('principles-box');
+  principlesBox.innerHTML = `
+    <div class="principle-title">Princípios para esta sessão</div>
+    <div class="principle-list">
+      ${session.principles.map(p => `<div class="principle-item">${p}</div>`).join('')}
+    </div>
+  `;
+
+  const blocksContainer = document.getElementById('blocks-container');
+  blocksContainer.innerHTML = '';
+  session.blocks.forEach(b => {
+    const block = document.createElement('div');
+    block.className = 'block';
+    block.innerHTML = `
+      <div class="block-header">
+        <div class="block-icon">${b.icon}</div>
+        <div class="block-title">${b.title}</div>
+        <div class="block-time">${b.time}</div>
+      </div>
+      <div class="questions">
+        ${b.questions.map(q => `<div class="question"><p class="q-text">${q}</p></div>`).join('')}
+      </div>
+    `;
+    blocksContainer.appendChild(block);
+  });
+
+  resetTimer();
+  goTo('screen-perguntas', 3);
+}
+
+function goTo(screenId, step) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startTimer() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    seconds++;
+    updateTimerDisplay();
+  }, 1000);
+  document.getElementById('timer-start').textContent = 'Pausar';
+  document.getElementById('timer-start').onclick = pauseTimer;
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  document.getElementById('timer-start').textContent = 'Continuar';
+  document.getElementById('timer-start').onclick = startTimer;
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  seconds = 0;
+  updateTimerDisplay();
+  document.getElementById('timer-start').textContent = 'Iniciar';
+  document.getElementById('timer-start').onclick = startTimer;
+}
+
+function updateTimerDisplay() {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  document.getElementById('timer-display').textContent =
+    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+}
+</script>
+
+</body>
+</html>
