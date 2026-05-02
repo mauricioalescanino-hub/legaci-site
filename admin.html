@@ -803,12 +803,25 @@ async function loadVisaoGeral() {
     });
 
     const ativos = clientesData.filter(c => c.status === 'fechado' || c.status === 'em_producao');
+    
+    // Faturamento = todos os clientes com data_fechamento no mês
     const faturamentoMes = clientesData
-      .filter(c => c.data_fechamento && new Date(c.data_fechamento).getMonth() === now.getMonth())
+      .filter(c => {
+        if(!c.data_fechamento) return false;
+        const d = new Date(c.data_fechamento);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      })
       .reduce((sum, c) => sum + (c.valor || 0), 0);
     
+    // Conversão = leads do mês que viraram clientes com data_fechamento
+    const clientesFechadosNoMes = clientesData.filter(c => {
+      if(!c.data_fechamento) return false;
+      const d = new Date(c.data_fechamento);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+    
     const conversao = thisMonth.length > 0 
-      ? ((clientesData.filter(c => c.status === 'fechado').length / thisMonth.length) * 100).toFixed(0)
+      ? ((clientesFechadosNoMes / thisMonth.length) * 100).toFixed(0)
       : 0;
 
     document.getElementById('total-leads').textContent = thisMonth.length;
@@ -870,8 +883,8 @@ async function loadFinanceiro() {
     const despesas = await despesasRes.json();
     const capital = await capitalRes.json();
 
-    // Calcular valores
-    const receitaClientes = clientes.filter(c => c.status === 'fechado').reduce((sum, c) => sum + (c.valor || 0), 0);
+    // Calcular valores - TODOS os clientes com data_fechamento
+    const receitaClientes = clientes.reduce((sum, c) => sum + (c.valor || 0), 0);
     const receitaExtras = receitas.reduce((sum, r) => sum + (r.valor || 0), 0);
     const totalReceitas = receitaClientes + receitaExtras;
 
@@ -886,10 +899,10 @@ async function loadFinanceiro() {
     document.getElementById('fin-lucro').style.color = lucro >= 0 ? 'var(--success)' : 'var(--danger)';
     document.getElementById('fin-capital').textContent = `R$ ${capitalAtual.toLocaleString('pt-BR')}`;
 
-    // Tabela Receitas
+    // Tabela Receitas - TODOS os clientes com data_fechamento
     const receitasBody = document.getElementById('receitas-body');
     const todasReceitas = [
-      ...clientes.filter(c => c.status === 'fechado').map(c => ({
+      ...clientes.map(c => ({
         id: c.id,
         descricao: `Cliente: ${c.nome}`,
         valor: c.valor,
