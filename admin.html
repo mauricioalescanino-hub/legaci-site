@@ -655,6 +655,8 @@ function closeModal() {
 async function salvarCliente(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
+  const status = formData.get('status');
+  
   const data = {
     nome: formData.get('nome'),
     email: formData.get('email'),
@@ -662,13 +664,13 @@ async function salvarCliente(e) {
     modo: formData.get('modo'),
     plano: formData.get('plano'),
     valor: parseFloat(formData.get('valor')),
-    status: formData.get('status'),
+    status: status,
     pagamento_status: formData.get('pagamento_status'),
     pagamento_forma: formData.get('pagamento_forma'),
     sessao1_agendada: formData.get('sessao1') || null,
     sessao2_agendada: formData.get('sessao2') || null,
     notas: formData.get('notas'),
-    data_fechamento: formData.get('status') === 'fechado' ? new Date().toISOString().split('T')[0] : null
+    data_fechamento: status === 'fechado' ? new Date().toISOString().split('T')[0] : null
   };
 
   try {
@@ -693,6 +695,7 @@ async function salvarCliente(e) {
       closeModal();
       loadClientes();
       loadVisaoGeral();
+      loadFinanceiro();
       alert('Cliente salvo com sucesso!');
     } else {
       alert('Erro ao salvar cliente');
