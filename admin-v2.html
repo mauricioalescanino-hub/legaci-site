@@ -29,9 +29,6 @@ body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);li
 .card-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:0.75rem}
 .card-value{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:400;color:var(--ink);margin-bottom:0.5rem}
 .card-detail{font-size:13px;color:var(--ink3)}
-.card-trend{display:inline-block;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;margin-top:0.5rem}
-.card-trend.up{background:rgba(45,122,79,0.1);color:var(--success)}
-.card-trend.neutral{background:rgba(138,132,128,0.1);color:var(--ink3)}
 .section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
 .section-title{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:400;color:var(--ink)}
@@ -51,7 +48,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
 .badge-lead{background:rgba(138,132,128,0.15);color:var(--ink3)}
 .badge-proposta{background:rgba(217,119,6,0.15);color:var(--warning)}
 .badge-fechado{background:rgba(45,122,79,0.15);color:var(--success)}
-.badge-producao{background:rgba(26,60,52,0.15);color:var(--forest)}
+.badge-em_producao{background:rgba(26,60,52,0.15);color:var(--forest)}
 .badge-entregue{background:rgba(193,127,74,0.15);color:var(--copper)}
 .badge-pendente{background:rgba(220,38,38,0.15);color:var(--danger)}
 .badge-pago{background:rgba(45,122,79,0.15);color:var(--success)}
@@ -83,6 +80,17 @@ tr:hover{background:rgba(193,127,74,0.02)}
 .screen.active{display:block}
 .actions-cell{display:flex;gap:0.5rem}
 @media(max-width:768px){.sidebar{width:100%;height:auto;position:relative}.main{margin-left:0;padding:2rem 1rem}.cards{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+
+/* Print styles for financial report */
+@media print {
+  .sidebar, .btn, .filters, .actions-cell, .modal-overlay { display: none !important; }
+  .main { margin-left: 0 !important; padding: 1rem !important; }
+  .screen { display: none !important; }
+  .screen.active { display: block !important; }
+  body { background: white !important; }
+  .card { break-inside: avoid; }
+  .section { break-inside: avoid; }
+}
 </style>
 </head>
 <body>
@@ -93,25 +101,25 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <div class="logo-sub">Painel Admin</div>
   </div>
   <nav class="nav">
-    <div class="nav-item active" onclick="showScreen('visao-geral')">
+    <div class="nav-item active" onclick="showScreen('visao-geral', this)">
       <span class="nav-icon">📊</span><span>Visão Geral</span>
     </div>
-    <div class="nav-item" onclick="showScreen('dashboard')">
+    <div class="nav-item" onclick="showScreen('dashboard', this)">
       <span class="nav-icon">📈</span><span>Dashboard</span>
     </div>
-    <div class="nav-item" onclick="showScreen('clientes')">
+    <div class="nav-item" onclick="showScreen('clientes', this)">
       <span class="nav-icon">👥</span><span>Clientes</span>
     </div>
-    <div class="nav-item" onclick="showScreen('financeiro')">
+    <div class="nav-item" onclick="showScreen('financeiro', this)">
       <span class="nav-icon">💰</span><span>Financeiro</span>
     </div>
-    <div class="nav-item" onclick="showScreen('agenda')">
+    <div class="nav-item" onclick="showScreen('agenda', this)">
       <span class="nav-icon">📅</span><span>Agenda</span>
     </div>
-    <div class="nav-item" onclick="showScreen('leads-sofia')">
+    <div class="nav-item" onclick="showScreen('leads-sofia', this)">
       <span class="nav-icon">💬</span><span>Leads Sofia</span>
     </div>
-    <div class="nav-item" onclick="showScreen('relatorios')">
+    <div class="nav-item" onclick="showScreen('relatorios', this)">
       <span class="nav-icon">📄</span><span>Relatórios</span>
     </div>
   </nav>
@@ -202,11 +210,11 @@ tr:hover{background:rgba(193,127,74,0.02)}
     </div>
 
     <div class="filters">
-      <button class="filter-btn active" onclick="filterClientes('todos')">Todos</button>
-      <button class="filter-btn" onclick="filterClientes('lead')">Leads</button>
-      <button class="filter-btn" onclick="filterClientes('fechado')">Fechados</button>
-      <button class="filter-btn" onclick="filterClientes('em_producao')">Em Produção</button>
-      <button class="filter-btn" onclick="filterClientes('entregue')">Entregues</button>
+      <button class="filter-btn active" onclick="filterClientes('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="filterClientes('lead', this)">Leads</button>
+      <button class="filter-btn" onclick="filterClientes('fechado', this)">Fechados</button>
+      <button class="filter-btn" onclick="filterClientes('em_producao', this)">Em Produção</button>
+      <button class="filter-btn" onclick="filterClientes('entregue', this)">Entregues</button>
     </div>
 
     <div class="section">
@@ -371,7 +379,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
       <div class="section-header">
         <h2 class="section-title">Fluxo de Caixa do Mês</h2>
       </div>
-      
+
       <div class="cards" style="margin-bottom: 2rem;">
         <div class="card">
           <div class="card-label">Entradas</div>
@@ -482,13 +490,64 @@ tr:hover{background:rgba(193,127,74,0.02)}
     </div>
   </div>
 
+  <!-- RELATÓRIOS -->
+  <div class="screen" id="screen-relatorios">
+    <div class="header">
+      <h1 class="header-title">Relatórios</h1>
+      <p class="header-sub">Exporte dados para análise externa</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Relatórios Disponíveis</h2>
+      </div>
+
+      <div style="display: grid; gap: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Relatório Financeiro Mensal</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Receitas, despesas, lucro e fluxo de caixa do mês atual</p>
+          </div>
+          <button class="btn" onclick="exportarRelatorioFinanceiro()">📄 Gerar PDF</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Lista de Clientes</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Todos os clientes com status, plano e valores em Excel</p>
+          </div>
+          <button class="btn" onclick="exportarClientesExcel()">📊 Gerar Excel</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Agenda de Entrevistas</h3>
+            <p style="font-size: 13px; color: var(--ink3);">Todas as entrevistas agendadas em formato CSV</p>
+          </div>
+          <button class="btn" onclick="exportarAgendaCSV()">📅 Gerar CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Notificações e Lembretes</h2>
+      </div>
+      <div id="notificacoes-container"></div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- ========== MODAIS (fora do .main) ========== -->
+
 <!-- MODAL CLIENTE -->
 <div class="modal-overlay" id="modal-cliente">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
     <h2 class="modal-title" id="modal-cliente-title">Novo Cliente</h2>
     <p class="modal-sub">Preencha os dados do cliente</p>
-    
+
     <form id="form-cliente" onsubmit="salvarCliente(event)">
       <div class="form-group">
         <label class="form-label">Nome Completo</label>
@@ -581,55 +640,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
       </div>
     </form>
   </div>
-  </div>
-
-  <!-- RELATÓRIOS -->
-  <div class="screen" id="screen-relatorios">
-    <div class="header">
-      <h1 class="header-title">Relatórios</h1>
-      <p class="header-sub">Exporte dados para análise externa</p>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">Relatórios Disponíveis</h2>
-      </div>
-      
-      <div style="display: grid; gap: 1.5rem;">
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
-          <div>
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Relatório Financeiro Mensal</h3>
-            <p style="font-size: 13px; color: var(--ink3);">Receitas, despesas, lucro e fluxo de caixa do mês atual</p>
-          </div>
-          <button class="btn" onclick="exportarRelatorioFinanceiro()">📄 Gerar PDF</button>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
-          <div>
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Lista de Clientes</h3>
-            <p style="font-size: 13px; color: var(--ink3);">Todos os clientes com status, plano e valores em Excel</p>
-          </div>
-          <button class="btn" onclick="exportarClientesExcel()">📊 Gerar Excel</button>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: rgba(193,127,74,0.05); border-radius: 12px; border: 1px solid var(--border);">
-          <div>
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 0.25rem;">Agenda de Entrevistas</h3>
-            <p style="font-size: 13px; color: var(--ink3);">Todas as entrevistas agendadas em formato CSV</p>
-          </div>
-          <button class="btn" onclick="exportarAgendaCSV()">📅 Gerar CSV</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">Notificações e Lembretes</h2>
-      </div>
-      
-      <div id="notificacoes-container"></div>
-    </div>
-  </div>
+</div>
 
 <!-- MODAL RECEITA -->
 <div class="modal-overlay" id="modal-receita">
@@ -637,7 +648,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <button class="modal-close" onclick="closeModalReceita()">×</button>
     <h2 class="modal-title">Nova Receita</h2>
     <p class="modal-sub">Adicione uma receita extra além dos clientes</p>
-    
+
     <form id="form-receita" onsubmit="salvarReceita(event)">
       <div class="form-group">
         <label class="form-label">Descrição</label>
@@ -678,10 +689,10 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <button class="modal-close" onclick="closeModalDespesa()">×</button>
     <h2 class="modal-title" id="modal-despesa-title">Nova Despesa</h2>
     <p class="modal-sub">Adicione uma despesa fixa ou variável</p>
-    
+
     <form id="form-despesa" onsubmit="salvarDespesa(event)">
       <input type="hidden" name="tipo" id="despesa-tipo">
-      
+
       <div class="form-group">
         <label class="form-label">Descrição</label>
         <input type="text" class="form-input" name="descricao" required>
@@ -730,7 +741,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <button class="modal-close" onclick="closeModalCapital()">×</button>
     <h2 class="modal-title">Atualizar Capital de Giro</h2>
     <p class="modal-sub">Registre o saldo atual disponível</p>
-    
+
     <form id="form-capital" onsubmit="salvarCapital(event)">
       <div class="form-row">
         <div class="form-group">
@@ -756,8 +767,6 @@ tr:hover{background:rgba(193,127,74,0.02)}
   </div>
 </div>
 
-</div>
-
 <script>
 const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
@@ -771,30 +780,85 @@ let clientes = [];
 let currentFilter = 'todos';
 let editingId = null;
 
-// Navegação
-function showScreen(screenName) {
+// ========== NAVEGAÇÃO ==========
+function showScreen(screenName, navEl) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(`screen-${screenName}`).classList.add('active');
-  event.target.closest('.nav-item').classList.add('active');
-  
-  if(screenName === 'visao-geral') loadVisaoGeral();
-  if(screenName === 'dashboard') loadDashboard();
-  if(screenName === 'clientes') loadClientes();
-  if(screenName === 'financeiro') loadFinanceiro();
-  if(screenName === 'agenda') loadAgenda();
-  if(screenName === 'leads-sofia') loadLeadsSofia();
-  if(screenName === 'relatorios') loadNotificacoes();
+
+  document.getElementById('screen-' + screenName).classList.add('active');
+
+  // navEl is passed directly — no reliance on event.target
+  if (navEl) {
+    const item = navEl.closest ? navEl.closest('.nav-item') : navEl;
+    if (item) item.classList.add('active');
+  }
+
+  if (screenName === 'visao-geral')   loadVisaoGeral();
+  if (screenName === 'dashboard')     loadDashboard();
+  if (screenName === 'clientes')      loadClientes();
+  if (screenName === 'financeiro')    loadFinanceiro();
+  if (screenName === 'agenda')        loadAgenda();
+  if (screenName === 'leads-sofia')   loadLeadsSofia();
+  if (screenName === 'relatorios')    loadNotificacoes();
 }
 
-// Atualizar valor automaticamente
+// ========== HELPERS ==========
+function getStatusLabel(status) {
+  const labels = { lead: 'Lead', proposta: 'Proposta', fechado: 'Fechado', em_producao: 'Em Produção', entregue: 'Entregue' };
+  return labels[status] || status;
+}
+
+function getPagamentoLabel(status) {
+  const labels = { pendente: 'Pendente', pago: 'Pago', parcelado: 'Parcelado' };
+  return labels[status] || status;
+}
+
+function sb(path) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+}
+
+function sbPost(path, body) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(body)
+  });
+}
+
+function sbPatch(path, body) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(body)
+  });
+}
+
+function sbDelete(path) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+}
+
+// ========== MODAL CLIENTE ==========
 function updateValor() {
-  const modo = document.querySelector('[name="modo"]').value;
-  const plano = document.querySelector('[name="plano"]').value;
+  const modo = document.querySelector('#form-cliente [name="modo"]').value;
+  const plano = document.querySelector('#form-cliente [name="plano"]').value;
   document.getElementById('valor-input').value = precos[modo][plano];
 }
 
-// Modal
 function openNovoCliente() {
   editingId = null;
   document.getElementById('modal-cliente-title').textContent = 'Novo Cliente';
@@ -807,12 +871,35 @@ function closeModal() {
   document.getElementById('modal-cliente').classList.remove('active');
 }
 
-// Salvar cliente
+function editarCliente(id) {
+  const cliente = clientes.find(c => c.id === id);
+  if (!cliente) return;
+
+  editingId = id;
+  document.getElementById('modal-cliente-title').textContent = 'Editar Cliente';
+
+  const form = document.getElementById('form-cliente');
+  form.querySelector('[name="nome"]').value = cliente.nome || '';
+  form.querySelector('[name="email"]').value = cliente.email || '';
+  form.querySelector('[name="whatsapp"]').value = cliente.whatsapp || '';
+  form.querySelector('[name="modo"]').value = cliente.modo || 'solo';
+  form.querySelector('[name="plano"]').value = cliente.plano || '1sessao';
+  form.querySelector('[name="valor"]').value = cliente.valor || '';
+  form.querySelector('[name="status"]').value = cliente.status || 'lead';
+  form.querySelector('[name="pagamento_status"]').value = cliente.pagamento_status || 'pendente';
+  form.querySelector('[name="pagamento_forma"]').value = cliente.pagamento_forma || 'pix';
+  form.querySelector('[name="sessao1"]').value = cliente.sessao1_agendada ? cliente.sessao1_agendada.slice(0, 16) : '';
+  form.querySelector('[name="sessao2"]').value = cliente.sessao2_agendada ? cliente.sessao2_agendada.slice(0, 16) : '';
+  form.querySelector('[name="notas"]').value = cliente.notas || '';
+
+  document.getElementById('modal-cliente').classList.add('active');
+}
+
 async function salvarCliente(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
   const status = formData.get('status');
-  
+
   const data = {
     nome: formData.get('nome'),
     email: formData.get('email'),
@@ -830,24 +917,11 @@ async function salvarCliente(e) {
   };
 
   try {
-    const url = editingId 
-      ? `${SUPABASE_URL}/rest/v1/legaci_clientes?id=eq.${editingId}`
-      : `${SUPABASE_URL}/rest/v1/legaci_clientes`;
-    
-    const method = editingId ? 'PATCH' : 'POST';
-    
-    const res = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(data)
-    });
+    const res = editingId
+      ? await sbPatch('legaci_clientes?id=eq.' + editingId, data)
+      : await sbPost('legaci_clientes', data);
 
-    if(res.ok) {
+    if (res.ok) {
       closeModal();
       loadClientes();
       loadVisaoGeral();
@@ -856,36 +930,51 @@ async function salvarCliente(e) {
     } else {
       alert('Erro ao salvar cliente');
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     alert('Erro ao salvar cliente');
   }
 }
 
-// Carregar clientes
+async function deletarCliente(id) {
+  const cliente = clientes.find(c => c.id === id);
+  if (!cliente) return;
+
+  if (!confirm('Tem certeza que deseja excluir o cliente "' + cliente.nome + '"?\n\nEsta ação não pode ser desfeita.')) return;
+
+  try {
+    const res = await sbDelete('legaci_clientes?id=eq.' + id);
+    if (res.ok) {
+      alert('Cliente excluído com sucesso!');
+      loadClientes();
+      loadVisaoGeral();
+      loadFinanceiro();
+    } else {
+      alert('Erro ao excluir cliente');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir cliente');
+  }
+}
+
+// ========== CLIENTES ==========
 async function loadClientes() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&order=created_at.desc`, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      }
-    });
+    const res = await sb('legaci_clientes?select=*&order=created_at.desc');
     clientes = await res.json();
     renderClientes();
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
 function renderClientes() {
   const tbody = document.getElementById('clientes-body');
-  const filtered = currentFilter === 'todos' 
-    ? clientes 
-    : clientes.filter(c => c.status === currentFilter);
+  const filtered = currentFilter === 'todos' ? clientes : clientes.filter(c => c.status === currentFilter);
 
-  if(filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente encontrado</div></div></td></tr>`;
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente encontrado</div></div></td></tr>';
     return;
   }
 
@@ -896,87 +985,30 @@ function renderClientes() {
         <div class="client-contact">${c.email || c.whatsapp || '—'}</div>
       </td>
       <td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
-      <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+      <td>R$ ${(c.valor || 0).toLocaleString('pt-BR')}</td>
       <td><span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span></td>
       <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
       <td class="actions-cell">
         <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
-        <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background: rgba(220,38,38,0.1); color: var(--danger); border-color: rgba(220,38,38,0.2);">Excluir</button>
+        <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
       </td>
     </tr>
   `).join('');
 }
 
-function filterClientes(status) {
+function filterClientes(status, btn) {
   currentFilter = status;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderClientes();
 }
 
-function editarCliente(id) {
-  const cliente = clientes.find(c => c.id === id);
-  if(!cliente) return;
-
-  editingId = id;
-  document.getElementById('modal-cliente-title').textContent = 'Editar Cliente';
-  
-  const form = document.getElementById('form-cliente');
-  form.querySelector('[name="nome"]').value = cliente.nome || '';
-  form.querySelector('[name="email"]').value = cliente.email || '';
-  form.querySelector('[name="whatsapp"]').value = cliente.whatsapp || '';
-  form.querySelector('[name="modo"]').value = cliente.modo || 'solo';
-  form.querySelector('[name="plano"]').value = cliente.plano || '1sessao';
-  form.querySelector('[name="valor"]').value = cliente.valor || '';
-  form.querySelector('[name="status"]').value = cliente.status || 'lead';
-  form.querySelector('[name="pagamento_status"]').value = cliente.pagamento_status || 'pendente';
-  form.querySelector('[name="pagamento_forma"]').value = cliente.pagamento_forma || 'pix';
-  form.querySelector('[name="sessao1"]').value = cliente.sessao1_agendada ? cliente.sessao1_agendada.slice(0,16) : '';
-  form.querySelector('[name="sessao2"]').value = cliente.sessao2_agendada ? cliente.sessao2_agendada.slice(0,16) : '';
-  form.querySelector('[name="notas"]').value = cliente.notas || '';
-  
-  document.getElementById('modal-cliente').classList.add('active');
-}
-
-async function deletarCliente(id) {
-  const cliente = clientes.find(c => c.id === id);
-  if(!cliente) return;
-  
-  if(!confirm(`Tem certeza que deseja excluir o cliente "${cliente.nome}"?\n\nEsta ação não pode ser desfeita.`)) return;
-  
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      }
-    });
-
-    if(res.ok) {
-      alert('Cliente excluído com sucesso!');
-      loadClientes();
-      loadVisaoGeral();
-      loadFinanceiro();
-    } else {
-      alert('Erro ao excluir cliente');
-    }
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao excluir cliente');
-  }
-}
-
-// Visão Geral
+// ========== VISÃO GERAL ==========
 async function loadVisaoGeral() {
   try {
     const [clientesRes, leadsRes] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_leads?select=*&order=created_at.desc`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      })
+      sb('legaci_clientes?select=*'),
+      sb('legaci_leads?select=*&order=created_at.desc')
     ]);
 
     const clientesData = await clientesRes.json();
@@ -989,36 +1021,33 @@ async function loadVisaoGeral() {
     });
 
     const ativos = clientesData.filter(c => c.status === 'fechado' || c.status === 'em_producao');
-    
-    // Faturamento = todos os clientes com data_fechamento no mês
+
     const faturamentoMes = clientesData
       .filter(c => {
-        if(!c.data_fechamento) return false;
+        if (!c.data_fechamento) return false;
         const d = new Date(c.data_fechamento);
         return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       })
       .reduce((sum, c) => sum + (c.valor || 0), 0);
-    
-    // Conversão = leads do mês que viraram clientes com data_fechamento
+
     const clientesFechadosNoMes = clientesData.filter(c => {
-      if(!c.data_fechamento) return false;
+      if (!c.data_fechamento) return false;
       const d = new Date(c.data_fechamento);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     }).length;
-    
-    const conversao = thisMonth.length > 0 
+
+    const conversao = thisMonth.length > 0
       ? ((clientesFechadosNoMes / thisMonth.length) * 100).toFixed(0)
       : 0;
 
     document.getElementById('total-leads').textContent = thisMonth.length;
     document.getElementById('total-clientes').textContent = ativos.length;
-    document.getElementById('total-faturamento').textContent = `R$ ${faturamentoMes.toLocaleString('pt-BR')}`;
-    document.getElementById('taxa-conversao').textContent = `${conversao}%`;
+    document.getElementById('total-faturamento').textContent = 'R$ ' + faturamentoMes.toLocaleString('pt-BR');
+    document.getElementById('taxa-conversao').textContent = conversao + '%';
 
-    // Últimos clientes
     const ultimos = clientesData.slice(0, 5);
     const container = document.getElementById('ultimos-clientes');
-    if(ultimos.length === 0) {
+    if (ultimos.length === 0) {
       container.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente ainda</div></div>';
     } else {
       container.innerHTML = `
@@ -1030,19 +1059,19 @@ async function loadVisaoGeral() {
                 <td><div class="client-name">${c.nome}</div></td>
                 <td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
                 <td><span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span></td>
-                <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+                <td>R$ ${(c.valor || 0).toLocaleString('pt-BR')}</td>
               </tr>
             `).join('')}
           </tbody>
         </table>
       `;
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
-// Financeiro COMPLETO
+// ========== FINANCEIRO ==========
 async function loadFinanceiro() {
   try {
     const now = new Date();
@@ -1050,87 +1079,66 @@ async function loadFinanceiro() {
     const ultimoDia = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
     const [clientesRes, receitasRes, despesasRes, capitalRes] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&data_fechamento=gte.${primeiroDia}&data_fechamento=lte.${ultimoDia}`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?select=*&data=gte.${primeiroDia}&data=lte.${ultimoDia}&order=data.desc`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?select=*&data=gte.${primeiroDia}&data=lte.${ultimoDia}&order=data.desc`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_capital?select=*&order=data.desc&limit=5`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      })
+      sb('legaci_clientes?select=*&data_fechamento=gte.' + primeiroDia + '&data_fechamento=lte.' + ultimoDia),
+      sb('legaci_receitas?select=*&data=gte.' + primeiroDia + '&data=lte.' + ultimoDia + '&order=data.desc'),
+      sb('legaci_despesas?select=*&data=gte.' + primeiroDia + '&data=lte.' + ultimoDia + '&order=data.desc'),
+      sb('legaci_capital?select=*&order=data.desc&limit=5')
     ]);
 
-    const clientes = await clientesRes.json();
+    const clientesMes = await clientesRes.json();
     const receitas = await receitasRes.json();
     const despesas = await despesasRes.json();
     const capital = await capitalRes.json();
 
-    // Calcular valores - TODOS os clientes com data_fechamento
-    const receitaClientes = clientes.reduce((sum, c) => sum + (c.valor || 0), 0);
+    const receitaClientes = clientesMes.reduce((sum, c) => sum + (c.valor || 0), 0);
     const receitaExtras = receitas.reduce((sum, r) => sum + (r.valor || 0), 0);
     const totalReceitas = receitaClientes + receitaExtras;
-
     const totalDespesas = despesas.reduce((sum, d) => sum + (d.valor || 0), 0);
     const lucro = totalReceitas - totalDespesas;
     const capitalAtual = capital.length > 0 ? capital[0].saldo : 0;
 
-    // Atualizar cards
-    document.getElementById('fin-receitas').textContent = `R$ ${totalReceitas.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-despesas').textContent = `R$ ${totalDespesas.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-lucro').textContent = `R$ ${lucro.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-lucro').style.color = lucro >= 0 ? 'var(--success)' : 'var(--danger)';
-    document.getElementById('fin-capital').textContent = `R$ ${capitalAtual.toLocaleString('pt-BR')}`;
-    
-    // Calcular Caixa Atual = Capital + Pagamentos Recebidos - Despesas
-    const clientesPagos = clientes.filter(c => c.pagamento_status === 'pago');
+    const clientesPagos = clientesMes.filter(c => c.pagamento_status === 'pago');
     const entradasCaixa = clientesPagos.reduce((sum, c) => sum + (c.valor || 0), 0) + receitaExtras;
     const caixaAtual = capitalAtual + entradasCaixa - totalDespesas;
-    
-    document.getElementById('fin-caixa-atual').textContent = `R$ ${caixaAtual.toLocaleString('pt-BR')}`;
+
+    document.getElementById('fin-receitas').textContent = 'R$ ' + totalReceitas.toLocaleString('pt-BR');
+    document.getElementById('fin-despesas').textContent = 'R$ ' + totalDespesas.toLocaleString('pt-BR');
+    document.getElementById('fin-lucro').textContent = 'R$ ' + lucro.toLocaleString('pt-BR');
+    document.getElementById('fin-lucro').style.color = lucro >= 0 ? 'var(--success)' : 'var(--danger)';
+    document.getElementById('fin-capital').textContent = 'R$ ' + capitalAtual.toLocaleString('pt-BR');
+    document.getElementById('fin-caixa-atual').textContent = 'R$ ' + caixaAtual.toLocaleString('pt-BR');
     document.getElementById('fin-caixa-atual').style.color = caixaAtual >= 0 ? 'var(--success)' : 'var(--danger)';
 
-    // Tabela Receitas - TODOS os clientes com data_fechamento
+    // Receitas table
     const receitasBody = document.getElementById('receitas-body');
     const todasReceitas = [
-      ...clientes.map(c => ({
-        id: c.id,
-        descricao: `Cliente: ${c.nome}`,
-        valor: c.valor,
-        data: c.data_fechamento,
-        tipo: 'cliente'
-      })),
-      ...receitas.map(r => ({...r, tipo: 'extra'}))
+      ...clientesMes.map(c => ({ id: c.id, descricao: 'Cliente: ' + c.nome, valor: c.valor, data: c.data_fechamento, tipo: 'cliente' })),
+      ...receitas.map(r => ({ ...r, tipo: 'extra' }))
     ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
-    if(todasReceitas.length === 0) {
+    if (todasReceitas.length === 0) {
       receitasBody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">💰</div><div class="empty-title">Nenhuma receita no mês</div></div></td></tr>';
     } else {
       receitasBody.innerHTML = todasReceitas.map(r => `
         <tr>
           <td>${r.descricao}</td>
-          <td>R$ ${r.valor.toLocaleString('pt-BR')}</td>
+          <td>R$ ${(r.valor || 0).toLocaleString('pt-BR')}</td>
           <td>${new Date(r.data).toLocaleDateString('pt-BR')}</td>
-          <td>
-            ${r.tipo === 'extra' ? `<button class="btn btn-small btn-secondary" onclick="deletarReceita('${r.id}')">Excluir</button>` : '—'}
-          </td>
+          <td>${r.tipo === 'extra' ? '<button class="btn btn-small btn-secondary" onclick="deletarReceita(\'' + r.id + '\')">Excluir</button>' : '—'}</td>
         </tr>
       `).join('');
     }
 
-    // Tabela Despesas Fixas
+    // Despesas fixas
     const despesasFixas = despesas.filter(d => d.tipo === 'fixa');
     const fixasBody = document.getElementById('despesas-fixas-body');
-    if(despesasFixas.length === 0) {
+    if (despesasFixas.length === 0) {
       fixasBody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nenhuma despesa fixa</div></div></td></tr>';
     } else {
       fixasBody.innerHTML = despesasFixas.map(d => `
         <tr>
-          <td>${d.descricao} ${d.recorrente ? '🔁' : ''}</td>
-          <td>R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td>${d.descricao}${d.recorrente ? ' 🔁' : ''}</td>
+          <td>R$ ${(d.valor || 0).toLocaleString('pt-BR')}</td>
           <td>${d.categoria}</td>
           <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
           <td><button class="btn btn-small btn-secondary" onclick="deletarDespesa('${d.id}')">Excluir</button></td>
@@ -1138,16 +1146,16 @@ async function loadFinanceiro() {
       `).join('');
     }
 
-    // Tabela Despesas Variáveis
+    // Despesas variáveis
     const despesasVariaveis = despesas.filter(d => d.tipo === 'variavel');
     const variaveisBody = document.getElementById('despesas-variaveis-body');
-    if(despesasVariaveis.length === 0) {
+    if (despesasVariaveis.length === 0) {
       variaveisBody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nenhuma despesa variável</div></div></td></tr>';
     } else {
       variaveisBody.innerHTML = despesasVariaveis.map(d => `
         <tr>
           <td>${d.descricao}</td>
-          <td>R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td>R$ ${(d.valor || 0).toLocaleString('pt-BR')}</td>
           <td>${d.categoria}</td>
           <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
           <td><button class="btn btn-small btn-secondary" onclick="deletarDespesa('${d.id}')">Excluir</button></td>
@@ -1155,96 +1163,79 @@ async function loadFinanceiro() {
       `).join('');
     }
 
-    // Tabela Capital
+    // Capital
     const capitalBody = document.getElementById('capital-body');
-    if(capital.length === 0) {
+    if (capital.length === 0) {
       capitalBody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">💵</div><div class="empty-title">Nenhum registro de capital</div></div></td></tr>';
     } else {
       capitalBody.innerHTML = capital.map(c => `
         <tr>
           <td>${new Date(c.data).toLocaleDateString('pt-BR')}</td>
-          <td>R$ ${c.saldo.toLocaleString('pt-BR')}</td>
+          <td>R$ ${(c.saldo || 0).toLocaleString('pt-BR')}</td>
           <td>${c.descricao || '—'}</td>
           <td><button class="btn btn-small btn-secondary" onclick="deletarCapital('${c.id}')">Excluir</button></td>
         </tr>
       `).join('');
     }
 
-    // ========== FLUXO DE CAIXA ==========
-    
-    // Saídas = Todas as despesas do mês
+    // Fluxo de caixa
     const saidasCaixa = totalDespesas;
-    
-    // Saldo do mês
     const saldoCaixa = entradasCaixa - saidasCaixa;
 
-    // Atualizar cards do caixa
-    document.getElementById('caixa-entradas').textContent = `R$ ${entradasCaixa.toLocaleString('pt-BR')}`;
-    document.getElementById('caixa-saidas').textContent = `R$ ${saidasCaixa.toLocaleString('pt-BR')}`;
-    document.getElementById('caixa-saldo').textContent = `R$ ${saldoCaixa.toLocaleString('pt-BR')}`;
+    document.getElementById('caixa-entradas').textContent = 'R$ ' + entradasCaixa.toLocaleString('pt-BR');
+    document.getElementById('caixa-saidas').textContent = 'R$ ' + saidasCaixa.toLocaleString('pt-BR');
+    document.getElementById('caixa-saldo').textContent = 'R$ ' + saldoCaixa.toLocaleString('pt-BR');
     document.getElementById('caixa-saldo').style.color = saldoCaixa >= 0 ? 'var(--success)' : 'var(--danger)';
 
-    // Tabela Entradas
     const entradasBody = document.getElementById('caixa-entradas-body');
     const todasEntradas = [
-      ...clientesPagos.map(c => ({
-        descricao: `Cliente: ${c.nome}`,
-        valor: c.valor,
-        data: c.data_fechamento
-      })),
-      ...receitas.map(r => ({
-        descricao: r.descricao,
-        valor: r.valor,
-        data: r.data
-      }))
+      ...clientesPagos.map(c => ({ descricao: 'Cliente: ' + c.nome, valor: c.valor, data: c.data_fechamento })),
+      ...receitas.map(r => ({ descricao: r.descricao, valor: r.valor, data: r.data }))
     ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
-    if(todasEntradas.length === 0) {
-      entradasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding: 2rem;"><div class="empty-icon" style="font-size: 32px;">💰</div><div class="empty-title" style="font-size: 14px;">Nenhuma entrada</div></div></td></tr>';
+    if (todasEntradas.length === 0) {
+      entradasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding:2rem"><div class="empty-icon" style="font-size:32px">💰</div><div class="empty-title" style="font-size:14px">Nenhuma entrada</div></div></td></tr>';
     } else {
       entradasBody.innerHTML = todasEntradas.map(e => `
         <tr>
           <td>${e.descricao}</td>
-          <td style="color: var(--success); font-weight: 600;">+ R$ ${e.valor.toLocaleString('pt-BR')}</td>
+          <td style="color:var(--success);font-weight:600">+ R$ ${(e.valor || 0).toLocaleString('pt-BR')}</td>
           <td>${new Date(e.data).toLocaleDateString('pt-BR')}</td>
         </tr>
       `).join('');
     }
 
-    // Tabela Saídas
     const saidasBody = document.getElementById('caixa-saidas-body');
-    if(despesas.length === 0) {
-      saidasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding: 2rem;"><div class="empty-icon" style="font-size: 32px;">📊</div><div class="empty-title" style="font-size: 14px;">Nenhuma saída</div></div></td></tr>';
+    if (despesas.length === 0) {
+      saidasBody.innerHTML = '<tr><td colspan="3"><div class="empty" style="padding:2rem"><div class="empty-icon" style="font-size:32px">📊</div><div class="empty-title" style="font-size:14px">Nenhuma saída</div></div></td></tr>';
     } else {
-      saidasBody.innerHTML = despesas.sort((a, b) => new Date(b.data) - new Date(a.data)).map(d => `
+      saidasBody.innerHTML = [...despesas].sort((a, b) => new Date(b.data) - new Date(a.data)).map(d => `
         <tr>
           <td>${d.descricao}</td>
-          <td style="color: var(--danger); font-weight: 600;">- R$ ${d.valor.toLocaleString('pt-BR')}</td>
+          <td style="color:var(--danger);font-weight:600">- R$ ${(d.valor || 0).toLocaleString('pt-BR')}</td>
           <td>${new Date(d.data).toLocaleDateString('pt-BR')}</td>
         </tr>
       `).join('');
     }
 
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
-// Agenda
+// ========== AGENDA ==========
 async function loadAgenda() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*&or=(sessao1_agendada.not.is.null,sessao2_agendada.not.is.null)&order=sessao1_agendada.asc`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    const clientes = await res.json();
-
+    const res = await sb('legaci_clientes?select=*&or=(sessao1_agendada.not.is.null,sessao2_agendada.not.is.null)&order=sessao1_agendada.asc');
+    const dados = await res.json();
     const tbody = document.getElementById('agenda-body');
-    if(clientes.length === 0) {
+
+    if (dados.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Nenhuma entrevista agendada</div></div></td></tr>';
       return;
     }
 
-    tbody.innerHTML = clientes.map(c => `
+    tbody.innerHTML = dados.map(c => `
       <tr>
         <td>${c.nome}</td>
         <td>${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
@@ -1252,21 +1243,19 @@ async function loadAgenda() {
         <td>${c.sessao2_agendada ? new Date(c.sessao2_agendada).toLocaleString('pt-BR') : '—'}</td>
       </tr>
     `).join('');
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
-// Leads Sofia
+// ========== LEADS SOFIA ==========
 async function loadLeadsSofia() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_leads?select=*&order=created_at.desc`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
+    const res = await sb('legaci_leads?select=*&order=created_at.desc');
     const leads = await res.json();
-
     const tbody = document.getElementById('sofia-body');
-    if(leads.length === 0) {
+
+    if (leads.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">💬</div><div class="empty-title">Nenhum lead capturado ainda</div></div></td></tr>';
       return;
     }
@@ -1281,38 +1270,16 @@ async function loadLeadsSofia() {
         <td>${new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
       </tr>
     `).join('');
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
-// Helpers
-function getStatusLabel(status) {
-  const labels = {
-    lead: 'Lead',
-    proposta: 'Proposta',
-    fechado: 'Fechado',
-    em_producao: 'Em Produção',
-    entregue: 'Entregue'
-  };
-  return labels[status] || status;
-}
-
-function getPagamentoLabel(status) {
-  const labels = {
-    pendente: 'Pendente',
-    pago: 'Pago',
-    parcelado: 'Parcelado'
-  };
-  return labels[status] || status;
-}
-
-// Modais Financeiro
+// ========== MODAIS FINANCEIRO ==========
 function openNovaReceita() {
   document.getElementById('form-receita').reset();
   document.getElementById('modal-receita').classList.add('active');
 }
-
 function closeModalReceita() {
   document.getElementById('modal-receita').classList.remove('active');
 }
@@ -1323,183 +1290,198 @@ function openNovaDespesa(tipo) {
   document.getElementById('modal-despesa-title').textContent = tipo === 'fixa' ? 'Nova Despesa Fixa' : 'Nova Despesa Variável';
   document.getElementById('modal-despesa').classList.add('active');
 }
-
 function closeModalDespesa() {
   document.getElementById('modal-despesa').classList.remove('active');
 }
 
 function openNovoCapital() {
   document.getElementById('form-capital').reset();
-  const inputs = document.getElementById('form-capital').querySelectorAll('[name="data"]');
-  if(inputs.length > 0) inputs[0].value = new Date().toISOString().split('T')[0];
+  document.querySelector('#form-capital [name="data"]').value = new Date().toISOString().split('T')[0];
   document.getElementById('modal-capital').classList.add('active');
 }
-
 function closeModalCapital() {
   document.getElementById('modal-capital').classList.remove('active');
 }
 
-// Salvar Receita
+// ========== SALVAR FINANCEIRO ==========
 async function salvarReceita(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = {
-    descricao: formData.get('descricao'),
-    valor: parseFloat(formData.get('valor')),
-    data: formData.get('data'),
-    categoria: formData.get('categoria')
-  };
-
+  const fd = new FormData(e.target);
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(data)
+    const res = await sbPost('legaci_receitas', {
+      descricao: fd.get('descricao'),
+      valor: parseFloat(fd.get('valor')),
+      data: fd.get('data'),
+      categoria: fd.get('categoria')
     });
-
-    if(res.ok) {
-      closeModalReceita();
-      loadFinanceiro();
-      alert('Receita adicionada!');
-    } else {
-      alert('Erro ao adicionar receita');
-    }
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao adicionar receita');
-  }
+    if (res.ok) { closeModalReceita(); loadFinanceiro(); alert('Receita adicionada!'); }
+    else alert('Erro ao adicionar receita');
+  } catch (err) { console.error(err); alert('Erro ao adicionar receita'); }
 }
 
-// Salvar Despesa
 async function salvarDespesa(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = {
-    descricao: formData.get('descricao'),
-    valor: parseFloat(formData.get('valor')),
-    tipo: formData.get('tipo'),
-    categoria: formData.get('categoria'),
-    data: formData.get('data'),
-    recorrente: formData.get('recorrente') === 'on'
-  };
-
+  const fd = new FormData(e.target);
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(data)
+    const res = await sbPost('legaci_despesas', {
+      descricao: fd.get('descricao'),
+      valor: parseFloat(fd.get('valor')),
+      tipo: fd.get('tipo'),
+      categoria: fd.get('categoria'),
+      data: fd.get('data'),
+      recorrente: fd.get('recorrente') === 'on'
     });
-
-    if(res.ok) {
-      closeModalDespesa();
-      loadFinanceiro();
-      alert('Despesa adicionada!');
-    } else {
-      alert('Erro ao adicionar despesa');
-    }
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao adicionar despesa');
-  }
+    if (res.ok) { closeModalDespesa(); loadFinanceiro(); alert('Despesa adicionada!'); }
+    else alert('Erro ao adicionar despesa');
+  } catch (err) { console.error(err); alert('Erro ao adicionar despesa'); }
 }
 
-// Salvar Capital
 async function salvarCapital(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = {
-    saldo: parseFloat(formData.get('saldo')),
-    data: formData.get('data'),
-    descricao: formData.get('descricao')
-  };
-
+  const fd = new FormData(e.target);
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/legaci_capital`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(data)
+    const res = await sbPost('legaci_capital', {
+      saldo: parseFloat(fd.get('saldo')),
+      data: fd.get('data'),
+      descricao: fd.get('descricao')
     });
-
-    if(res.ok) {
-      closeModalCapital();
-      loadFinanceiro();
-      alert('Capital atualizado!');
-    } else {
-      alert('Erro ao atualizar capital');
-    }
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao atualizar capital');
-  }
+    if (res.ok) { closeModalCapital(); loadFinanceiro(); alert('Capital atualizado!'); }
+    else alert('Erro ao atualizar capital');
+  } catch (err) { console.error(err); alert('Erro ao atualizar capital'); }
 }
 
-// Deletar itens
+// ========== DELETAR ==========
 async function deletarReceita(id) {
-  if(!confirm('Excluir esta receita?')) return;
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    loadFinanceiro();
-  } catch(err) {
-    console.error(err);
-  }
+  if (!confirm('Excluir esta receita?')) return;
+  try { await sbDelete('legaci_receitas?id=eq.' + id); loadFinanceiro(); } catch (err) { console.error(err); }
 }
 
 async function deletarDespesa(id) {
-  if(!confirm('Excluir esta despesa?')) return;
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    loadFinanceiro();
-  } catch(err) {
-    console.error(err);
-  }
+  if (!confirm('Excluir esta despesa?')) return;
+  try { await sbDelete('legaci_despesas?id=eq.' + id); loadFinanceiro(); } catch (err) { console.error(err); }
 }
 
 async function deletarCapital(id) {
-  if(!confirm('Excluir este registro de capital?')) return;
+  if (!confirm('Excluir este registro de capital?')) return;
+  try { await sbDelete('legaci_capital?id=eq.' + id); loadFinanceiro(); } catch (err) { console.error(err); }
+}
+
+// ========== RELATÓRIOS ==========
+async function exportarRelatorioFinanceiro() {
+  // Fetch fresh financial data for the print report
+  const now = new Date();
+  const mesNome = now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  const primeiroDia = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const ultimoDia = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/legaci_capital?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    loadFinanceiro();
-  } catch(err) {
+    const [clientesRes, receitasRes, despesasRes, capitalRes] = await Promise.all([
+      sb('legaci_clientes?select=*&data_fechamento=gte.' + primeiroDia + '&data_fechamento=lte.' + ultimoDia),
+      sb('legaci_receitas?select=*&data=gte.' + primeiroDia + '&data=lte.' + ultimoDia + '&order=data.desc'),
+      sb('legaci_despesas?select=*&data=gte.' + primeiroDia + '&data=lte.' + ultimoDia + '&order=data.desc'),
+      sb('legaci_capital?select=*&order=data.desc&limit=1')
+    ]);
+
+    const clientesMes = await clientesRes.json();
+    const receitas = await receitasRes.json();
+    const despesas = await despesasRes.json();
+    const capital = await capitalRes.json();
+
+    const receitaClientes = clientesMes.reduce((s, c) => s + (c.valor || 0), 0);
+    const receitaExtras = receitas.reduce((s, r) => s + (r.valor || 0), 0);
+    const totalReceitas = receitaClientes + receitaExtras;
+    const totalDespesas = despesas.reduce((s, d) => s + (d.valor || 0), 0);
+    const lucro = totalReceitas - totalDespesas;
+    const capitalAtual = capital.length > 0 ? capital[0].saldo : 0;
+
+    const linhasClientes = clientesMes.map(c =>
+      `<tr><td>${c.nome}</td><td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td><td>${getStatusLabel(c.status)}</td><td>R$ ${(c.valor||0).toLocaleString('pt-BR')}</td><td>${getPagamentoLabel(c.pagamento_status)}</td></tr>`
+    ).join('');
+
+    const linhasDespesas = despesas.map(d =>
+      `<tr><td>${d.descricao}</td><td>${d.tipo === 'fixa' ? 'Fixa' : 'Variável'}</td><td>${d.categoria}</td><td>R$ ${(d.valor||0).toLocaleString('pt-BR')}</td></tr>`
+    ).join('');
+
+    const linhasExtras = receitas.map(r =>
+      `<tr><td>${r.descricao}</td><td>${r.categoria}</td><td>R$ ${(r.valor||0).toLocaleString('pt-BR')}</td></tr>`
+    ).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório Financeiro Legaci – ${mesNome}</title>
+<style>
+  body { font-family: Georgia, serif; color: #111; margin: 2cm; font-size: 13px; }
+  h1 { font-size: 26px; color: #1A3C34; margin-bottom: 4px; }
+  h2 { font-size: 16px; color: #C17F4A; margin: 24px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  .sub { color: #888; font-size: 12px; margin-bottom: 24px; }
+  .resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .box { border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+  .box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+  .box-value { font-size: 22px; font-weight: bold; }
+  .green { color: #2D7A4F; }
+  .red { color: #DC2626; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #888; padding: 6px 8px; border-bottom: 1px solid #ddd; }
+  td { padding: 8px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+  .footer { margin-top: 32px; font-size: 11px; color: #aaa; text-align: right; }
+  @media print { body { margin: 1cm; } }
+</style>
+</head>
+<body>
+<h1>Legaci — Relatório Financeiro</h1>
+<p class="sub">${mesNome.charAt(0).toUpperCase() + mesNome.slice(1)} &nbsp;·&nbsp; Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+
+<div class="resumo">
+  <div class="box"><div class="box-label">Receitas</div><div class="box-value green">R$ ${totalReceitas.toLocaleString('pt-BR')}</div></div>
+  <div class="box"><div class="box-label">Despesas</div><div class="box-value red">R$ ${totalDespesas.toLocaleString('pt-BR')}</div></div>
+  <div class="box"><div class="box-label">Lucro Líquido</div><div class="box-value ${lucro >= 0 ? 'green' : 'red'}">R$ ${lucro.toLocaleString('pt-BR')}</div></div>
+</div>
+<div class="resumo">
+  <div class="box"><div class="box-label">Capital de Giro</div><div class="box-value">R$ ${capitalAtual.toLocaleString('pt-BR')}</div></div>
+</div>
+
+<h2>Clientes Fechados no Mês (${clientesMes.length})</h2>
+${clientesMes.length > 0 ? `
+<table>
+  <thead><tr><th>Cliente</th><th>Plano</th><th>Status</th><th>Valor</th><th>Pagamento</th></tr></thead>
+  <tbody>${linhasClientes}</tbody>
+</table>` : '<p style="color:#888;font-size:12px">Nenhum cliente fechado no mês.</p>'}
+
+${receitas.length > 0 ? `
+<h2>Receitas Extras (${receitas.length})</h2>
+<table>
+  <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th></tr></thead>
+  <tbody>${linhasExtras}</tbody>
+</table>` : ''}
+
+<h2>Despesas do Mês (${despesas.length})</h2>
+${despesas.length > 0 ? `
+<table>
+  <thead><tr><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Valor</th></tr></thead>
+  <tbody>${linhasDespesas}</tbody>
+</table>` : '<p style="color:#888;font-size:12px">Nenhuma despesa no mês.</p>'}
+
+<p class="footer">Legaci Admin · Relatório gerado automaticamente</p>
+<script>window.onload = function(){ window.print(); }<\/script>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+  } catch (err) {
     console.error(err);
+    alert('Erro ao gerar relatório');
   }
 }
 
-// ========== RELATÓRIOS E NOTIFICAÇÕES ==========
-
-function exportarRelatorioFinanceiro() {
-  alert('Relatório PDF em desenvolvimento! Por enquanto, tire um print da tela Financeiro 📸');
-}
-
 function exportarClientesExcel() {
-  // Gerar CSV (abre no Excel)
   const csv = [
     ['Nome', 'Email', 'WhatsApp', 'Modo', 'Plano', 'Valor', 'Status', 'Pagamento'].join(','),
     ...clientes.map(c => [
-      c.nome,
+      '"' + (c.nome || '') + '"',
       c.email || '',
       c.whatsapp || '',
       c.modo,
@@ -1513,17 +1495,17 @@ function exportarClientesExcel() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `clientes_legaci_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = 'clientes_legaci_' + new Date().toISOString().split('T')[0] + '.csv';
   link.click();
 }
 
 function exportarAgendaCSV() {
   const clientesComAgenda = clientes.filter(c => c.sessao1_agendada || c.sessao2_agendada);
-  
+
   const csv = [
     ['Cliente', 'Plano', 'Sessão 1', 'Sessão 2'].join(','),
     ...clientesComAgenda.map(c => [
-      c.nome,
+      '"' + (c.nome || '') + '"',
       c.plano,
       c.sessao1_agendada || '',
       c.sessao2_agendada || ''
@@ -1533,68 +1515,61 @@ function exportarAgendaCSV() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `agenda_legaci_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = 'agenda_legaci_' + new Date().toISOString().split('T')[0] + '.csv';
   link.click();
 }
 
+// ========== NOTIFICAÇÕES ==========
+// Loads clients independently — does not depend on the global `clientes` array
 async function loadNotificacoes() {
   const container = document.getElementById('notificacoes-container');
   const notifs = [];
 
-  // Entrevistas próximas (próximas 48h)
+  let dadosClientes = clientes;
+  // If global clientes is empty (e.g. navigated directly to Relatórios), fetch fresh
+  if (!dadosClientes || dadosClientes.length === 0) {
+    try {
+      const res = await sb('legaci_clientes?select=*');
+      dadosClientes = await res.json();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const agora = new Date();
-  const em48h = new Date(agora.getTime() + (48 * 60 * 60 * 1000));
-  
-  clientes.forEach(c => {
-    if(c.sessao1_agendada) {
+  const em48h = new Date(agora.getTime() + 48 * 60 * 60 * 1000);
+  const ha7dias = new Date(agora.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  dadosClientes.forEach(c => {
+    if (c.sessao1_agendada) {
       const d = new Date(c.sessao1_agendada);
-      if(d > agora && d < em48h) {
+      if (d > agora && d < em48h) {
         const horas = Math.floor((d - agora) / (1000 * 60 * 60));
-        notifs.push({
-          tipo: 'entrevista',
-          urgencia: horas < 24 ? 'alta' : 'media',
-          mensagem: `Entrevista com <strong>${c.nome}</strong> em ${horas}h`,
-          data: d
-        });
+        notifs.push({ tipo: 'entrevista', urgencia: horas < 24 ? 'alta' : 'media', mensagem: 'Entrevista com <strong>' + c.nome + '</strong> em ' + horas + 'h' });
       }
     }
-    if(c.sessao2_agendada) {
+    if (c.sessao2_agendada) {
       const d = new Date(c.sessao2_agendada);
-      if(d > agora && d < em48h) {
+      if (d > agora && d < em48h) {
         const horas = Math.floor((d - agora) / (1000 * 60 * 60));
-        notifs.push({
-          tipo: 'entrevista',
-          urgencia: horas < 24 ? 'alta' : 'media',
-          mensagem: `Sessão 2 com <strong>${c.nome}</strong> em ${horas}h`,
-          data: d
-        });
+        notifs.push({ tipo: 'entrevista', urgencia: horas < 24 ? 'alta' : 'media', mensagem: 'Sessão 2 com <strong>' + c.nome + '</strong> em ' + horas + 'h' });
       }
     }
-  });
-
-  // Pagamentos pendentes há mais de 7 dias
-  const ha7dias = new Date(agora.getTime() - (7 * 24 * 60 * 60 * 1000));
-  clientes.forEach(c => {
-    if(c.pagamento_status === 'pendente' && c.data_fechamento) {
+    if (c.pagamento_status === 'pendente' && c.data_fechamento) {
       const d = new Date(c.data_fechamento);
-      if(d < ha7dias) {
+      if (d < ha7dias) {
         const dias = Math.floor((agora - d) / (1000 * 60 * 60 * 24));
-        notifs.push({
-          tipo: 'pagamento',
-          urgencia: 'alta',
-          mensagem: `<strong>${c.nome}</strong> com pagamento pendente há ${dias} dias`,
-          data: d
-        });
+        notifs.push({ tipo: 'pagamento', urgencia: 'alta', mensagem: '<strong>' + c.nome + '</strong> com pagamento pendente há ' + dias + ' dias' });
       }
     }
   });
 
-  if(notifs.length === 0) {
+  if (notifs.length === 0) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Nenhuma notificação no momento</div><div class="empty-text">Tudo em dia!</div></div>';
   } else {
     container.innerHTML = notifs.map(n => `
-      <div style="padding: 1rem; margin-bottom: 1rem; background: ${n.urgencia === 'alta' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)'}; border-left: 3px solid ${n.urgencia === 'alta' ? '#DC2626' : '#D97706'}; border-radius: 8px;">
-        <div style="font-size: 14px; color: var(--ink2);">${n.tipo === 'entrevista' ? '📅' : '💰'} ${n.mensagem}</div>
+      <div style="padding:1rem;margin-bottom:1rem;background:${n.urgencia === 'alta' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)'};border-left:3px solid ${n.urgencia === 'alta' ? '#DC2626' : '#D97706'};border-radius:8px;">
+        <div style="font-size:14px;color:var(--ink2)">${n.tipo === 'entrevista' ? '📅' : '💰'} ${n.mensagem}</div>
       </div>
     `).join('');
   }
@@ -1605,136 +1580,82 @@ let chartReceitasDespesas, chartClientes, chartFaturamento;
 
 async function loadDashboard() {
   try {
-    // Buscar dados dos últimos 6 meses
     const hoje = new Date();
     const meses = [];
     const labels = [];
-    
-    for(let i = 5; i >= 0; i--) {
+
+    for (let i = 5; i >= 0; i--) {
       const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
       meses.push(d);
       labels.push(d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }));
     }
 
     const [clientesRes, receitasRes, despesasRes] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_clientes?select=*`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_receitas?select=*`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/legaci_despesas?select=*`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      })
+      sb('legaci_clientes?select=*'),
+      sb('legaci_receitas?select=*'),
+      sb('legaci_despesas?select=*')
     ]);
 
-    const clientes = await clientesRes.json();
-    const receitas = await receitasRes.json();
-    const despesas = await despesasRes.json();
+    const clientesAll = await clientesRes.json();
+    const receitasAll = await receitasRes.json();
+    const despesasAll = await despesasRes.json();
 
-    // Calcular receitas e despesas por mês
     const receitasPorMes = meses.map(mes => {
       const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
       const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
-      
-      const clientesMes = clientes.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim);
-      const receitasMes = receitas.filter(r => r.data >= inicio && r.data <= fim);
-      
-      return clientesMes.reduce((sum, c) => sum + (c.valor || 0), 0) + 
-             receitasMes.reduce((sum, r) => sum + (r.valor || 0), 0);
+      const cli = clientesAll.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim);
+      const rec = receitasAll.filter(r => r.data >= inicio && r.data <= fim);
+      return cli.reduce((s, c) => s + (c.valor || 0), 0) + rec.reduce((s, r) => s + (r.valor || 0), 0);
     });
 
     const despesasPorMes = meses.map(mes => {
       const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
       const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
-      
-      const despesasMes = despesas.filter(d => d.data >= inicio && d.data <= fim);
-      return despesasMes.reduce((sum, d) => sum + (d.valor || 0), 0);
+      return despesasAll.filter(d => d.data >= inicio && d.data <= fim).reduce((s, d) => s + (d.valor || 0), 0);
     });
 
     const clientesPorMes = meses.map(mes => {
       const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1).toISOString().split('T')[0];
       const fim = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).toISOString().split('T')[0];
-      return clientes.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim).length;
+      return clientesAll.filter(c => c.data_fechamento >= inicio && c.data_fechamento <= fim).length;
     });
 
-    // Gráfico Receitas vs Despesas
     const ctx1 = document.getElementById('chart-receitas-despesas');
-    if(chartReceitasDespesas) chartReceitasDespesas.destroy();
+    if (chartReceitasDespesas) chartReceitasDespesas.destroy();
     chartReceitasDespesas = new Chart(ctx1, {
       type: 'line',
       data: {
-        labels: labels,
-        datasets: [{
-          label: 'Receitas',
-          data: receitasPorMes,
-          borderColor: '#2D7A4F',
-          backgroundColor: 'rgba(45,122,79,0.1)',
-          tension: 0.4,
-          fill: true
-        }, {
-          label: 'Despesas',
-          data: despesasPorMes,
-          borderColor: '#DC2626',
-          backgroundColor: 'rgba(220,38,38,0.1)',
-          tension: 0.4,
-          fill: true
-        }]
+        labels,
+        datasets: [
+          { label: 'Receitas', data: receitasPorMes, borderColor: '#2D7A4F', backgroundColor: 'rgba(45,122,79,0.1)', tension: 0.4, fill: true },
+          { label: 'Despesas', data: despesasPorMes, borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.1)', tension: 0.4, fill: true }
+        ]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { position: 'top' } },
-        scales: { y: { beginAtZero: true } }
-      }
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
     });
 
-    // Gráfico Clientes
     const ctx2 = document.getElementById('chart-clientes');
-    if(chartClientes) chartClientes.destroy();
+    if (chartClientes) chartClientes.destroy();
     chartClientes = new Chart(ctx2, {
       type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Clientes Fechados',
-          data: clientesPorMes,
-          backgroundColor: '#C17F4A'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-      }
+      data: { labels, datasets: [{ label: 'Clientes Fechados', data: clientesPorMes, backgroundColor: '#C17F4A' }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
 
-    // Gráfico Faturamento
     const ctx3 = document.getElementById('chart-faturamento');
-    if(chartFaturamento) chartFaturamento.destroy();
+    if (chartFaturamento) chartFaturamento.destroy();
     chartFaturamento = new Chart(ctx3, {
       type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Faturamento',
-          data: receitasPorMes,
-          backgroundColor: '#1A3C34'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
-      }
+      data: { labels, datasets: [{ label: 'Faturamento', data: receitasPorMes, backgroundColor: '#1A3C34' }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
 
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
 
-// Init
+// ========== INIT ==========
 loadVisaoGeral();
 </script>
 
