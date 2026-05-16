@@ -113,8 +113,14 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <div class="nav-item" onclick="showScreen('clientes', this)">
       <span class="nav-icon">👥</span><span>Clientes</span>
     </div>
+    <div class="nav-item" onclick="showScreen('comercial', this)">
+      <span class="nav-icon">🎯</span><span>Comercial</span>
+    </div>
     <div class="nav-item" onclick="showScreen('financeiro', this)">
       <span class="nav-icon">💰</span><span>Financeiro</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('centro-custos', this)">
+      <span class="nav-icon">📋</span><span>Centro de Custos</span>
     </div>
     <div class="nav-item" onclick="showScreen('agenda', this)">
       <span class="nav-icon">📅</span><span>Agenda</span>
@@ -548,6 +554,133 @@ tr:hover{background:rgba(193,127,74,0.02)}
     </div>
   </div>
 
+  <!-- CENTRO DE CUSTOS -->
+  <div class="screen" id="screen-centro-custos">
+    <div class="header">
+      <h1 class="header-title">Centro de Custos</h1>
+      <p class="header-sub">Pagamentos por parceiro e rentabilidade por projeto</p>
+    </div>
+
+    <div class="cards" style="margin-bottom:2rem">
+      <div class="card">
+        <div class="card-label">Custos Pendentes</div>
+        <div class="card-value" id="cc-pendente" style="color:var(--danger)">—</div>
+        <div class="card-detail">A pagar para parceiros</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Pago no Mês</div>
+        <div class="card-value" id="cc-pago-mes">—</div>
+        <div class="card-detail">Custos liquidados</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Margem Média</div>
+        <div class="card-value" id="cc-margem-media">—</div>
+        <div class="card-detail">Dos projetos com custos</div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom:2rem">
+      <div class="section-header">
+        <h2 class="section-title">Pagamentos por Parceiro</h2>
+        <div style="display:flex;gap:0.5rem">
+          <button class="filter-btn active" onclick="filterCentroCustos('todos', this)">Todos</button>
+          <button class="filter-btn" onclick="filterCentroCustos('pendente', this)">Pendentes</button>
+          <button class="filter-btn" onclick="filterCentroCustos('pago', this)">Pagos</button>
+        </div>
+      </div>
+      <div id="cc-por-parceiro"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Rentabilidade por Projeto</h2>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Receita</th>
+              <th>Custos</th>
+              <th>Margem</th>
+              <th>%</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cc-rentabilidade"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMERCIAL -->
+  <div class="screen" id="screen-comercial">
+    <div class="header">
+      <h1 class="header-title">Comercial</h1>
+      <p class="header-sub">Metas de vendas e pipeline</p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap">
+      <select class="form-select" id="mes-comercial" onchange="loadComercial()" style="max-width:220px"></select>
+      <button class="btn" onclick="openNovaMeta()">✎ Definir Meta</button>
+    </div>
+
+    <div class="cards" style="margin-bottom:2rem">
+      <div class="card">
+        <div class="card-label">Meta de Receita</div>
+        <div class="card-value" id="com-meta-receita">—</div>
+        <div class="card-detail">Objetivo do mês</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Receita Realizada</div>
+        <div class="card-value" id="com-realizado">—</div>
+        <div class="card-detail" id="com-pct-receita">— % da meta</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Meta de Fechamentos</div>
+        <div class="card-value" id="com-meta-clientes">—</div>
+        <div class="card-detail">Clientes esperados</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Fechamentos</div>
+        <div class="card-value" id="com-fechamentos">—</div>
+        <div class="card-detail" id="com-pct-clientes">— % da meta</div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom:2rem">
+      <div class="section-header">
+        <h2 class="section-title">Progresso do Mês</h2>
+      </div>
+      <div style="margin-bottom:1.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.625rem">
+          <span style="font-size:13px;font-weight:600;color:var(--ink)">Receita</span>
+          <span style="font-size:13px;color:var(--ink3)" id="prog-receita-label">R$ 0 / R$ 0</span>
+        </div>
+        <div style="background:var(--border);border-radius:100px;height:14px;overflow:hidden">
+          <div id="prog-receita-bar" style="height:100%;width:0%;border-radius:100px;transition:width 0.7s ease,background 0.4s"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.625rem">
+          <span style="font-size:13px;font-weight:600;color:var(--ink)">Fechamentos</span>
+          <span style="font-size:13px;color:var(--ink3)" id="prog-clientes-label">0 / 0</span>
+        </div>
+        <div style="background:var(--border);border-radius:100px;height:14px;overflow:hidden">
+          <div id="prog-clientes-bar" style="height:100%;width:0%;border-radius:100px;transition:width 0.7s ease,background 0.4s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Pipeline Comercial</h2>
+        <span style="font-size:13px;color:var(--ink3)">Todos os clientes ativos</span>
+      </div>
+      <div id="pipeline-container" style="display:flex;align-items:stretch"></div>
+    </div>
+  </div>
+
   <!-- PARCEIROS -->
   <div class="screen" id="screen-parceiros">
     <div class="header">
@@ -821,6 +954,93 @@ tr:hover{background:rgba(193,127,74,0.02)}
   </div>
 </div>
 
+<!-- MODAL CUSTOS DO PROJETO -->
+<div class="modal-overlay" id="modal-custos-projeto">
+  <div class="modal" style="max-width:720px">
+    <button class="modal-close" onclick="closeModalCustos()">×</button>
+    <h2 class="modal-title" id="custos-cliente-nome">Custos do Projeto</h2>
+    <p class="modal-sub" id="custos-cliente-plano"></p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.75rem;padding:1.25rem;background:var(--cream);border-radius:12px">
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:4px">Receita</div>
+        <div style="font-size:20px;font-family:'Libre Baskerville',serif;color:var(--success)" id="custos-receita">—</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:4px">Total Custos</div>
+        <div style="font-size:20px;font-family:'Libre Baskerville',serif;color:var(--danger)" id="custos-total">—</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:4px">Margem Líquida</div>
+        <div style="font-size:20px;font-family:'Libre Baskerville',serif" id="custos-margem">—</div>
+      </div>
+    </div>
+
+    <form id="form-custo-inline" onsubmit="adicionarCusto(event)" style="padding:1.25rem;border:1.5px solid var(--border);border-radius:12px;margin-bottom:1.5rem">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
+        <div>
+          <label class="form-label">Descrição</label>
+          <input type="text" class="form-input" name="descricao" required placeholder="Ex: Impressão 3 cópias">
+        </div>
+        <div>
+          <label class="form-label">Categoria</label>
+          <select class="form-select" name="categoria">
+            <option value="entrevistador">Entrevistador</option>
+            <option value="api">APIs</option>
+            <option value="grafica">Gráfica</option>
+            <option value="logistica">Logística</option>
+            <option value="operacional">Operacional</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" class="form-input" name="valor" step="0.01" min="0" required placeholder="0,00">
+        </div>
+        <div>
+          <label class="form-label">Parceiro</label>
+          <select class="form-select" name="parceiro_id" id="custo-parceiro-select">
+            <option value="">— Nenhum —</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-small">+ Adicionar Custo</button>
+    </form>
+
+    <div id="custos-lista">
+      <div class="empty"><div class="empty-icon">💰</div><div class="empty-title">Nenhum custo lançado</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL META -->
+<div class="modal-overlay" id="modal-meta">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModalMeta()">×</button>
+    <h2 class="modal-title">Definir Meta</h2>
+    <p class="modal-sub" id="modal-meta-sub">Meta mensal de vendas</p>
+
+    <form id="form-meta" onsubmit="salvarMeta(event)">
+      <input type="hidden" name="mes" id="meta-mes-input">
+
+      <div class="form-group">
+        <label class="form-label">Meta de Receita (R$)</label>
+        <input type="number" class="form-input" name="meta_receita" min="0" step="100" placeholder="Ex: 10000" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Meta de Fechamentos</label>
+        <input type="number" class="form-input" name="meta_clientes" min="0" step="1" placeholder="Ex: 5" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModalMeta()">Cancelar</button>
+        <button type="submit" class="btn">Salvar Meta</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- MODAL PARCEIRO -->
 <div class="modal-overlay" id="modal-parceiro">
   <div class="modal">
@@ -901,9 +1121,11 @@ function showScreen(screenName, navEl) {
   if (screenName === 'visao-geral')   loadVisaoGeral();
   if (screenName === 'dashboard')     loadDashboard();
   if (screenName === 'clientes')      loadClientes();
+  if (screenName === 'comercial')     { initMesSelector(); loadComercial(); }
   if (screenName === 'financeiro')    loadFinanceiro();
   if (screenName === 'agenda')        loadAgenda();
   if (screenName === 'leads-sofia')   loadLeadsSofia();
+  if (screenName === 'centro-custos') loadCentroCustos();
   if (screenName === 'parceiros')     loadParceiros();
   if (screenName === 'relatorios')    loadNotificacoes();
 }
@@ -1245,6 +1467,7 @@ function renderClientes() {
       <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
       <td class="actions-cell">
         ${c.whatsapp ? `<button class="btn btn-small btn-secondary" onclick="abrirWhatsApp('${c.whatsapp}')" style="background:rgba(37,211,102,0.1);color:#128C7E;border-color:rgba(37,211,102,0.3);" title="Abrir WhatsApp">💬</button>` : ''}
+        <button class="btn btn-small btn-secondary" onclick="openCustosProjeto('${c.id}')" style="background:rgba(193,127,74,0.08);color:var(--copper);border-color:rgba(193,127,74,0.3);" title="Custos do projeto">💰</button>
         <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
         <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
       </td>
@@ -1917,6 +2140,404 @@ async function loadDashboard() {
   } catch (err) {
     console.error(err);
   }
+}
+
+// ========== CUSTOS POR PROJETO ==========
+let custosClienteAtual = null;
+let custosLista = [];
+let filtroCentroCustos = 'todos';
+
+const categoriaLabel = { entrevistador:'Entrevistador', api:'API', grafica:'Gráfica', logistica:'Logística', operacional:'Operacional', outros:'Outros' };
+
+async function openCustosProjeto(clienteId) {
+  custosClienteAtual = clientes.find(c => c.id === clienteId);
+  if (!custosClienteAtual) return;
+
+  if (parceiros.length === 0) {
+    try {
+      const res = await sb('legaci_parceiros?select=*&order=nome.asc');
+      parceiros = await res.json();
+    } catch (err) { console.error(err); }
+  }
+
+  document.getElementById('custos-cliente-nome').textContent = custosClienteAtual.nome;
+  document.getElementById('custos-cliente-plano').textContent =
+    (custosClienteAtual.modo === 'casal' ? 'Casal' : 'Solo') + ' · ' +
+    (custosClienteAtual.plano === '2sessoes' ? '2 Sessões' : '1 Sessão');
+  document.getElementById('form-custo-inline').reset();
+
+  const select = document.getElementById('custo-parceiro-select');
+  select.innerHTML = '<option value="">— Nenhum —</option>' +
+    parceiros.map(p => `<option value="${p.id}">${p.nome} (${getTipoLabel(p.tipo)})</option>`).join('');
+
+  document.getElementById('modal-custos-projeto').classList.add('active');
+  await loadCustosProjeto();
+}
+
+function closeModalCustos() {
+  document.getElementById('modal-custos-projeto').classList.remove('active');
+}
+
+async function loadCustosProjeto() {
+  if (!custosClienteAtual) return;
+  try {
+    const res = await sb('legaci_custos_projeto?select=*&cliente_id=eq.' + custosClienteAtual.id + '&order=created_at.desc');
+    custosLista = await res.json();
+    renderCustosProjeto();
+  } catch (err) { console.error(err); }
+}
+
+function renderCustosProjeto() {
+  const receita = custosClienteAtual.valor || 0;
+  const totalCustos = custosLista.reduce((s, c) => s + (c.valor || 0), 0);
+  const margem = receita - totalCustos;
+  const pct = receita > 0 ? ((margem / receita) * 100).toFixed(0) : 0;
+
+  document.getElementById('custos-receita').textContent = 'R$ ' + receita.toLocaleString('pt-BR');
+  document.getElementById('custos-total').textContent   = 'R$ ' + totalCustos.toLocaleString('pt-BR');
+  const margemEl = document.getElementById('custos-margem');
+  margemEl.textContent  = 'R$ ' + margem.toLocaleString('pt-BR') + ' (' + pct + '%)';
+  margemEl.style.color  = margem >= 0 ? 'var(--success)' : 'var(--danger)';
+
+  const container = document.getElementById('custos-lista');
+  if (custosLista.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">💰</div><div class="empty-title">Nenhum custo lançado</div><div class="empty-text">Use o formulário acima para adicionar</div></div>';
+    return;
+  }
+
+  container.innerHTML = `
+    <table>
+      <thead><tr><th>Descrição</th><th>Categoria</th><th>Parceiro</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>
+        ${custosLista.map(c => {
+          const parceiro = parceiros.find(p => p.id === c.parceiro_id);
+          return `<tr>
+            <td>${c.descricao || '—'}</td>
+            <td style="font-size:12px;color:var(--ink3)">${categoriaLabel[c.categoria] || c.categoria}</td>
+            <td style="font-size:13px;color:var(--ink3)">${parceiro ? parceiro.nome : '—'}</td>
+            <td>R$ ${(c.valor || 0).toLocaleString('pt-BR')}</td>
+            <td><span class="badge badge-${c.status_pagamento}">${c.status_pagamento === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+            <td class="actions-cell">
+              ${c.status_pagamento === 'pendente' ? `<button class="btn btn-small btn-secondary" onclick="marcarCustoPago('${c.id}')" style="background:rgba(45,122,79,0.1);color:var(--success);border-color:rgba(45,122,79,0.2);">✓ Pago</button>` : ''}
+              <button class="btn btn-small btn-secondary" onclick="deletarCusto('${c.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function adicionarCusto(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  try {
+    const res = await sbPost('legaci_custos_projeto', {
+      cliente_id: custosClienteAtual.id,
+      descricao: fd.get('descricao'),
+      categoria: fd.get('categoria'),
+      valor: parseFloat(fd.get('valor')),
+      parceiro_id: fd.get('parceiro_id') || null,
+      status_pagamento: 'pendente'
+    });
+    if (res.ok) { e.target.reset(); loadCustosProjeto(); }
+    else alert('Erro ao adicionar custo');
+  } catch (err) { console.error(err); }
+}
+
+async function marcarCustoPago(id) {
+  try {
+    const res = await sbPatch('legaci_custos_projeto?id=eq.' + id, {
+      status_pagamento: 'pago',
+      data_pagamento: new Date().toISOString().split('T')[0]
+    });
+    if (res.ok) loadCustosProjeto();
+  } catch (err) { console.error(err); }
+}
+
+async function deletarCusto(id) {
+  if (!confirm('Excluir este custo?')) return;
+  try { await sbDelete('legaci_custos_projeto?id=eq.' + id); loadCustosProjeto(); }
+  catch (err) { console.error(err); }
+}
+
+// ========== CENTRO DE CUSTOS ==========
+async function loadCentroCustos() {
+  try {
+    const [custosRes, clientesRes, parceirosRes] = await Promise.all([
+      sb('legaci_custos_projeto?select=*&order=created_at.desc'),
+      sb('legaci_clientes?select=id,nome,valor,plano,modo'),
+      sb('legaci_parceiros?select=id,nome,tipo')
+    ]);
+    const todosCustos   = await custosRes.json();
+    const todosClientes = await clientesRes.json();
+    const todosParceiros= await parceirosRes.json();
+
+    const clienteMap  = {};  todosClientes.forEach(c  => clienteMap[c.id]  = c);
+    const parceiroMap = {};  todosParceiros.forEach(p => parceiroMap[p.id] = p);
+
+    const now = new Date();
+    const primeiroDia = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    const ultimoDia   = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+    const totalPendente = todosCustos
+      .filter(c => c.status_pagamento === 'pendente')
+      .reduce((s, c) => s + (c.valor || 0), 0);
+
+    const pagoMes = todosCustos
+      .filter(c => c.status_pagamento === 'pago' && c.data_pagamento >= primeiroDia && c.data_pagamento <= ultimoDia)
+      .reduce((s, c) => s + (c.valor || 0), 0);
+
+    const custosPorCliente = {};
+    todosCustos.forEach(c => {
+      custosPorCliente[c.cliente_id] = (custosPorCliente[c.cliente_id] || 0) + (c.valor || 0);
+    });
+    const margens = Object.entries(custosPorCliente).map(([cid, custos]) => {
+      const cl = clienteMap[cid];
+      return cl && cl.valor ? ((cl.valor - custos) / cl.valor) * 100 : null;
+    }).filter(m => m !== null);
+    const margemMedia = margens.length > 0 ? (margens.reduce((s, m) => s + m, 0) / margens.length).toFixed(0) : null;
+
+    document.getElementById('cc-pendente').textContent     = 'R$ ' + totalPendente.toLocaleString('pt-BR');
+    document.getElementById('cc-pago-mes').textContent     = 'R$ ' + pagoMes.toLocaleString('pt-BR');
+    document.getElementById('cc-margem-media').textContent = margemMedia !== null ? margemMedia + '%' : '—';
+    document.getElementById('cc-margem-media').style.color = margemMedia !== null
+      ? (margemMedia >= 50 ? 'var(--success)' : margemMedia >= 25 ? 'var(--warning)' : 'var(--danger)') : 'var(--ink)';
+
+    renderCCPorParceiro(todosCustos, clienteMap, parceiroMap);
+    renderCCRentabilidade(todosCustos, todosClientes, custosPorCliente);
+
+  } catch (err) { console.error(err); }
+}
+
+function filterCentroCustos(status, btn) {
+  filtroCentroCustos = status;
+  document.querySelectorAll('#screen-centro-custos .filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadCentroCustos();
+}
+
+function renderCCPorParceiro(todosCustos, clienteMap, parceiroMap) {
+  const container = document.getElementById('cc-por-parceiro');
+  const filtrados  = filtroCentroCustos === 'todos' ? todosCustos : todosCustos.filter(c => c.status_pagamento === filtroCentroCustos);
+  const comParceiro = filtrados.filter(c => c.parceiro_id);
+
+  if (comParceiro.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">Nenhum custo com parceiro neste filtro</div></div>';
+    return;
+  }
+
+  const grupos = {};
+  comParceiro.forEach(c => { if (!grupos[c.parceiro_id]) grupos[c.parceiro_id] = []; grupos[c.parceiro_id].push(c); });
+
+  container.innerHTML = Object.entries(grupos).map(([pid, custos]) => {
+    const p     = parceiroMap[pid];
+    const total = custos.reduce((s, c) => s + (c.valor || 0), 0);
+    return `
+      <div style="margin-bottom:1.5rem;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;background:rgba(193,127,74,0.05);border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-weight:600;color:var(--ink)">${p ? p.nome : 'Parceiro removido'}</span>
+            ${p ? `<span class="badge badge-${p.tipo}" style="margin-left:8px">${getTipoLabel(p.tipo)}</span>` : ''}
+          </div>
+          <span style="font-size:16px;font-weight:700;color:var(--ink)">R$ ${total.toLocaleString('pt-BR')}</span>
+        </div>
+        <table style="margin:0">
+          <thead><tr><th>Cliente</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            ${custos.map(c => {
+              const cl = clienteMap[c.cliente_id];
+              return `<tr>
+                <td style="font-weight:500">${cl ? cl.nome : '—'}</td>
+                <td>${c.descricao || '—'}</td>
+                <td style="font-size:12px;color:var(--ink3)">${categoriaLabel[c.categoria] || c.categoria}</td>
+                <td>R$ ${(c.valor || 0).toLocaleString('pt-BR')}</td>
+                <td><span class="badge badge-${c.status_pagamento}">${c.status_pagamento === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+                <td>${c.status_pagamento === 'pendente'
+                  ? `<button class="btn btn-small btn-secondary" onclick="marcarCustoPagoCC('${c.id}')" style="background:rgba(45,122,79,0.1);color:var(--success);border-color:rgba(45,122,79,0.2);">✓ Pago</button>`
+                  : ''}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }).join('');
+}
+
+function renderCCRentabilidade(todosCustos, todosClientes, custosPorCliente) {
+  const tbody = document.getElementById('cc-rentabilidade');
+  const clienteIds = Object.keys(custosPorCliente);
+  const lista = todosClientes.filter(c => clienteIds.includes(c.id));
+
+  if (lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nenhum projeto com custos lançados</div></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = lista.map(cl => {
+    const totalCustos = custosPorCliente[cl.id] || 0;
+    const receita = cl.valor || 0;
+    const margem  = receita - totalCustos;
+    const pct     = receita > 0 ? ((margem / receita) * 100).toFixed(0) : 0;
+    const cor     = pct >= 50 ? 'var(--success)' : pct >= 25 ? 'var(--warning)' : 'var(--danger)';
+    return `<tr>
+      <td>
+        <div class="client-name">${cl.nome}</div>
+        <div class="client-contact">${cl.modo === 'casal' ? 'Casal' : 'Solo'} · ${cl.plano === '2sessoes' ? '2 Sessões' : '1 Sessão'}</div>
+      </td>
+      <td style="color:var(--success);font-weight:600">R$ ${receita.toLocaleString('pt-BR')}</td>
+      <td style="color:var(--danger)">R$ ${totalCustos.toLocaleString('pt-BR')}</td>
+      <td style="color:${margem >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:600">R$ ${margem.toLocaleString('pt-BR')}</td>
+      <td><span style="font-weight:700;color:${cor}">${pct}%</span></td>
+      <td><button class="btn btn-small btn-secondary" onclick="openCustosProjeto('${cl.id}')">Ver Custos</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function marcarCustoPagoCC(id) {
+  try {
+    const res = await sbPatch('legaci_custos_projeto?id=eq.' + id, {
+      status_pagamento: 'pago',
+      data_pagamento: new Date().toISOString().split('T')[0]
+    });
+    if (res.ok) loadCentroCustos();
+  } catch (err) { console.error(err); }
+}
+
+// ========== COMERCIAL ==========
+let metaAtual = null;
+let mesComercialSelecionado = '';
+
+function initMesSelector() {
+  const sel = document.getElementById('mes-comercial');
+  const hoje = new Date();
+  sel.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    const val = d.toISOString().slice(0, 7);
+    const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const opt = document.createElement('option');
+    opt.value = val;
+    opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  mesComercialSelecionado = sel.value;
+}
+
+async function loadComercial() {
+  const sel = document.getElementById('mes-comercial');
+  if (!sel.options.length) initMesSelector();
+  mesComercialSelecionado = sel.value;
+  const [ano, mes] = mesComercialSelecionado.split('-');
+  const primeiroDia = `${mesComercialSelecionado}-01`;
+  const ultimoDia = new Date(parseInt(ano), parseInt(mes), 0).toISOString().split('T')[0];
+
+  try {
+    const [clientesRes, metaRes] = await Promise.all([
+      sb('legaci_clientes?select=*'),
+      sb('legaci_metas?select=*&mes=eq.' + mesComercialSelecionado + '&limit=1')
+    ]);
+
+    const todosClientes = await clientesRes.json();
+    const metas = await metaRes.json();
+    metaAtual = metas.length > 0 ? metas[0] : null;
+
+    const clientesMes = todosClientes.filter(c =>
+      c.data_fechamento && c.data_fechamento >= primeiroDia && c.data_fechamento <= ultimoDia
+    );
+
+    const realizado = clientesMes.reduce((sum, c) => sum + (c.valor || 0), 0);
+    const fechamentos = clientesMes.length;
+    const metaReceita = metaAtual ? metaAtual.meta_receita : 0;
+    const metaClientes = metaAtual ? metaAtual.meta_clientes : 0;
+    const pctReceita = metaReceita > 0 ? Math.min(100, (realizado / metaReceita) * 100) : 0;
+    const pctClientes = metaClientes > 0 ? Math.min(100, (fechamentos / metaClientes) * 100) : 0;
+
+    function barColor(pct) {
+      if (pct >= 100) return 'var(--success)';
+      if (pct >= 70)  return 'var(--forest)';
+      if (pct >= 40)  return 'var(--warning)';
+      return 'var(--danger)';
+    }
+
+    document.getElementById('com-meta-receita').textContent  = metaReceita > 0 ? 'R$ ' + metaReceita.toLocaleString('pt-BR') : '—';
+    document.getElementById('com-realizado').textContent     = 'R$ ' + realizado.toLocaleString('pt-BR');
+    document.getElementById('com-realizado').style.color     = realizado >= metaReceita && metaReceita > 0 ? 'var(--success)' : 'var(--ink)';
+    document.getElementById('com-pct-receita').textContent   = metaReceita > 0 ? pctReceita.toFixed(0) + '% da meta' : 'Meta não definida';
+    document.getElementById('com-meta-clientes').textContent = metaClientes > 0 ? metaClientes : '—';
+    document.getElementById('com-fechamentos').textContent   = fechamentos;
+    document.getElementById('com-fechamentos').style.color   = fechamentos >= metaClientes && metaClientes > 0 ? 'var(--success)' : 'var(--ink)';
+    document.getElementById('com-pct-clientes').textContent  = metaClientes > 0 ? pctClientes.toFixed(0) + '% da meta' : 'Meta não definida';
+
+    document.getElementById('prog-receita-label').textContent  = 'R$ ' + realizado.toLocaleString('pt-BR') + ' / R$ ' + metaReceita.toLocaleString('pt-BR');
+    document.getElementById('prog-clientes-label').textContent = fechamentos + ' / ' + metaClientes;
+
+    setTimeout(() => {
+      const rBar = document.getElementById('prog-receita-bar');
+      rBar.style.width      = pctReceita + '%';
+      rBar.style.background = barColor(pctReceita);
+      const cBar = document.getElementById('prog-clientes-bar');
+      cBar.style.width      = pctClientes + '%';
+      cBar.style.background = barColor(pctClientes);
+    }, 60);
+
+    const pipeline = [
+      { status: 'lead',        label: 'Leads',    icon: '🎯' },
+      { status: 'proposta',    label: 'Proposta',  icon: '📨' },
+      { status: 'fechado',     label: 'Fechado',   icon: '✅' },
+      { status: 'em_producao', label: 'Produção',  icon: '🎙️' },
+      { status: 'entregue',    label: 'Entregue',  icon: '📦' }
+    ];
+
+    document.getElementById('pipeline-container').innerHTML = pipeline.map((stage, i) => {
+      const grupo = todosClientes.filter(c => c.status === stage.status);
+      const valor = grupo.reduce((s, c) => s + (c.valor || 0), 0);
+      return `
+        <div style="flex:1;text-align:center;padding:1.75rem 0.75rem;${i > 0 ? 'border-left:1px solid var(--border)' : ''}">
+          <div style="font-size:30px;margin-bottom:0.75rem">${stage.icon}</div>
+          <div style="font-family:'Libre Baskerville',serif;font-size:32px;color:var(--ink);margin-bottom:0.25rem">${grupo.length}</div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:0.5rem">${stage.label}</div>
+          <div style="font-size:12px;color:${valor > 0 ? 'var(--ink3)' : 'var(--border)'}">${valor > 0 ? 'R$ ' + valor.toLocaleString('pt-BR') : '—'}</div>
+        </div>`;
+    }).join('');
+
+  } catch (err) { console.error(err); }
+}
+
+function openNovaMeta() {
+  const form = document.getElementById('form-meta');
+  form.reset();
+  document.getElementById('meta-mes-input').value = mesComercialSelecionado;
+  const [ano, mes] = mesComercialSelecionado.split('-');
+  const d = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+  const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  document.getElementById('modal-meta-sub').textContent = 'Meta para ' + label.charAt(0).toUpperCase() + label.slice(1);
+  if (metaAtual) {
+    form.querySelector('[name="meta_receita"]').value = metaAtual.meta_receita;
+    form.querySelector('[name="meta_clientes"]').value = metaAtual.meta_clientes;
+  }
+  document.getElementById('modal-meta').classList.add('active');
+}
+
+function closeModalMeta() {
+  document.getElementById('modal-meta').classList.remove('active');
+}
+
+async function salvarMeta(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = {
+    mes: fd.get('mes'),
+    meta_receita: parseFloat(fd.get('meta_receita')),
+    meta_clientes: parseInt(fd.get('meta_clientes'))
+  };
+  try {
+    const res = metaAtual
+      ? await sbPatch('legaci_metas?id=eq.' + metaAtual.id, data)
+      : await sbPost('legaci_metas', data);
+    if (res.ok) { closeModalMeta(); loadComercial(); alert('Meta salva!'); }
+    else alert('Erro ao salvar meta');
+  } catch (err) { console.error(err); alert('Erro ao salvar meta'); }
 }
 
 // ========== INIT ==========
