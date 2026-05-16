@@ -131,6 +131,9 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <div class="nav-item" onclick="showScreen('parceiros', this)">
       <span class="nav-icon">🤝</span><span>Parceiros</span>
     </div>
+    <div class="nav-item" onclick="showScreen('agentes', this)">
+      <span class="nav-icon">🤖</span><span>Agentes IA</span>
+    </div>
     <div class="nav-item" onclick="showScreen('relatorios', this)">
       <span class="nav-icon">📄</span><span>Relatórios</span>
     </div>
@@ -470,6 +473,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
               <th>Entrevistador</th>
               <th>Sessão 1</th>
               <th>Sessão 2</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="agenda-body"></tbody>
@@ -503,6 +507,116 @@ tr:hover{background:rgba(193,127,74,0.02)}
           </thead>
           <tbody id="sofia-body"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENTES IA -->
+  <div class="screen" id="screen-agentes">
+    <div class="header">
+      <h1 class="header-title">Agentes IA</h1>
+      <p class="header-sub">Automações inteligentes para marketing, vendas e operação</p>
+    </div>
+
+    <div class="section" style="margin-bottom:2rem;background:linear-gradient(135deg,var(--forest),#2a5c50);border:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-family:'Libre Baskerville',serif;font-size:22px;color:var(--white);margin-bottom:0.5rem">Hub de Agentes Legaci</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.7)">6 agentes configurados com prompts completos, setup e instruções de uso</div>
+        </div>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" style="background:var(--copper);color:var(--white);border:none;border-radius:10px;padding:0.875rem 1.75rem;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block">
+          Abrir Hub de Agentes →
+        </a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem">
+
+      <div class="card" style="border-left:4px solid var(--copper)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">📱</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #1 · Criador de Conteúdo</div>
+            <div style="font-size:12px;color:var(--ink3)">Instagram no piloto automático · Semanal</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Gera 3 posts por semana com legendas, hashtags segmentadas e sugestões visuais.</p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--copper)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">🎯</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #2 · Copywriter de Ads</div>
+            <div style="font-size:12px;color:var(--ink3)">Criativos que convertem · Quinzenal</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Cria 5-10 variações de anúncios testando diferentes ângulos emocionais.</p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--success)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">💬</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #3 · Especialista Follow-up</div>
+            <div style="font-size:12px;color:var(--ink3)">Sequências que fecham vendas · Diário</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Gera mensagens personalizadas de follow-up (WhatsApp + Email) +30% conversão. <strong>Use o botão 🤖 nos clientes para pré-preencher.</strong></p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--copper)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">📊</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #4 · Analisador Performance</div>
+            <div style="font-size:12px;color:var(--ink3)">Insights que movem o ponteiro · Semanal</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Analisa métricas semanalmente e sugere 3 ações concretas de melhoria.</p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--success)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">🎬</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #5 · Personalizador Roteiros</div>
+            <div style="font-size:12px;color:var(--ink3)">Entrevistas únicas e memoráveis · Por cliente</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Adapta roteiro de entrevista para cada cliente. <strong>Use o botão 🎬 na Agenda para pré-preencher.</strong></p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--copper)">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <span style="font-size:28px">📈</span>
+          <div>
+            <div style="font-weight:600;color:var(--ink)">Agente #6 · Gestor de Tráfego</div>
+            <div style="font-size:12px;color:var(--ink3)">Meta Ads otimizado · Semanal</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Analisa campanhas, sugere otimizações e cria novos criativos. Reduz CPA em 20-30%.</p>
+        <a href="../Agentes/hub-agentes-legaci.html" target="_blank" class="btn btn-secondary btn-small" style="display:inline-block;text-decoration:none">Ver Prompt →</a>
+      </div>
+
+    </div>
+
+    <div class="section" style="margin-top:2rem;background:rgba(193,127,74,0.04);border-color:rgba(193,127,74,0.2)">
+      <div style="font-family:'Libre Baskerville',serif;font-size:16px;color:var(--ink);margin-bottom:1rem">Como usar os atalhos do painel</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;font-size:13px;color:var(--ink2)">
+        <div style="display:flex;gap:0.75rem;align-items:flex-start">
+          <span style="font-size:20px;flex-shrink:0">🤖</span>
+          <div><strong>Botão Follow-up IA</strong> na aba Clientes — monta o prompt do Agente #3 com os dados do cliente preenchidos. Copie e cole no Claude.ai.</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start">
+          <span style="font-size:20px;flex-shrink:0">🎬</span>
+          <div><strong>Botão Gerar Roteiro</strong> na aba Agenda — monta o prompt do Agente #5 com os dados do cliente preenchidos. Copie e cole no Claude.ai.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1468,6 +1582,7 @@ function renderClientes() {
       <td class="actions-cell">
         ${c.whatsapp ? `<button class="btn btn-small btn-secondary" onclick="abrirWhatsApp('${c.whatsapp}')" style="background:rgba(37,211,102,0.1);color:#128C7E;border-color:rgba(37,211,102,0.3);" title="Abrir WhatsApp">💬</button>` : ''}
         <button class="btn btn-small btn-secondary" onclick="openCustosProjeto('${c.id}')" style="background:rgba(193,127,74,0.08);color:var(--copper);border-color:rgba(193,127,74,0.3);" title="Custos do projeto">💰</button>
+        <button class="btn btn-small btn-secondary" onclick="gerarPromptFollowup('${c.id}')" style="background:rgba(26,60,52,0.08);color:var(--forest);border-color:rgba(26,60,52,0.3);" title="Gerar prompt de Follow-up IA (Agente #3)">🤖</button>
         <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
         <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
       </td>
@@ -1721,15 +1836,19 @@ async function loadAgenda() {
       return;
     }
 
-    tbody.innerHTML = dados.map(c => `
+    tbody.innerHTML = dados.map(c => {
+      const entrevistadorNome = c.entrevistador_id ? (entrevistadoresMap[c.entrevistador_id] || '—') : '—';
+      const clienteJson = encodeURIComponent(JSON.stringify({ ...c, entrevistador_nome: entrevistadorNome }));
+      return `
       <tr>
         <td>${c.nome}</td>
         <td>${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
-        <td>${c.entrevistador_id ? (entrevistadoresMap[c.entrevistador_id] || '—') : '—'}</td>
+        <td>${entrevistadorNome}</td>
         <td>${c.sessao1_agendada ? new Date(c.sessao1_agendada).toLocaleString('pt-BR') : '—'}</td>
         <td>${c.sessao2_agendada ? new Date(c.sessao2_agendada).toLocaleString('pt-BR') : '—'}</td>
-      </tr>
-    `).join('');
+        <td><button class="btn btn-small btn-secondary" onclick="gerarPromptRoteiro('${clienteJson}')" style="background:rgba(26,60,52,0.08);color:var(--forest);border-color:rgba(26,60,52,0.3);" title="Gerar roteiro de entrevista IA (Agente #5)">🎬 Roteiro</button></td>
+      </tr>`;
+    }).join('');
   } catch (err) {
     console.error(err);
   }
@@ -2538,6 +2657,130 @@ async function salvarMeta(e) {
     if (res.ok) { closeModalMeta(); loadComercial(); alert('Meta salva!'); }
     else alert('Erro ao salvar meta');
   } catch (err) { console.error(err); alert('Erro ao salvar meta'); }
+}
+
+// ========== AGENTES IA ==========
+function gerarPromptFollowup(clienteId) {
+  const c = clientes.find(x => x.id == clienteId);
+  if (!c) return;
+
+  const dias = getDiasNoStatus(c);
+  const planoLabel = c.plano === '1sessao' ? '1 Sessão' : '2 Sessões';
+  const modoLabel = c.modo === 'solo' ? 'Solo' : 'Casal';
+  const statusLabel = getStatusLabel(c.status);
+  const valorFmt = 'R$ ' + (c.valor || 0).toLocaleString('pt-BR');
+
+  const prompt = `IDENTIDADE:
+Você é o closer consultivo da Legaci. Estilo empático, paciente, nunca agressivo.
+Você entende que decidir preservar memórias é emocional e leva tempo.
+
+CONTEXTO:
+- Ciclo de venda: 3-14 dias (decisão emocional, envolve família)
+- Ticket: R$ 790 - R$ 1.990 (compra considerada, não impulsiva)
+- Objeções comuns: "vou pensar", "preciso falar com família", "caro", "não agora"
+
+PRINCÍPIOS DE FOLLOW-UP:
+1. Nunca pressionar - oferecer valor em cada contato
+2. Espaçar 2-3 dias entre mensagens
+3. Mudar de canal (WhatsApp → Email → WhatsApp)
+4. Máximo 3 tentativas, depois nurturing (voltar em 30 dias)
+
+TAREFA:
+Crie sequência de follow-up personalizada para este lead.
+
+DADOS DO LEAD:
+- Nome: ${c.nome}
+- Plano de interesse: ${planoLabel} · ${modoLabel}
+- Status atual: ${statusLabel} (${dias} dias neste status)
+- Proposta enviada: ${valorFmt}
+- WhatsApp: ${c.whatsapp || 'não informado'}
+- Email: ${c.email || 'não informado'}
+- Objeção detectada: [preencha se souber]
+- Última interação: [descreva o último contato]
+
+CONTEXTO DA CONVERSA:
+${c.notas ? c.notas : '[sem notas registradas — adicione contexto manual aqui]'}
+
+---
+
+Gere a sequência completa (D+2, D+5, D+7) via WhatsApp e Email, personalizada para ${c.nome}.`;
+
+  navigator.clipboard.writeText(prompt).then(() => {
+    alert('✅ Prompt do Agente #3 (Follow-up) copiado!\n\nAbra o Claude.ai, cole o prompt e use o agente salvo "AGENTE - Follow-up Vendas".');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = prompt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ Prompt do Agente #3 (Follow-up) copiado!\n\nAbra o Claude.ai, cole o prompt e use o agente salvo "AGENTE - Follow-up Vendas".');
+  });
+}
+
+function gerarPromptRoteiro(clienteJson) {
+  let c;
+  try { c = JSON.parse(decodeURIComponent(clienteJson)); } catch (e) { alert('Erro ao ler dados do cliente.'); return; }
+
+  const planoLabel = c.plano === '1sessao' ? '1 Sessão' : '2 Sessões';
+  const modoLabel = c.modo === 'solo' ? 'Solo' : 'Casal';
+  const entrevistador = c.entrevistador_nome || 'não definido';
+  const sessao1 = c.sessao1_agendada ? new Date(c.sessao1_agendada).toLocaleString('pt-BR') : 'a definir';
+  const sessao2 = c.sessao2_agendada ? new Date(c.sessao2_agendada).toLocaleString('pt-BR') : 'não agendada';
+
+  const prompt = `IDENTIDADE:
+Você é roteirista sênior especializado em histórias de vida.
+Transforma roteiro genérico em algo único e memorável para cada pessoa.
+
+CONTEXTO:
+- Sessão: 90 minutos (não dá pra perguntar tudo)
+- Objetivo: Capturar ESSÊNCIA da pessoa, não biografia completa
+- Formato: Conversacional, não interrogatório
+- Entrevistador: Treinado mas não é jornalista profissional
+
+ROTEIRO BASE:
+[Cole aqui o conteúdo do seu roteiro base antes de usar]
+
+TAREFA:
+Personalize o roteiro para este cliente específico.
+
+---
+
+DADOS DO CLIENTE:
+- Nome completo: ${c.nome}
+- Plano contratado: ${planoLabel} · ${modoLabel}
+- Entrevistador responsável: ${entrevistador}
+- Sessão 1: ${sessao1}
+- Sessão 2: ${sessao2}
+- Email: ${c.email || 'não informado'}
+
+INFORMAÇÕES ADICIONAIS:
+${c.notas ? c.notas : '[sem notas registradas — adicione contexto aqui antes de usar]'}
+
+- Idade: [preencha]
+- Profissão/carreira: [principal ocupação da vida]
+- Origem: [onde nasceu, contexto familiar]
+- Momentos históricos vividos: [ex: ditadura, imigração, etc]
+- Família atual: [filhos, netos, cônjuge]
+- Motivação para fazer: [presente, saúde frágil, legado, etc]
+- Hobbies marcantes: [preencha]
+- Temas sensíveis a evitar: [preencha]
+
+---
+
+Gere o roteiro personalizado para ${c.nome}, adaptando as perguntas à história de vida específica desta pessoa.`;
+
+  navigator.clipboard.writeText(prompt).then(() => {
+    alert('✅ Prompt do Agente #5 (Roteiro) copiado!\n\nAbra o Claude.ai, cole o prompt + seu roteiro base e use o agente salvo "AGENTE - Roteiro Personalizado".');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = prompt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ Prompt do Agente #5 (Roteiro) copiado!\n\nAbra o Claude.ai, cole o prompt + seu roteiro base e use o agente salvo "AGENTE - Roteiro Personalizado".');
+  });
 }
 
 // ========== INIT ==========
