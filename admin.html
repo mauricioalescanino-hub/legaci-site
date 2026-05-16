@@ -53,6 +53,9 @@ tr:hover{background:rgba(193,127,74,0.02)}
 .badge-pendente{background:rgba(220,38,38,0.15);color:var(--danger)}
 .badge-pago{background:rgba(45,122,79,0.15);color:var(--success)}
 .badge-parcelado{background:rgba(217,119,6,0.15);color:var(--warning)}
+.badge-entrevistador{background:rgba(26,60,52,0.15);color:var(--forest)}
+.badge-fornecedor{background:rgba(193,127,74,0.15);color:var(--copper)}
+.badge-outro{background:rgba(138,132,128,0.15);color:var(--ink3)}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,16,16,0.5);backdrop-filter:blur(4px);z-index:1000;padding:2rem;overflow-y:auto}
 .modal-overlay.active{display:flex;align-items:center;justify-content:center}
 .modal{background:var(--white);border-radius:20px;max-width:600px;width:100%;padding:2.5rem;position:relative;animation:modalSlide 0.3s ease}
@@ -118,6 +121,9 @@ tr:hover{background:rgba(193,127,74,0.02)}
     </div>
     <div class="nav-item" onclick="showScreen('leads-sofia', this)">
       <span class="nav-icon">💬</span><span>Leads Sofia</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('parceiros', this)">
+      <span class="nav-icon">🤝</span><span>Parceiros</span>
     </div>
     <div class="nav-item" onclick="showScreen('relatorios', this)">
       <span class="nav-icon">📄</span><span>Relatórios</span>
@@ -207,6 +213,10 @@ tr:hover{background:rgba(193,127,74,0.02)}
     <div class="header">
       <h1 class="header-title">Clientes</h1>
       <p class="header-sub">Gerencie todos os clientes e leads</p>
+    </div>
+
+    <div style="margin-bottom:1rem">
+      <input type="text" class="form-input" id="busca-clientes" placeholder="Buscar por nome, email ou WhatsApp..." oninput="handleSearch(this.value)" style="max-width:420px">
     </div>
 
     <div class="filters">
@@ -451,6 +461,7 @@ tr:hover{background:rgba(193,127,74,0.02)}
             <tr>
               <th>Cliente</th>
               <th>Plano</th>
+              <th>Entrevistador</th>
               <th>Sessão 1</th>
               <th>Sessão 2</th>
             </tr>
@@ -534,6 +545,42 @@ tr:hover{background:rgba(193,127,74,0.02)}
         <h2 class="section-title">Notificações e Lembretes</h2>
       </div>
       <div id="notificacoes-container"></div>
+    </div>
+  </div>
+
+  <!-- PARCEIROS -->
+  <div class="screen" id="screen-parceiros">
+    <div class="header">
+      <h1 class="header-title">Parceiros</h1>
+      <p class="header-sub">Entrevistadores, fornecedores e colaboradores</p>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterParceiros('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="filterParceiros('entrevistador', this)">Entrevistadores</button>
+      <button class="filter-btn" onclick="filterParceiros('fornecedor', this)">Fornecedores</button>
+      <button class="filter-btn" onclick="filterParceiros('outro', this)">Outros</button>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Lista de Parceiros</h2>
+        <button class="btn" onclick="openNovoParceiro()">+ Adicionar Parceiro</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Contato</th>
+              <th>Notas</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="parceiros-body"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -627,6 +674,13 @@ tr:hover{background:rgba(193,127,74,0.02)}
           <label class="form-label">Sessão 2 (Opcional)</label>
           <input type="datetime-local" class="form-input" name="sessao2">
         </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Entrevistador Responsável</label>
+        <select class="form-select" name="entrevistador_id" id="entrevistador-select">
+          <option value="">— Sem entrevistador —</option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -767,6 +821,52 @@ tr:hover{background:rgba(193,127,74,0.02)}
   </div>
 </div>
 
+<!-- MODAL PARCEIRO -->
+<div class="modal-overlay" id="modal-parceiro">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalParceiro()">×</button>
+    <h2 class="modal-title" id="modal-parceiro-title">Novo Parceiro</h2>
+    <p class="modal-sub">Cadastre entrevistadores, fornecedores e colaboradores</p>
+
+    <form id="form-parceiro" onsubmit="salvarParceiro(event)">
+      <div class="form-group">
+        <label class="form-label">Nome Completo</label>
+        <input type="text" class="form-input" name="nome" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" name="tipo">
+          <option value="entrevistador">Entrevistador</option>
+          <option value="fornecedor">Fornecedor</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" name="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" class="form-input" name="whatsapp">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notas</label>
+        <textarea class="form-textarea" name="notas" placeholder="Especialidade, disponibilidade, região..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModalParceiro()">Cancelar</button>
+        <button type="submit" class="btn">Salvar Parceiro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
@@ -779,6 +879,11 @@ const precos = {
 let clientes = [];
 let currentFilter = 'todos';
 let editingId = null;
+let searchTerm = '';
+
+let parceiros = [];
+let currentFilterParceiros = 'todos';
+let editingParceiroId = null;
 
 // ========== NAVEGAÇÃO ==========
 function showScreen(screenName, navEl) {
@@ -799,6 +904,7 @@ function showScreen(screenName, navEl) {
   if (screenName === 'financeiro')    loadFinanceiro();
   if (screenName === 'agenda')        loadAgenda();
   if (screenName === 'leads-sofia')   loadLeadsSofia();
+  if (screenName === 'parceiros')     loadParceiros();
   if (screenName === 'relatorios')    loadNotificacoes();
 }
 
@@ -811,6 +917,24 @@ function getStatusLabel(status) {
 function getPagamentoLabel(status) {
   const labels = { pendente: 'Pendente', pago: 'Pago', parcelado: 'Parcelado' };
   return labels[status] || status;
+}
+
+function getDiasNoStatus(c) {
+  const ref = c.data_fechamento || c.created_at;
+  if (!ref) return '—';
+  const dias = Math.floor((new Date() - new Date(ref)) / (1000 * 60 * 60 * 24));
+  return dias;
+}
+
+function abrirWhatsApp(whatsapp) {
+  const numero = whatsapp.replace(/\D/g, '');
+  const completo = numero.startsWith('55') ? numero : '55' + numero;
+  window.open('https://wa.me/' + completo, '_blank');
+}
+
+function handleSearch(value) {
+  searchTerm = value.toLowerCase().trim();
+  renderClientes();
 }
 
 function sb(path) {
@@ -852,6 +976,123 @@ function sbDelete(path) {
   });
 }
 
+// ========== PARCEIROS ==========
+function getTipoLabel(tipo) {
+  const labels = { entrevistador: 'Entrevistador', fornecedor: 'Fornecedor', outro: 'Outro' };
+  return labels[tipo] || tipo;
+}
+
+async function loadParceiros() {
+  try {
+    const res = await sb('legaci_parceiros?select=*&order=nome.asc');
+    parceiros = await res.json();
+    renderParceiros();
+  } catch (err) { console.error(err); }
+}
+
+function renderParceiros() {
+  const tbody = document.getElementById('parceiros-body');
+  const filtered = currentFilterParceiros === 'todos' ? parceiros : parceiros.filter(p => p.tipo === currentFilterParceiros);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">Nenhum parceiro cadastrado</div><div class="empty-text">Clique em "Adicionar Parceiro" para começar</div></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => `
+    <tr>
+      <td>
+        <div class="client-name">${p.nome}</div>
+      </td>
+      <td><span class="badge badge-${p.tipo}">${getTipoLabel(p.tipo)}</span></td>
+      <td>
+        <div class="client-contact">${p.email || '—'}</div>
+        ${p.whatsapp ? `<div class="client-contact">${p.whatsapp}</div>` : ''}
+      </td>
+      <td style="max-width:240px;color:var(--ink3);font-size:13px">${p.notas || '—'}</td>
+      <td class="actions-cell">
+        ${p.whatsapp ? `<button class="btn btn-small btn-secondary" onclick="abrirWhatsApp('${p.whatsapp}')" style="background:rgba(37,211,102,0.1);color:#128C7E;border-color:rgba(37,211,102,0.3);" title="WhatsApp">💬</button>` : ''}
+        <button class="btn btn-small btn-secondary" onclick="editarParceiro('${p.id}')">Editar</button>
+        <button class="btn btn-small btn-secondary" onclick="deletarParceiro('${p.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterParceiros(tipo, btn) {
+  currentFilterParceiros = tipo;
+  document.querySelectorAll('#screen-parceiros .filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderParceiros();
+}
+
+function openNovoParceiro() {
+  editingParceiroId = null;
+  document.getElementById('modal-parceiro-title').textContent = 'Novo Parceiro';
+  document.getElementById('form-parceiro').reset();
+  document.getElementById('modal-parceiro').classList.add('active');
+}
+
+function closeModalParceiro() {
+  document.getElementById('modal-parceiro').classList.remove('active');
+}
+
+function editarParceiro(id) {
+  const p = parceiros.find(x => x.id === id);
+  if (!p) return;
+  editingParceiroId = id;
+  document.getElementById('modal-parceiro-title').textContent = 'Editar Parceiro';
+  const form = document.getElementById('form-parceiro');
+  form.querySelector('[name="nome"]').value = p.nome || '';
+  form.querySelector('[name="tipo"]').value = p.tipo || 'entrevistador';
+  form.querySelector('[name="email"]').value = p.email || '';
+  form.querySelector('[name="whatsapp"]').value = p.whatsapp || '';
+  form.querySelector('[name="notas"]').value = p.notas || '';
+  document.getElementById('modal-parceiro').classList.add('active');
+}
+
+async function salvarParceiro(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = {
+    nome: fd.get('nome'),
+    tipo: fd.get('tipo'),
+    email: fd.get('email'),
+    whatsapp: fd.get('whatsapp'),
+    notas: fd.get('notas')
+  };
+  try {
+    const res = editingParceiroId
+      ? await sbPatch('legaci_parceiros?id=eq.' + editingParceiroId, data)
+      : await sbPost('legaci_parceiros', data);
+    if (res.ok) { closeModalParceiro(); loadParceiros(); alert('Parceiro salvo!'); }
+    else alert('Erro ao salvar parceiro');
+  } catch (err) { console.error(err); alert('Erro ao salvar parceiro'); }
+}
+
+async function deletarParceiro(id) {
+  const p = parceiros.find(x => x.id === id);
+  if (!p || !confirm(`Excluir parceiro "${p.nome}"?`)) return;
+  try {
+    const res = await sbDelete('legaci_parceiros?id=eq.' + id);
+    if (res.ok) { loadParceiros(); alert('Parceiro excluído!'); }
+    else alert('Erro ao excluir');
+  } catch (err) { console.error(err); }
+}
+
+async function populateEntrevistadorSelect(selectedId = null) {
+  const select = document.getElementById('entrevistador-select');
+  let lista = parceiros.filter(p => p.tipo === 'entrevistador');
+  if (lista.length === 0) {
+    try {
+      const res = await sb('legaci_parceiros?select=id,nome&tipo=eq.entrevistador&order=nome.asc');
+      lista = await res.json();
+    } catch (err) { console.error(err); }
+  }
+  select.innerHTML = '<option value="">— Sem entrevistador —</option>' +
+    lista.map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.nome}</option>`).join('');
+}
+
 // ========== MODAL CLIENTE ==========
 function updateValor() {
   const modo = document.querySelector('#form-cliente [name="modo"]').value;
@@ -864,6 +1105,7 @@ function openNovoCliente() {
   document.getElementById('modal-cliente-title').textContent = 'Novo Cliente';
   document.getElementById('form-cliente').reset();
   updateValor();
+  populateEntrevistadorSelect();
   document.getElementById('modal-cliente').classList.add('active');
 }
 
@@ -892,6 +1134,7 @@ function editarCliente(id) {
   form.querySelector('[name="sessao2"]').value = cliente.sessao2_agendada ? cliente.sessao2_agendada.slice(0, 16) : '';
   form.querySelector('[name="notas"]').value = cliente.notas || '';
 
+  populateEntrevistadorSelect(cliente.entrevistador_id || null);
   document.getElementById('modal-cliente').classList.add('active');
 }
 
@@ -912,6 +1155,7 @@ async function salvarCliente(e) {
     pagamento_forma: formData.get('pagamento_forma'),
     sessao1_agendada: formData.get('sessao1') || null,
     sessao2_agendada: formData.get('sessao2') || null,
+    entrevistador_id: formData.get('entrevistador_id') || null,
     notas: formData.get('notas'),
     data_fechamento: status === 'fechado' ? new Date().toISOString().split('T')[0] : null
   };
@@ -971,7 +1215,15 @@ async function loadClientes() {
 
 function renderClientes() {
   const tbody = document.getElementById('clientes-body');
-  const filtered = currentFilter === 'todos' ? clientes : clientes.filter(c => c.status === currentFilter);
+  let filtered = currentFilter === 'todos' ? clientes : clientes.filter(c => c.status === currentFilter);
+
+  if (searchTerm) {
+    filtered = filtered.filter(c =>
+      (c.nome || '').toLowerCase().includes(searchTerm) ||
+      (c.email || '').toLowerCase().includes(searchTerm) ||
+      (c.whatsapp || '').replace(/\D/g, '').includes(searchTerm.replace(/\D/g, ''))
+    );
+  }
 
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Nenhum cliente encontrado</div></div></td></tr>';
@@ -986,9 +1238,13 @@ function renderClientes() {
       </td>
       <td>${c.modo === 'solo' ? 'Solo' : 'Casal'} · ${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
       <td>R$ ${(c.valor || 0).toLocaleString('pt-BR')}</td>
-      <td><span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span></td>
+      <td>
+        <span class="badge badge-${c.status}">${getStatusLabel(c.status)}</span>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">${getDiasNoStatus(c)} dias</div>
+      </td>
       <td><span class="badge badge-${c.pagamento_status}">${getPagamentoLabel(c.pagamento_status)}</span></td>
       <td class="actions-cell">
+        ${c.whatsapp ? `<button class="btn btn-small btn-secondary" onclick="abrirWhatsApp('${c.whatsapp}')" style="background:rgba(37,211,102,0.1);color:#128C7E;border-color:rgba(37,211,102,0.3);" title="Abrir WhatsApp">💬</button>` : ''}
         <button class="btn btn-small btn-secondary" onclick="editarCliente('${c.id}')">Editar</button>
         <button class="btn btn-small btn-secondary" onclick="deletarCliente('${c.id}')" style="background:rgba(220,38,38,0.1);color:var(--danger);border-color:rgba(220,38,38,0.2);">Excluir</button>
       </td>
@@ -1226,12 +1482,19 @@ async function loadFinanceiro() {
 // ========== AGENDA ==========
 async function loadAgenda() {
   try {
-    const res = await sb('legaci_clientes?select=*&or=(sessao1_agendada.not.is.null,sessao2_agendada.not.is.null)&order=sessao1_agendada.asc');
-    const dados = await res.json();
+    const [clientesRes, parceirosRes] = await Promise.all([
+      sb('legaci_clientes?select=*&or=(sessao1_agendada.not.is.null,sessao2_agendada.not.is.null)&order=sessao1_agendada.asc'),
+      sb('legaci_parceiros?select=id,nome&tipo=eq.entrevistador&order=nome.asc')
+    ]);
+    const dados = await clientesRes.json();
+    const entrevistadores = await parceirosRes.json();
+    const entrevistadoresMap = {};
+    entrevistadores.forEach(p => entrevistadoresMap[p.id] = p.nome);
+
     const tbody = document.getElementById('agenda-body');
 
     if (dados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Nenhuma entrevista agendada</div></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Nenhuma entrevista agendada</div></div></td></tr>';
       return;
     }
 
@@ -1239,6 +1502,7 @@ async function loadAgenda() {
       <tr>
         <td>${c.nome}</td>
         <td>${c.plano === '1sessao' ? '1 Sessão' : '2 Sessões'}</td>
+        <td>${c.entrevistador_id ? (entrevistadoresMap[c.entrevistador_id] || '—') : '—'}</td>
         <td>${c.sessao1_agendada ? new Date(c.sessao1_agendada).toLocaleString('pt-BR') : '—'}</td>
         <td>${c.sessao2_agendada ? new Date(c.sessao2_agendada).toLocaleString('pt-BR') : '—'}</td>
       </tr>
