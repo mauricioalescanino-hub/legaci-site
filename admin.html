@@ -1402,8 +1402,12 @@ async function salvarParceiro(e) {
       ? await sbPatch('legaci_parceiros?id=eq.' + editingParceiroId, data)
       : await sbPost('legaci_parceiros', data);
     if (res.ok) { closeModalParceiro(); loadParceiros(); alert('Parceiro salvo!'); }
-    else alert('Erro ao salvar parceiro');
-  } catch (err) { console.error(err); alert('Erro ao salvar parceiro'); }
+    else {
+      const errBody = await res.text();
+      console.error('Supabase parceiro error:', res.status, errBody);
+      alert('Erro ao salvar parceiro\n\nStatus: ' + res.status + '\n' + errBody);
+    }
+  } catch (err) { console.error(err); alert('Erro ao salvar parceiro\n' + err.message); }
 }
 
 async function deletarParceiro(id) {
@@ -1508,11 +1512,13 @@ async function salvarCliente(e) {
       loadFinanceiro();
       alert('Cliente salvo com sucesso!');
     } else {
-      alert('Erro ao salvar cliente');
+      const errBody = await res.text();
+      console.error('Supabase cliente error:', res.status, errBody);
+      alert('Erro ao salvar cliente\n\nStatus: ' + res.status + '\n' + errBody);
     }
   } catch (err) {
     console.error(err);
-    alert('Erro ao salvar cliente');
+    alert('Erro ao salvar cliente\n' + err.message);
   }
 }
 
