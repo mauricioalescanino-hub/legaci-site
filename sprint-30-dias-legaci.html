@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint 30 Dias · Legaci</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --forest:#1A3C34;
+  --copper:#C17F4A;
+  --cream:#F8F6F2;
+  --gold:#D4AF37;
+  --ink:#111010;
+  --ink2:rgba(17,16,16,0.75);
+  --ink3:rgba(17,16,16,0.5);
+  --border:rgba(17,16,16,0.08);
+  --success:#2D7A4F;
+  --warning:#D97706;
+  --blue:#2563EB;
+  --pink:#EC4899;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Bricolage Grotesque',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg, var(--forest), #0f231e);
+  color:#fff;
+  padding:3rem 2rem 2rem;
+  position:relative;
+  overflow:hidden;
+}
+
+.header::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(193,127,74,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(212,175,55,0.1) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+.header-content{
+  max-width:1400px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:1rem;
+  margin-bottom:2rem;
+}
+
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+
+.logo-mark{
+  font-family:'Libre Baskerville',serif;
+  font-size:32px;
+  color:var(--gold);
+  line-height:1;
+}
+
+.logo-text{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--gold);
+  text-transform:uppercase;
+  opacity:0.9;
+}
+
+.user-switcher{
+  display:flex;
+  gap:0.5rem;
+  background:rgba(255,255,255,0.1);
+  padding:0.25rem;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);
+}
+
+.user-btn{
+  padding:0.5rem 1rem;
+  background:transparent;
+  color:#fff;
+  border:none;
+  border-radius:7px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:600;
+  transition:all 0.2s;
+  opacity:0.6;
+}
+
+.user-btn.active{
+  background:var(--copper);
+  opacity:1;
+}
+
+.header h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(28px, 4vw, 42px);
+  font-weight:400;
+  margin-bottom:0.5rem;
+}
+
+.header h1 em{
+  color:var(--gold);
+  font-style:italic;
+}
+
+.header-sub{
+  font-size:16px;
+  opacity:0.85;
+  font-weight:300;
+}
+
+/* STATS BAR */
+.stats-bar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:1rem;
+  margin-top:2rem;
+}
+
+.stat-card{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  padding:1.25rem;
+  border-radius:12px;
+}
+
+.stat-value{
+  font-size:32px;
+  font-weight:700;
+  color:var(--gold);
+  font-family:'JetBrains Mono',monospace;
+  line-height:1;
+  margin-bottom:0.5rem;
+}
+
+.stat-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  opacity:0.8;
+}
+
+.progress-bar{
+  height:6px;
+  background:rgba(255,255,255,0.1);
+  border-radius:3px;
+  overflow:hidden;
+  margin-top:0.75rem;
+}
+
+.progress-fill{
+  height:100%;
+  background:linear-gradient(to right, var(--copper), var(--gold));
+  transition:width 0.5s;
+  border-radius:3px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:1400px;
+  margin:0 auto;
+  padding:2rem;
+}
+
+/* WEEK TABS */
+.week-tabs{
+  display:flex;
+  gap:0.5rem;
+  margin-bottom:2rem;
+  overflow-x:auto;
+  padding-bottom:0.5rem;
+  scrollbar-width:thin;
+}
+
+.week-tab{
+  padding:1rem 1.5rem;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink2);
+  white-space:nowrap;
+  transition:all 0.2s;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:0.25rem;
+  min-width:160px;
+}
+
+.week-tab:hover{
+  border-color:var(--copper);
+  transform:translateY(-2px);
+}
+
+.week-tab.active{
+  background:var(--forest);
+  color:#fff;
+  border-color:var(--forest);
+}
+
+.week-tab.active .week-tab-sub{
+  color:var(--gold);
+}
+
+.week-tab-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  color:var(--copper);
+  text-transform:uppercase;
+}
+
+.week-tab.active .week-tab-label{
+  color:var(--gold);
+}
+
+.week-tab-title{
+  font-size:14px;
+  font-weight:700;
+}
+
+.week-tab-sub{
+  font-size:11px;
+  font-weight:400;
+  color:var(--ink3);
+}
+
+/* COLUMNS */
+.columns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2rem;
+}
+
+.column{
+  background:#fff;
+  border-radius:14px;
+  border:1px solid var(--border);
+  overflow:hidden;
+}
+
+.column-header{
+  padding:1.5rem;
+  background:linear-gradient(135deg, rgba(26,60,52,0.04), rgba(193,127,74,0.04));
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.column-title{
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+}
+
+.user-avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#fff;
+  font-family:'Libre Baskerville',serif;
+  font-size:20px;
+}
+
+.user-avatar.dani{
+  background:linear-gradient(135deg, var(--pink), var(--copper));
+}
+
+.user-avatar.mauricio{
+  background:linear-gradient(135deg, var(--blue), var(--forest));
+}
+
+.column-name{
+  font-family:'Libre Baskerville',serif;
+  font-size:22px;
+  color:var(--forest);
+  font-weight:600;
+}
+
+.column-role{
+  font-size:12px;
+  color:var(--ink3);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:500;
+}
+
+.column-progress{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--copper);
+  font-weight:700;
+}
+
+.column-body{
+  padding:0;
+}
+
+/* TASK SECTION */
+.task-section{
+  border-bottom:1px solid var(--border);
+}
+
+.task-section:last-child{
+  border-bottom:none;
+}
+
+.task-section-header{
+  padding:1rem 1.5rem;
+  background:rgba(193,127,74,0.04);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--copper);
+  font-weight:700;
+  border-bottom:1px solid var(--border);
+}
+
+.task-list{
+  list-style:none;
+}
+
+.task{
+  padding:1rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:flex-start;
+  gap:0.75rem;
+  cursor:pointer;
+  transition:all 0.15s;
+  position:relative;
+}
+
+.task:last-child{
+  border-bottom:none;
+}
+
+.task:hover{
+  background:rgba(193,127,74,0.03);
+}
+
+.task.done{
+  background:rgba(45,122,79,0.04);
+}
+
+.task.done .task-text{
+  text-decoration:line-through;
+  color:var(--ink3);
+}
+
+.task-check{
+  width:22px;
+  height:22px;
+  border:2px solid var(--copper);
+  border-radius:6px;
+  flex-shrink:0;
+  margin-top:1px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:transparent;
+  font-size:14px;
+  font-weight:700;
+  transition:all 0.2s;
+  background:#fff;
+}
+
+.task.done .task-check{
+  background:var(--success);
+  border-color:var(--success);
+  color:#fff;
+}
+
+.task-content{
+  flex:1;
+  min-width:0;
+}
+
+.task-text{
+  font-size:14px;
+  color:var(--ink);
+  line-height:1.6;
+  transition:all 0.2s;
+}
+
+.task-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--success);
+  margin-top:0.25rem;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+
+.task-date::before{
+  content:'✓';
+  font-weight:700;
+}
+
+.task:not(.done) .task-date{
+  display:none;
+}
+
+/* LOADING */
+.loading{
+  text-align:center;
+  padding:3rem;
+  color:var(--ink3);
+  font-size:14px;
+}
+
+.loading-spinner{
+  display:inline-block;
+  width:24px;
+  height:24px;
+  border:3px solid var(--border);
+  border-top-color:var(--copper);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin-bottom:1rem;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* SETUP MODAL */
+.setup-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+}
+
+.setup-modal.hidden{
+  display:none;
+}
+
+.setup-content{
+  background:#fff;
+  border-radius:16px;
+  padding:2.5rem;
+  max-width:600px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.setup-content h2{
+  font-family:'Libre Baskerville',serif;
+  font-size:28px;
+  color:var(--forest);
+  margin-bottom:1rem;
+}
+
+.setup-content p{
+  color:var(--ink2);
+  margin-bottom:1rem;
+  font-size:14px;
+}
+
+.setup-content pre{
+  background:#f5f5f5;
+  padding:1rem;
+  border-radius:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  overflow-x:auto;
+  margin:1rem 0;
+  line-height:1.6;
+}
+
+.setup-content label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--forest);
+  margin-bottom:0.5rem;
+  margin-top:1rem;
+}
+
+.setup-content input{
+  width:100%;
+  padding:0.75rem 1rem;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+}
+
+.setup-content button{
+  width:100%;
+  margin-top:1.5rem;
+  padding:1rem;
+  background:var(--forest);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-family:inherit;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+
+.setup-content button:hover{
+  background:#0f231e;
+}
+
+.setup-tabs{
+  display:flex;
+  gap:0.5rem;
+  margin-bottom:1.5rem;
+  border-bottom:2px solid var(--border);
+}
+
+.setup-tab{
+  padding:0.75rem 1.25rem;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  color:var(--ink3);
+  font-size:14px;
+  margin-bottom:-2px;
+  border-bottom:3px solid transparent;
+  transition:all 0.2s;
+}
+
+.setup-tab.active{
+  color:var(--forest);
+  border-bottom-color:var(--copper);
+}
+
+.setup-tab-content{display:none}
+.setup-tab-content.active{display:block}
+
+/* SYNC INDICATOR */
+.sync-indicator{
+  position:fixed;
+  bottom:1.5rem;
+  right:1.5rem;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:0.75rem 1.25rem;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  font-size:12px;
+  color:var(--ink2);
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  opacity:0;
+  transform:translateY(10px);
+  transition:all 0.3s;
+  pointer-events:none;
+  z-index:100;
+}
+
+.sync-indicator.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.sync-dot{
+  width:8px;
+  height:8px;
+  background:var(--success);
+  border-radius:50%;
+  animation:pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:0.4}
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .columns{grid-template-columns:1fr}
+  .container{padding:1rem}
+  .header{padding:2rem 1rem 1.5rem}
+  .stats-bar{grid-template-columns:repeat(2, 1fr)}
+}
+
+/* GOAL CARD */
+.goal-card{
+  background:linear-gradient(135deg, var(--copper), var(--gold));
+  color:#fff;
+  padding:1.5rem 2rem;
+  border-radius:14px;
+  margin-bottom:2rem;
+  text-align:center;
+  box-shadow:0 8px 24px rgba(193,127,74,0.25);
+}
+
+.goal-card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  opacity:0.9;
+  margin-bottom:0.5rem;
+}
+
+.goal-card-text{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(20px, 3vw, 28px);
+  font-weight:400;
+}
+
+.goal-card-text em{
+  font-style:italic;
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP MODAL -->
+<div class="setup-modal" id="setupModal">
+  <div class="setup-content">
+    <h2>🔧 Configurar Supabase</h2>
+    <p>Pra começar a usar, conecte ao seu Supabase. Os dados ficam salvos lá e sincronizam entre você e a Dani.</p>
+
+    <div class="setup-tabs">
+      <button class="setup-tab active" onclick="showSetupTab('config')">Configurar</button>
+      <button class="setup-tab" onclick="showSetupTab('sql')">SQL (Setup do Banco)</button>
+    </div>
+
+    <div class="setup-tab-content active" id="tab-config">
+      <label>Supabase URL</label>
+      <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+
+      <label>Supabase Anon Key</label>
+      <input type="text" id="supabaseKey" placeholder="eyJhbGci...">
+
+      <button onclick="saveConfig()">Conectar e Começar</button>
+
+      <p style="margin-top:1.5rem;font-size:12px;color:var(--ink3)">
+        💡 Antes de conectar, rode o SQL da aba ao lado no seu Supabase pra criar a tabela.
+      </p>
+    </div>
+
+    <div class="setup-tab-content" id="tab-sql">
+      <p>Cole este SQL no <strong>SQL Editor</strong> do seu Supabase:</p>
+      <pre>-- Tabela de tarefas Legaci
+CREATE TABLE IF NOT EXISTS legaci_tasks (
+  id TEXT PRIMARY KEY,
+  done BOOLEAN DEFAULT FALSE,
+  completed_at TIMESTAMPTZ,
+  user_owner TEXT NOT NULL,
+  week INTEGER NOT NULL,
+  section TEXT NOT NULL,
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Permitir acesso público (cuidado: ajuste conforme necessidade)
+ALTER TABLE legaci_tasks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Permitir leitura pública" ON legaci_tasks
+FOR SELECT USING (true);
+
+CREATE POLICY "Permitir update público" ON legaci_tasks
+FOR UPDATE USING (true);
+
+CREATE POLICY "Permitir insert público" ON legaci_tasks
+FOR INSERT WITH CHECK (true);</pre>
+
+      <p style="margin-top:1rem;font-size:12px;color:var(--ink3)">
+        ⚠️ As políticas acima são abertas. Pra produção, considere autenticação.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-content">
+    <div class="header-top">
+      <div class="logo-area">
+        <div class="logo-mark">L</div>
+        <div>
+          <div class="logo-text">SPRINT 30 DIAS · LEGACI</div>
+          <h1>Vendas em <em>30 dias</em></h1>
+        </div>
+      </div>
+      <div class="user-switcher">
+        <button class="user-btn active" onclick="setUser('both')">Visão Geral</button>
+        <button class="user-btn" onclick="setUser('dani')">Dani</button>
+        <button class="user-btn" onclick="setUser('mauricio')">Maurício</button>
+      </div>
+    </div>
+
+    <p class="header-sub">Da primeira venda à validação do modelo comercial</p>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-value" id="totalProgress">0%</div>
+        <div class="stat-label">Progresso Total</div>
+        <div class="progress-bar"><div class="progress-fill" id="totalBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="daniProgress">0%</div>
+        <div class="stat-label">Dani · Comercial</div>
+        <div class="progress-bar"><div class="progress-fill" id="daniBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="mauricioProgress">0%</div>
+        <div class="stat-label">Maurício · Produto</div>
+        <div class="progress-bar"><div class="progress-fill" id="mauricioBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="weekProgress">0/0</div>
+        <div class="stat-label">Tarefas Concluídas</div>
+        <div class="progress-bar"><div class="progress-fill" id="taskBar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <div class="goal-card">
+    <div class="goal-card-label">META DO MÊS</div>
+    <div class="goal-card-text">Primeira venda no <em>dia 30</em> · 3-5 vendas fechadas até o fim do mês</div>
+  </div>
+
+  <!-- WEEK TABS -->
+  <div class="week-tabs">
+    <button class="week-tab active" onclick="setWeek(1)">
+      <span class="week-tab-label">Semana 1</span>
+      <span class="week-tab-title">Onboarding</span>
+      <span class="week-tab-sub">Imersão e setup</span>
+    </button>
+    <button class="week-tab" onclick="setWeek(2)">
+      <span class="week-tab-label">Semana 2</span>
+      <span class="week-tab-title">Aquecimento</span>
+      <span class="week-tab-sub">Conteúdo e ads</span>
+    </button>
+    <button class="week-tab" onclick="setWeek(3)">
+      <span class="week-tab-label">Semana 3</span>
+      <span class="week-tab-title">Primeiras Conversas</span>
+      <span class="week-tab-sub">Calls e propostas</span>
+    </button>
+    <button class="week-tab" onclick="setWeek(4)">
+      <span class="week-tab-label">Semana 4</span>
+      <span class="week-tab-title">Fechar! 🎯</span>
+      <span class="week-tab-sub">Primeiras vendas</span>
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+    <div>Carregando dados...</div>
+  </div>
+
+  <!-- COLUMNS -->
+  <div class="columns" id="columns" style="display:none">
+    <div class="column" id="col-dani">
+      <div class="column-header">
+        <div class="column-title">
+          <div class="user-avatar dani">D</div>
+          <div>
+            <div class="column-name">Daniela</div>
+            <div class="column-role">Comercial · Marketing</div>
+          </div>
+        </div>
+        <div class="column-progress" id="dani-week-progress">0/0</div>
+      </div>
+      <div class="column-body" id="dani-tasks"></div>
+    </div>
+
+    <div class="column" id="col-mauricio">
+      <div class="column-header">
+        <div class="column-title">
+          <div class="user-avatar mauricio">M</div>
+          <div>
+            <div class="column-name">Maurício</div>
+            <div class="column-role">Produto · Operação</div>
+          </div>
+        </div>
+        <div class="column-progress" id="mauricio-week-progress">0/0</div>
+      </div>
+      <div class="column-body" id="mauricio-tasks"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SYNC INDICATOR -->
+<div class="sync-indicator" id="syncIndicator">
+  <div class="sync-dot"></div>
+  <span id="syncText">Salvo!</span>
+</div>
+
+<script>
+// ============================================
+// CONFIGURAÇÃO DAS TAREFAS
+// ============================================
+const TASKS_DATA = {
+  1: { // SEMANA 1
+    dani: [
+      { section: "Dias 1-3 · Imersão Express", items: [
+        "Leitura completa da documentação (spec, kit anti-crise, plano 5 anos)",
+        "Assistir a 1 entrevista gravada completa",
+        "Conversa de 2h com Maurício: tudo sobre o produto",
+        "Acessar todos os sistemas (Supabase, painel admin, Notion)",
+        "Conhecer ICP e personas detalhadas"
+      ]},
+      { section: "Dias 4-7 · Setup Comercial", items: [
+        "Auditar Instagram atual (engajamento, alcance)",
+        "Criar 5 criativos para Meta Ads (vídeo + carrossel + imagem)",
+        "Configurar Meta Ads Manager + Pixel",
+        "Adaptar script de vendas (template kit anti-crise)",
+        "Configurar CRM simples no Notion",
+        "Definir tabela de preços oficial"
+      ]}
+    ],
+    mauricio: [
+      { section: "Dias 1-7 · Operação Pronta", items: [
+        "Garantir 3 entrevistadores disponíveis e treinados",
+        "Testar pipeline ebook end-to-end",
+        "Confirmar parceria Grafset (impressão)",
+        "Atualizar landing page de vendas",
+        "Garantir que Sofia (chatbot) está funcionando",
+        "Preparar contratos prontos para assinatura",
+        "Ativar sistema de pagamento (PIX + cartão)"
+      ]},
+      { section: "Desenvolvimento (paralelo)", items: [
+        "Continuar Legaci Memórias no Claude Code",
+        "Priorizar pipeline do LIVRO primeiro (vendas)",
+        "Definir reuniões semanais com Dani (segunda 9h)"
+      ]}
+    ]
+  },
+  2: { // SEMANA 2
+    dani: [
+      { section: "Dias 8-14 · Aquecer Instagram", items: [
+        "Publicar 3 posts (segunda, quarta, sexta)",
+        "Stories diários (bastidores + depoimentos antigos)",
+        "Gravar e publicar 2 Reels com depoimentos reais",
+        "Engajar com followers atuais (DMs, comentários)"
+      ]},
+      { section: "Setup Ads", items: [
+        "Lançar campanha teste: R$ 30/dia (7 dias)",
+        "Criar 3 anúncios simultâneos para teste A/B",
+        "Definir objetivo: gerar leads (não vendas ainda)",
+        "Meta: 30-40 leads em 7 dias"
+      ]},
+      { section: "Prospecção Direta", items: [
+        "Identificar 20 contatos quentes da rede pessoal",
+        "Mandar mensagem personalizada apresentando Legaci",
+        "Marcar 5-8 calls de qualificação"
+      ]}
+    ],
+    mauricio: [
+      { section: "Suporte à Dani", items: [
+        "Acompanhar primeiras conversas dela com leads",
+        "Estar disponível para dúvidas (WhatsApp ativo)",
+        "Validar discurso de vendas em conjunto"
+      ]},
+      { section: "Desenvolvimento + Operação", items: [
+        "Continuar Legaci Memórias no Code",
+        "Validar pipeline do livro com 1 cliente piloto (se possível)",
+        "Garantir backup de entrevistadores",
+        "Documentar processo end-to-end"
+      ]}
+    ]
+  },
+  3: { // SEMANA 3
+    dani: [
+      { section: "Dias 15-21 · Vendas Reais", items: [
+        "Fazer 5-10 calls de qualificação com leads dos ads",
+        "Fazer 3-5 calls com prospecção direta",
+        "Enviar 8-12 propostas personalizadas",
+        "Executar follow-up D+2 e D+5 (template kit anti-crise)",
+        "Refinar discurso baseado em objeções reais"
+      ]},
+      { section: "Conteúdo", items: [
+        "Publicar mais 3 posts no Instagram",
+        "Tentar criar 1 Reels com potencial viral",
+        "Stories diários com perguntas para o público"
+      ]},
+      { section: "Ajuste de Ads", items: [
+        "Pausar criativos com CTR < 2%",
+        "Dobrar budget nos que estão funcionando (R$ 50/dia)",
+        "Criar mais 3 criativos baseados em dados"
+      ]}
+    ],
+    mauricio: [
+      { section: "Apoio Direto", items: [
+        "Participar de 2-3 calls com Dani (modo observador)",
+        "Ajudar a refinar discurso baseado em objeções",
+        "Estar disponível para calls grandes (Plano Premium)",
+        "Garantir suporte técnico"
+      ]},
+      { section: "Operação", items: [
+        "Pré-agendar entrevistadores para possíveis fechamentos",
+        "Testar fluxo completo end-to-end com cliente fictício",
+        "Acelerar pipeline livro (transcrição + edição)"
+      ]}
+    ]
+  },
+  4: { // SEMANA 4
+    dani: [
+      { section: "Dias 22-30 · Fechar! 🎯", items: [
+        "Follow-up agressivo (mas educado) em todas propostas",
+        "Meta: 3-5 vendas fechadas até dia 30",
+        "Coletar 50% do pagamento antecipado",
+        "Agendar entrevistas pós-fechamento",
+        "Celebrar cada venda 🎉"
+      ]},
+      { section: "Sistematização", items: [
+        "Documentar o que funcionou no script",
+        "Anotar objeções mais comuns",
+        "Criar playbook de vendas (vivo)",
+        "Definir metas para o mês seguinte"
+      ]},
+      { section: "Escala de Ads", items: [
+        "Se CAC < R$ 250 → aumentar para R$ 80/dia",
+        "Se CAC alto → otimizar criativos primeiro"
+      ]}
+    ],
+    mauricio: [
+      { section: "Garantir Entrega Perfeita", items: [
+        "Acompanhar PRIMEIRAS entrevistas pessoalmente",
+        "Garantir qualidade do roteiro personalizado",
+        "Pipeline ebook rodando sem falhas",
+        "Cada cliente sai encantado (gera depoimento + indicação)"
+      ]},
+      { section: "Desenvolvimento", items: [
+        "Continuar Legaci Memórias",
+        "Não atrasar entregas técnicas",
+        "Reunião final do mês com Dani (análise + plano mês 2)"
+      ]}
+    ]
+  }
+};
+
+// ============================================
+// ESTADO GLOBAL
+// ============================================
+let supabase = null;
+let currentWeek = 1;
+let currentUser = 'both';
+let tasksState = {}; // { taskId: { done, completedAt } }
+
+// ============================================
+// SUPABASE SETUP
+// ============================================
+function loadConfig(){
+  const url = localStorage.getItem('legaci_supabase_url');
+  const key = localStorage.getItem('legaci_supabase_key');
+  if(url && key){
+    supabase = window.supabase.createClient(url, key);
+    document.getElementById('setupModal').classList.add('hidden');
+    initApp();
+  }
+}
+
+function saveConfig(){
+  const url = document.getElementById('supabaseUrl').value.trim();
+  const key = document.getElementById('supabaseKey').value.trim();
+  if(!url || !key){
+    alert('Preencha URL e Key');
+    return;
+  }
+  localStorage.setItem('legaci_supabase_url', url);
+  localStorage.setItem('legaci_supabase_key', key);
+  supabase = window.supabase.createClient(url, key);
+  document.getElementById('setupModal').classList.add('hidden');
+  initApp();
+}
+
+function showSetupTab(tab){
+  document.querySelectorAll('.setup-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.setup-tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ============================================
+// CARREGAR DADOS DO SUPABASE
+// ============================================
+async function loadTasks(){
+  try {
+    const { data, error } = await supabase
+      .from('legaci_tasks')
+      .select('*');
+
+    if(error) throw error;
+
+    // Mapear estado
+    tasksState = {};
+    (data || []).forEach(task => {
+      tasksState[task.id] = {
+        done: task.done,
+        completedAt: task.completed_at
+      };
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('columns').style.display = 'grid';
+    renderTasks();
+    updateStats();
+  } catch(err) {
+    console.error('Erro ao carregar:', err);
+    showSync('Erro: ' + err.message, true);
+  }
+}
+
+// ============================================
+// SALVAR TAREFA
+// ============================================
+async function toggleTask(taskId, week, user, section, text){
+  const isDone = !tasksState[taskId]?.done;
+  const completedAt = isDone ? new Date().toISOString() : null;
+
+  // Atualizar UI imediatamente
+  tasksState[taskId] = { done: isDone, completedAt };
+  renderTasks();
+  updateStats();
+  showSync('Salvando...');
+
+  try {
+    const { error } = await supabase
+      .from('legaci_tasks')
+      .upsert({
+        id: taskId,
+        done: isDone,
+        completed_at: completedAt,
+        user_owner: user,
+        week: week,
+        section: section,
+        text: text
+      });
+
+    if(error) throw error;
+    showSync('✓ Salvo no Supabase');
+  } catch(err) {
+    console.error('Erro ao salvar:', err);
+    showSync('Erro: ' + err.message, true);
+    // Reverter estado
+    tasksState[taskId] = { done: !isDone, completedAt: null };
+    renderTasks();
+    updateStats();
+  }
+}
+
+// ============================================
+// RENDERIZAR
+// ============================================
+function renderTasks(){
+  const weekData = TASKS_DATA[currentWeek];
+  const showDani = currentUser === 'both' || currentUser === 'dani';
+  const showMauricio = currentUser === 'both' || currentUser === 'mauricio';
+
+  document.getElementById('col-dani').style.display = showDani ? 'block' : 'none';
+  document.getElementById('col-mauricio').style.display = showMauricio ? 'block' : 'none';
+
+  // Ajustar colunas se só 1 visível
+  document.getElementById('columns').style.gridTemplateColumns =
+    (showDani && showMauricio) ? '1fr 1fr' : '1fr';
+
+  // Dani
+  renderColumn('dani', weekData.dani);
+  // Maurício
+  renderColumn('mauricio', weekData.mauricio);
+}
+
+function renderColumn(user, sections){
+  const container = document.getElementById(user + '-tasks');
+  let html = '';
+  let totalTasks = 0;
+  let doneTasks = 0;
+
+  sections.forEach(section => {
+    html += `<div class="task-section">`;
+    html += `<div class="task-section-header">${section.section}</div>`;
+    html += `<ul class="task-list">`;
+
+    section.items.forEach((text, idx) => {
+      const taskId = `w${currentWeek}-${user}-${section.section.replace(/[^a-z0-9]/gi, '_')}-${idx}`;
+      const state = tasksState[taskId] || { done: false };
+      totalTasks++;
+      if(state.done) doneTasks++;
+
+      const dateText = state.completedAt
+        ? new Date(state.completedAt).toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        : '';
+
+      html += `
+        <li class="task ${state.done ? 'done' : ''}" onclick="toggleTask('${taskId}', ${currentWeek}, '${user}', '${section.section.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-text">${text}</div>
+            <div class="task-date">Concluído em ${dateText}</div>
+          </div>
+        </li>
+      `;
+    });
+
+    html += `</ul></div>`;
+  });
+
+  container.innerHTML = html;
+  document.getElementById(user + '-week-progress').textContent = `${doneTasks}/${totalTasks}`;
+}
+
+// ============================================
+// ESTATÍSTICAS
+// ============================================
+function updateStats(){
+  let total = 0, done = 0;
+  let daniTotal = 0, daniDone = 0;
+  let mauricioTotal = 0, mauricioDone = 0;
+
+  Object.keys(TASKS_DATA).forEach(week => {
+    ['dani', 'mauricio'].forEach(user => {
+      TASKS_DATA[week][user].forEach(section => {
+        section.items.forEach((text, idx) => {
+          const taskId = `w${week}-${user}-${section.section.replace(/[^a-z0-9]/gi, '_')}-${idx}`;
+          const state = tasksState[taskId] || { done: false };
+          total++;
+          if(state.done) done++;
+          if(user === 'dani'){
+            daniTotal++;
+            if(state.done) daniDone++;
+          } else {
+            mauricioTotal++;
+            if(state.done) mauricioDone++;
+          }
+        });
+      });
+    });
+  });
+
+  const totalPct = total ? Math.round((done/total)*100) : 0;
+  const daniPct = daniTotal ? Math.round((daniDone/daniTotal)*100) : 0;
+  const mauricioPct = mauricioTotal ? Math.round((mauricioDone/mauricioTotal)*100) : 0;
+
+  document.getElementById('totalProgress').textContent = totalPct + '%';
+  document.getElementById('daniProgress').textContent = daniPct + '%';
+  document.getElementById('mauricioProgress').textContent = mauricioPct + '%';
+  document.getElementById('weekProgress').textContent = `${done}/${total}`;
+
+  document.getElementById('totalBar').style.width = totalPct + '%';
+  document.getElementById('daniBar').style.width = daniPct + '%';
+  document.getElementById('mauricioBar').style.width = mauricioPct + '%';
+  document.getElementById('taskBar').style.width = totalPct + '%';
+}
+
+// ============================================
+// NAVEGAÇÃO
+// ============================================
+function setWeek(week){
+  currentWeek = week;
+  document.querySelectorAll('.week-tab').forEach((t, i) => {
+    t.classList.toggle('active', i + 1 === week);
+  });
+  renderTasks();
+}
+
+function setUser(user){
+  currentUser = user;
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTasks();
+}
+
+// ============================================
+// SYNC INDICATOR
+// ============================================
+let syncTimeout;
+function showSync(msg, isError = false){
+  const ind = document.getElementById('syncIndicator');
+  document.getElementById('syncText').textContent = msg;
+  ind.classList.add('visible');
+  ind.querySelector('.sync-dot').style.background = isError ? '#DC2626' : 'var(--success)';
+
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(() => {
+    ind.classList.remove('visible');
+  }, 2000);
+}
+
+// ============================================
+// INIT
+// ============================================
+function initApp(){
+  loadTasks();
+}
+
+// Iniciar
+loadConfig();
+</script>
+
+</body>
+</html>
