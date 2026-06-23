@@ -63,22 +63,8 @@ body{
 }
 
 .logo-area{display:flex;align-items:center;gap:1rem}
-
-.logo-mark{
-  font-family:'Libre Baskerville',serif;
-  font-size:32px;
-  color:var(--gold);
-  line-height:1;
-}
-
-.logo-text{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:2px;
-  color:var(--gold);
-  text-transform:uppercase;
-  opacity:0.9;
-}
+.logo-mark{font-family:'Libre Baskerville',serif;font-size:32px;color:var(--gold);line-height:1}
+.logo-text{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;opacity:0.9}
 
 .user-switcher{
   display:flex;
@@ -113,7 +99,6 @@ body{
 }
 
 .header h1 em{color:var(--gold);font-style:italic}
-
 .header-sub{font-size:16px;opacity:0.85;font-weight:300}
 
 .stats-bar{
@@ -179,7 +164,7 @@ body{
   flex-wrap:wrap;
 }
 
-.goal-card-text-area{flex:1;text-align:left}
+.goal-card-text-area{flex:1;text-align:left;min-width:0}
 
 .goal-card-label{
   font-family:'JetBrains Mono',monospace;
@@ -192,7 +177,7 @@ body{
 
 .goal-card-text{
   font-family:'Libre Baskerville',serif;
-  font-size:clamp(18px, 2.5vw, 24px);
+  font-size:clamp(16px, 2.5vw, 22px);
   font-weight:400;
 }
 
@@ -356,6 +341,7 @@ body{
   gap:0.75rem;
   transition:all 0.15s;
   position:relative;
+  cursor:pointer;
 }
 
 .task:last-child{border-bottom:none}
@@ -378,7 +364,6 @@ body{
   font-weight:700;
   transition:all 0.2s;
   background:#fff;
-  cursor:pointer;
 }
 
 .task.done .task-check{
@@ -387,8 +372,9 @@ body{
   color:#fff;
 }
 
-.task-content{flex:1;min-width:0;cursor:pointer}
+.task-content{flex:1;min-width:0}
 .task-text{font-size:14px;color:var(--ink);line-height:1.6;transition:all 0.2s}
+
 .task-custom-badge{
   display:inline-block;
   background:rgba(193,127,74,0.15);
@@ -525,11 +511,7 @@ body{
   font-family:inherit;
 }
 
-.modal-actions{
-  display:flex;
-  gap:0.75rem;
-  margin-top:2rem;
-}
+.modal-actions{display:flex;gap:0.75rem;margin-top:2rem}
 
 .btn-modal{
   flex:1;
@@ -590,6 +572,14 @@ body{
   50%{opacity:0.4}
 }
 
+.empty-state{
+  padding:2rem;
+  text-align:center;
+  color:var(--ink3);
+  font-size:14px;
+  font-style:italic;
+}
+
 @media(max-width:768px){
   .columns{grid-template-columns:1fr}
   .container{padding:1rem}
@@ -597,6 +587,9 @@ body{
   .stats-bar{grid-template-columns:repeat(2, 1fr)}
   .goal-card{flex-direction:column;text-align:center}
   .goal-card-text-area{text-align:center}
+  .header-top{flex-direction:column;align-items:stretch}
+  .user-switcher{width:100%;justify-content:space-between}
+  .user-btn{flex:1;text-align:center}
 }
 </style>
 </head>
@@ -613,10 +606,10 @@ body{
           <h1>Vendas em <em>30 dias</em></h1>
         </div>
       </div>
-      <div class="user-switcher">
-        <button class="user-btn active" data-user="both" onclick="setUser('both', event)">Visão Geral</button>
-        <button class="user-btn" data-user="dani" onclick="setUser('dani', event)">Dani</button>
-        <button class="user-btn" data-user="mauricio" onclick="setUser('mauricio', event)">Maurício</button>
+      <div class="user-switcher" id="userSwitcher">
+        <button class="user-btn active" data-user="both" type="button">Visão Geral</button>
+        <button class="user-btn" data-user="dani" type="button">Dani</button>
+        <button class="user-btn" data-user="mauricio" type="button">Maurício</button>
       </div>
     </div>
 
@@ -654,26 +647,26 @@ body{
       <div class="goal-card-label">META DO MÊS</div>
       <div class="goal-card-text">Primeira venda no <em>dia 30</em> · 3-5 vendas fechadas</div>
     </div>
-    <button class="btn-add" onclick="openAddTaskModal()">+ Adicionar Tarefa</button>
+    <button class="btn-add" id="btnAddTask" type="button">+ Adicionar Tarefa</button>
   </div>
 
-  <div class="week-tabs">
-    <button class="week-tab active" data-week="1" onclick="setWeek(1, event)">
+  <div class="week-tabs" id="weekTabs">
+    <button class="week-tab active" data-week="1" type="button">
       <span class="week-tab-label">Semana 1</span>
       <span class="week-tab-title">Onboarding</span>
       <span class="week-tab-sub">Imersão e setup</span>
     </button>
-    <button class="week-tab" data-week="2" onclick="setWeek(2, event)">
+    <button class="week-tab" data-week="2" type="button">
       <span class="week-tab-label">Semana 2</span>
       <span class="week-tab-title">Aquecimento</span>
       <span class="week-tab-sub">Conteúdo e ads</span>
     </button>
-    <button class="week-tab" data-week="3" onclick="setWeek(3, event)">
+    <button class="week-tab" data-week="3" type="button">
       <span class="week-tab-label">Semana 3</span>
       <span class="week-tab-title">Primeiras Conversas</span>
       <span class="week-tab-sub">Calls e propostas</span>
     </button>
-    <button class="week-tab" data-week="4" onclick="setWeek(4, event)">
+    <button class="week-tab" data-week="4" type="button">
       <span class="week-tab-label">Semana 4</span>
       <span class="week-tab-title">Fechar! 🎯</span>
       <span class="week-tab-sub">Primeiras vendas</span>
@@ -744,8 +737,8 @@ body{
     <textarea id="newTaskText" placeholder="Ex: Ligar para 5 leads quentes da rede pessoal"></textarea>
 
     <div class="modal-actions">
-      <button class="btn-modal btn-secondary" onclick="closeAddTaskModal()">Cancelar</button>
-      <button class="btn-modal btn-primary" onclick="addCustomTask()">Adicionar Tarefa</button>
+      <button class="btn-modal btn-secondary" id="btnCancel" type="button">Cancelar</button>
+      <button class="btn-modal btn-primary" id="btnSaveTask" type="button">Adicionar Tarefa</button>
     </div>
   </div>
 </div>
@@ -758,7 +751,7 @@ body{
 
 <script>
 // ============================================
-// SUPABASE - PRÉ-CONFIGURADO
+// CONFIGURAÇÃO SUPABASE
 // ============================================
 const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
@@ -766,7 +759,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let supabase = null;
 
 // ============================================
-// TAREFAS PADRÃO (PRÉ-DEFINIDAS)
+// TAREFAS PADRÃO
 // ============================================
 const DEFAULT_TASKS = {
   1: {
@@ -853,7 +846,7 @@ const DEFAULT_TASKS = {
         "Stories diários com perguntas para o público"
       ]},
       { section: "Ajuste de Ads", items: [
-        "Pausar criativos com CTR < 2%",
+        "Pausar criativos com CTR menor que 2%",
         "Dobrar budget nos que estão funcionando (R$ 50/dia)",
         "Criar mais 3 criativos baseados em dados"
       ]}
@@ -874,7 +867,7 @@ const DEFAULT_TASKS = {
   },
   4: {
     dani: [
-      { section: "Dias 22-30 · Fechar! 🎯", items: [
+      { section: "Dias 22-30 · Fechar 🎯", items: [
         "Follow-up agressivo (mas educado) em todas propostas",
         "Meta: 3-5 vendas fechadas até dia 30",
         "Coletar 50% do pagamento antecipado",
@@ -888,8 +881,8 @@ const DEFAULT_TASKS = {
         "Definir metas para o mês seguinte"
       ]},
       { section: "Escala de Ads", items: [
-        "Se CAC < R$ 250 → aumentar para R$ 80/dia",
-        "Se CAC alto → otimizar criativos primeiro"
+        "Se CAC menor que R$ 250: aumentar para R$ 80/dia",
+        "Se CAC alto: otimizar criativos primeiro"
       ]}
     ],
     mauricio: [
@@ -914,7 +907,7 @@ const DEFAULT_TASKS = {
 let currentWeek = 1;
 let currentUser = 'both';
 let tasksState = {};
-let customTasks = []; // Tarefas adicionadas pelo usuário
+let customTasks = [];
 
 // ============================================
 // HELPERS
@@ -923,9 +916,38 @@ function sectionToId(section){
   return section.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 }
 
-function makeTaskId(week, user, section, idx, isCustom = false){
-  const prefix = isCustom ? 'custom' : 'default';
-  return `${prefix}-w${week}-${user}-${sectionToId(section)}-${idx}`;
+function makeTaskId(week, user, section, idx){
+  return `default-w${week}-${user}-${sectionToId(section)}-${idx}`;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatDate(dateStr){
+  if(!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+// ============================================
+// SYNC INDICATOR
+// ============================================
+let syncTimeout;
+function showSync(msg, isError = false){
+  const ind = document.getElementById('syncIndicator');
+  document.getElementById('syncText').textContent = msg;
+  ind.classList.add('visible');
+  ind.querySelector('.sync-dot').style.background = isError ? 'var(--danger)' : 'var(--success)';
+
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(() => {
+    ind.classList.remove('visible');
+  }, 2500);
 }
 
 // ============================================
@@ -948,7 +970,6 @@ async function loadTasks(){
         completedAt: task.completed_at
       };
 
-      // Se for tarefa customizada (id começa com "custom-")
       if(task.id.startsWith('custom-')){
         customTasks.push({
           id: task.id,
@@ -964,22 +985,25 @@ async function loadTasks(){
     document.getElementById('columns').style.display = 'grid';
     renderTasks();
     updateStats();
+    showSync('✓ Dados carregados');
   } catch(err) {
     console.error('Erro ao carregar:', err);
-    showSync('Erro: ' + err.message, true);
     document.getElementById('loading').innerHTML =
-      '<p style="color:var(--danger)">Erro ao carregar: ' + err.message + '</p>' +
-      '<p style="margin-top:1rem;font-size:13px">Verifique se a tabela <code>legaci_tasks</code> foi criada no Supabase</p>';
+      '<p style="color:var(--danger);font-weight:600">Erro ao carregar dados</p>' +
+      '<p style="margin-top:0.5rem;font-size:13px">' + err.message + '</p>' +
+      '<p style="margin-top:1rem;font-size:12px;color:var(--ink3)">Verifique se a tabela <code>legaci_tasks</code> foi criada no Supabase</p>';
   }
 }
 
 // ============================================
-// SALVAR TAREFA (toggle done)
+// TOGGLE TAREFA
 // ============================================
-async function toggleTask(taskId, week, user, section, text){
+async function toggleTask(taskData){
+  const taskId = taskData.id;
   const isDone = !tasksState[taskId]?.done;
   const completedAt = isDone ? new Date().toISOString() : null;
 
+  // UI otimista
   tasksState[taskId] = { done: isDone, completedAt };
   renderTasks();
   updateStats();
@@ -992,14 +1016,14 @@ async function toggleTask(taskId, week, user, section, text){
         id: taskId,
         done: isDone,
         completed_at: completedAt,
-        user_owner: user,
-        week: week,
-        section: section,
-        text: text
+        user_owner: taskData.user,
+        week: taskData.week,
+        section: taskData.section,
+        text: taskData.text
       });
 
     if(error) throw error;
-    showSync(isDone ? '✓ Tarefa concluída!' : '↩ Desmarcado');
+    showSync(isDone ? '✓ Concluída!' : '↩ Desmarcada');
   } catch(err) {
     console.error('Erro ao salvar:', err);
     showSync('Erro: ' + err.message, true);
@@ -1010,7 +1034,7 @@ async function toggleTask(taskId, week, user, section, text){
 }
 
 // ============================================
-// ADICIONAR NOVA TAREFA
+// ADICIONAR TAREFA
 // ============================================
 function openAddTaskModal(){
   document.getElementById('newTaskUser').value = currentUser === 'mauricio' ? 'mauricio' : 'dani';
@@ -1055,19 +1079,19 @@ async function addCustomTask(){
 
     if(error) throw error;
 
-    // Adicionar localmente
     customTasks.push({ id: taskId, week, user, section, text });
     tasksState[taskId] = { done: false, completedAt: null };
 
     closeAddTaskModal();
-    renderTasks();
-    updateStats();
-    showSync('✓ Tarefa adicionada!');
 
-    // Navegar para a semana da nova tarefa se necessário
     if(week !== currentWeek){
       setWeek(week);
+    } else {
+      renderTasks();
+      updateStats();
     }
+
+    showSync('✓ Tarefa adicionada!');
   } catch(err) {
     console.error('Erro ao adicionar:', err);
     alert('Erro ao adicionar tarefa: ' + err.message);
@@ -1077,8 +1101,7 @@ async function addCustomTask(){
 // ============================================
 // REMOVER TAREFA CUSTOMIZADA
 // ============================================
-async function deleteCustomTask(taskId, event){
-  event.stopPropagation();
+async function deleteCustomTask(taskId){
   if(!confirm('Tem certeza que quer remover essa tarefa?')) return;
 
   showSync('Removendo...');
@@ -1096,7 +1119,7 @@ async function deleteCustomTask(taskId, event){
 
     renderTasks();
     updateStats();
-    showSync('✓ Tarefa removida');
+    showSync('✓ Removida');
   } catch(err) {
     console.error('Erro ao remover:', err);
     showSync('Erro: ' + err.message, true);
@@ -1123,15 +1146,22 @@ function renderTasks(){
 function renderColumn(user){
   const container = document.getElementById(user + '-tasks');
   const weekData = DEFAULT_TASKS[currentWeek][user];
-  let html = '';
+  container.innerHTML = '';
   let totalTasks = 0;
   let doneTasks = 0;
 
   // Tarefas padrão
   weekData.forEach(section => {
-    html += `<div class="task-section">`;
-    html += `<div class="task-section-header">${escapeHtml(section.section)}</div>`;
-    html += `<ul class="task-list">`;
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'task-section';
+
+    const header = document.createElement('div');
+    header.className = 'task-section-header';
+    header.textContent = section.section;
+    sectionDiv.appendChild(header);
+
+    const ul = document.createElement('ul');
+    ul.className = 'task-list';
 
     section.items.forEach((text, idx) => {
       const taskId = makeTaskId(currentWeek, user, section.section, idx);
@@ -1139,29 +1169,25 @@ function renderColumn(user){
       totalTasks++;
       if(state.done) doneTasks++;
 
-      const dateText = state.completedAt
-        ? new Date(state.completedAt).toLocaleDateString('pt-BR', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-          })
-        : '';
-
-      html += renderTaskHtml({
+      const li = createTaskElement({
         id: taskId,
         week: currentWeek,
         user: user,
         section: section.section,
         text: text,
         done: state.done,
-        dateText: dateText,
+        completedAt: state.completedAt,
         isCustom: false
       });
+
+      ul.appendChild(li);
     });
 
-    html += `</ul></div>`;
+    sectionDiv.appendChild(ul);
+    container.appendChild(sectionDiv);
   });
 
-  // Agrupar tarefas customizadas por seção
+  // Tarefas customizadas
   const userCustomTasks = customTasks.filter(t => t.week === currentWeek && t.user === user);
   const customBySections = {};
   userCustomTasks.forEach(t => {
@@ -1169,65 +1195,113 @@ function renderColumn(user){
     customBySections[t.section].push(t);
   });
 
-  // Renderizar tarefas customizadas
   Object.keys(customBySections).forEach(sectionName => {
-    html += `<div class="task-section">`;
-    html += `<div class="task-section-header">⭐ ${escapeHtml(sectionName)}</div>`;
-    html += `<ul class="task-list">`;
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'task-section';
+
+    const header = document.createElement('div');
+    header.className = 'task-section-header';
+    header.textContent = '⭐ ' + sectionName;
+    sectionDiv.appendChild(header);
+
+    const ul = document.createElement('ul');
+    ul.className = 'task-list';
 
     customBySections[sectionName].forEach(task => {
       const state = tasksState[task.id] || { done: false };
       totalTasks++;
       if(state.done) doneTasks++;
 
-      const dateText = state.completedAt
-        ? new Date(state.completedAt).toLocaleDateString('pt-BR', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-          })
-        : '';
-
-      html += renderTaskHtml({
+      const li = createTaskElement({
         id: task.id,
         week: task.week,
         user: task.user,
         section: task.section,
         text: task.text,
         done: state.done,
-        dateText: dateText,
+        completedAt: state.completedAt,
         isCustom: true
       });
+
+      ul.appendChild(li);
     });
 
-    html += `</ul></div>`;
+    sectionDiv.appendChild(ul);
+    container.appendChild(sectionDiv);
   });
 
-  container.innerHTML = html;
   document.getElementById(user + '-week-progress').textContent = `${doneTasks}/${totalTasks}`;
 }
 
-function renderTaskHtml(task){
-  const customBadge = task.isCustom ? '<span class="task-custom-badge">Custom</span>' : '';
-  const deleteBtn = task.isCustom
-    ? `<button class="task-delete" onclick="deleteCustomTask('${task.id}', event)" title="Remover tarefa">×</button>`
-    : '';
+// ============================================
+// CRIAR ELEMENTO DA TAREFA (sem onclick inline)
+// ============================================
+function createTaskElement(task){
+  const li = document.createElement('li');
+  li.className = 'task' + (task.done ? ' done' : '');
 
-  return `
-    <li class="task ${task.done ? 'done' : ''}">
-      <div class="task-check" onclick="toggleTask('${task.id}', ${task.week}, '${task.user}', ${JSON.stringify(task.section)}, ${JSON.stringify(task.text)})">✓</div>
-      <div class="task-content" onclick="toggleTask('${task.id}', ${task.week}, '${task.user}', ${JSON.stringify(task.section)}, ${JSON.stringify(task.text)})">
-        <div class="task-text">${escapeHtml(task.text)}${customBadge}</div>
-        <div class="task-date">Concluído em ${task.dateText}</div>
-      </div>
-      ${deleteBtn}
-    </li>
-  `;
-}
+  // Checkbox
+  const check = document.createElement('div');
+  check.className = 'task-check';
+  check.textContent = '✓';
 
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  // Content
+  const content = document.createElement('div');
+  content.className = 'task-content';
+
+  const textDiv = document.createElement('div');
+  textDiv.className = 'task-text';
+  textDiv.textContent = task.text;
+
+  if(task.isCustom){
+    const badge = document.createElement('span');
+    badge.className = 'task-custom-badge';
+    badge.textContent = 'Custom';
+    textDiv.appendChild(badge);
+  }
+
+  content.appendChild(textDiv);
+
+  if(task.completedAt){
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'task-date';
+    dateDiv.textContent = 'Concluído em ' + formatDate(task.completedAt);
+    content.appendChild(dateDiv);
+  }
+
+  // Event listener (em vez de onclick inline)
+  const handleClick = (e) => {
+    e.stopPropagation();
+    toggleTask({
+      id: task.id,
+      week: task.week,
+      user: task.user,
+      section: task.section,
+      text: task.text
+    });
+  };
+
+  check.addEventListener('click', handleClick);
+  content.addEventListener('click', handleClick);
+
+  li.appendChild(check);
+  li.appendChild(content);
+
+  // Delete button só pra customizadas
+  if(task.isCustom){
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'task-delete';
+    deleteBtn.textContent = '×';
+    deleteBtn.title = 'Remover tarefa';
+    deleteBtn.type = 'button';
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteCustomTask(task.id);
+    });
+    li.appendChild(deleteBtn);
+  }
+
+  return li;
 }
 
 // ============================================
@@ -1238,7 +1312,6 @@ function updateStats(){
   let daniTotal = 0, daniDone = 0;
   let mauricioTotal = 0, mauricioDone = 0;
 
-  // Padrão
   Object.keys(DEFAULT_TASKS).forEach(week => {
     ['dani', 'mauricio'].forEach(user => {
       DEFAULT_TASKS[week][user].forEach(section => {
@@ -1259,7 +1332,6 @@ function updateStats(){
     });
   });
 
-  // Customizadas
   customTasks.forEach(task => {
     const state = tasksState[task.id] || { done: false };
     total++;
@@ -1291,7 +1363,7 @@ function updateStats(){
 // ============================================
 // NAVEGAÇÃO
 // ============================================
-function setWeek(week, event){
+function setWeek(week){
   currentWeek = week;
   document.querySelectorAll('.week-tab').forEach(t => {
     t.classList.toggle('active', parseInt(t.dataset.week) === week);
@@ -1299,7 +1371,7 @@ function setWeek(week, event){
   renderTasks();
 }
 
-function setUser(user, event){
+function setUser(user){
   currentUser = user;
   document.querySelectorAll('.user-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.user === user);
@@ -1308,37 +1380,57 @@ function setUser(user, event){
 }
 
 // ============================================
-// SYNC INDICATOR
+// INIT - USANDO EVENT LISTENERS (não inline)
 // ============================================
-let syncTimeout;
-function showSync(msg, isError = false){
-  const ind = document.getElementById('syncIndicator');
-  document.getElementById('syncText').textContent = msg;
-  ind.classList.add('visible');
-  ind.querySelector('.sync-dot').style.background = isError ? 'var(--danger)' : 'var(--success)';
+function initEventListeners(){
+  // Botões de semana
+  document.querySelectorAll('.week-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const week = parseInt(btn.dataset.week);
+      setWeek(week);
+    });
+  });
 
-  clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    ind.classList.remove('visible');
-  }, 2500);
+  // Botões de usuário
+  document.querySelectorAll('.user-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const user = btn.dataset.user;
+      setUser(user);
+    });
+  });
+
+  // Botão adicionar tarefa
+  document.getElementById('btnAddTask').addEventListener('click', openAddTaskModal);
+
+  // Modal
+  document.getElementById('btnCancel').addEventListener('click', closeAddTaskModal);
+  document.getElementById('btnSaveTask').addEventListener('click', addCustomTask);
+
+  // Fechar modal ao clicar fora
+  document.getElementById('addTaskModal').addEventListener('click', e => {
+    if(e.target.id === 'addTaskModal') closeAddTaskModal();
+  });
 }
 
-// ============================================
-// FECHAR MODAL AO CLICAR FORA
-// ============================================
-document.getElementById('addTaskModal').addEventListener('click', e => {
-  if(e.target.id === 'addTaskModal') closeAddTaskModal();
-});
-
-// ============================================
-// INIT
-// ============================================
-function initApp(){
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  loadTasks();
+function init(){
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    initEventListeners();
+    loadTasks();
+  } catch(err) {
+    console.error('Erro na inicialização:', err);
+    document.getElementById('loading').innerHTML =
+      '<p style="color:var(--danger);font-weight:600">Erro ao inicializar</p>' +
+      '<p style="margin-top:0.5rem;font-size:13px">' + err.message + '</p>';
+  }
 }
 
-initApp();
+// Aguarda DOM carregar
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
 
 </body>
