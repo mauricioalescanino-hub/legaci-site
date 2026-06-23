@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sprint 30 Dias · Legaci</title>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --forest:#1A3C34;
@@ -33,38 +32,60 @@ body{
   min-height:100vh;
 }
 
+/* DEBUG PANEL */
+#debugPanel{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#1a1a1a;
+  color:#0f0;
+  padding:0.75rem 1rem;
+  font-family:monospace;
+  font-size:11px;
+  max-height:150px;
+  overflow-y:auto;
+  border-top:2px solid #0f0;
+  z-index:9999;
+  display:none;
+}
+
+#debugPanel.visible{display:block}
+
+#debugPanel .log-error{color:#ff5555}
+#debugPanel .log-success{color:#55ff55}
+#debugPanel .log-info{color:#aaa}
+
+#debugToggle{
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  background:#1a1a1a;
+  color:#0f0;
+  border:1px solid #0f0;
+  padding:0.5rem 1rem;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:monospace;
+  font-size:12px;
+  z-index:10000;
+}
+
 .header{
   background:linear-gradient(135deg, var(--forest), #0f231e);
   color:#fff;
-  padding:3rem 2rem 2rem;
-  position:relative;
-  overflow:hidden;
+  padding:2rem 1.5rem;
 }
 
-.header::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 50%, rgba(193,127,74,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 50%, rgba(212,175,55,0.1) 0%, transparent 50%);
-  pointer-events:none;
+.header-content{max-width:1400px;margin:0 auto}
+
+.header h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(24px, 4vw, 36px);
+  margin-bottom:0.5rem;
 }
-
-.header-content{max-width:1400px;margin:0 auto;position:relative;z-index:2}
-
-.header-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:1rem;
-  margin-bottom:2rem;
-}
-
-.logo-area{display:flex;align-items:center;gap:1rem}
-.logo-mark{font-family:'Libre Baskerville',serif;font-size:32px;color:var(--gold);line-height:1}
-.logo-text{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;opacity:0.9}
+.header h1 em{color:var(--gold);font-style:italic}
+.header-sub{opacity:0.85;font-size:14px}
 
 .user-switcher{
   display:flex;
@@ -72,11 +93,12 @@ body{
   background:rgba(255,255,255,0.1);
   padding:0.25rem;
   border-radius:10px;
-  border:1px solid rgba(255,255,255,0.15);
+  margin-top:1.5rem;
+  max-width:max-content;
 }
 
 .user-btn{
-  padding:0.5rem 1rem;
+  padding:0.6rem 1.2rem;
   background:transparent;
   color:#fff;
   border:none;
@@ -85,186 +107,130 @@ body{
   font-family:inherit;
   font-size:13px;
   font-weight:600;
-  transition:all 0.2s;
   opacity:0.6;
+  transition:all 0.2s;
 }
 
 .user-btn.active{background:var(--copper);opacity:1}
+.user-btn:hover{opacity:1}
 
-.header h1{
-  font-family:'Libre Baskerville',serif;
-  font-size:clamp(28px, 4vw, 42px);
-  font-weight:400;
-  margin-bottom:0.5rem;
-}
-
-.header h1 em{color:var(--gold);font-style:italic}
-.header-sub{font-size:16px;opacity:0.85;font-weight:300}
+.container{max-width:1400px;margin:0 auto;padding:1.5rem;padding-bottom:5rem}
 
 .stats-bar{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
   gap:1rem;
-  margin-top:2rem;
+  margin-bottom:2rem;
 }
 
 .stat-card{
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.15);
-  padding:1.25rem;
-  border-radius:12px;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:1rem;
+  border-radius:10px;
 }
 
 .stat-value{
-  font-size:32px;
+  font-size:24px;
   font-weight:700;
-  color:var(--gold);
+  color:var(--copper);
   font-family:'JetBrains Mono',monospace;
-  line-height:1;
-  margin-bottom:0.5rem;
 }
 
 .stat-label{
   font-size:11px;
   text-transform:uppercase;
   letter-spacing:1px;
-  opacity:0.8;
+  color:var(--ink3);
+  margin-top:0.25rem;
 }
-
-.progress-bar{
-  height:6px;
-  background:rgba(255,255,255,0.1);
-  border-radius:3px;
-  overflow:hidden;
-  margin-top:0.75rem;
-}
-
-.progress-fill{
-  height:100%;
-  background:linear-gradient(to right, var(--copper), var(--gold));
-  transition:width 0.5s;
-  border-radius:3px;
-}
-
-.container{max-width:1400px;margin:0 auto;padding:2rem}
 
 .goal-card{
   background:linear-gradient(135deg, var(--copper), var(--gold));
   color:#fff;
-  padding:1.5rem 2rem;
-  border-radius:14px;
-  margin-bottom:2rem;
-  text-align:center;
-  box-shadow:0 8px 24px rgba(193,127,74,0.25);
+  padding:1.25rem 1.5rem;
+  border-radius:12px;
+  margin-bottom:1.5rem;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:1rem;
   flex-wrap:wrap;
 }
 
-.goal-card-text-area{flex:1;text-align:left;min-width:0}
-
-.goal-card-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  opacity:0.9;
-  margin-bottom:0.5rem;
-}
-
-.goal-card-text{
-  font-family:'Libre Baskerville',serif;
-  font-size:clamp(16px, 2.5vw, 22px);
-  font-weight:400;
-}
-
-.goal-card-text em{font-style:italic}
+.goal-text{font-size:16px;font-family:'Libre Baskerville',serif}
 
 .btn-add{
-  background:rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.25);
   border:2px solid rgba(255,255,255,0.4);
   color:#fff;
-  padding:0.75rem 1.5rem;
-  border-radius:10px;
+  padding:0.6rem 1.2rem;
+  border-radius:8px;
   font-family:inherit;
-  font-size:14px;
   font-weight:700;
+  font-size:13px;
   cursor:pointer;
-  transition:all 0.2s;
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-  white-space:nowrap;
 }
 
-.btn-add:hover{
-  background:rgba(255,255,255,0.3);
-  transform:translateY(-2px);
-}
+.btn-add:hover{background:rgba(255,255,255,0.35)}
 
 .week-tabs{
   display:flex;
   gap:0.5rem;
-  margin-bottom:2rem;
+  margin-bottom:1.5rem;
   overflow-x:auto;
   padding-bottom:0.5rem;
-  scrollbar-width:thin;
 }
 
 .week-tab{
-  padding:1rem 1.5rem;
+  padding:0.75rem 1.25rem;
   background:#fff;
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:8px;
   cursor:pointer;
   font-family:inherit;
-  font-size:14px;
+  font-size:13px;
   font-weight:600;
   color:var(--ink2);
   white-space:nowrap;
-  transition:all 0.2s;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:0.25rem;
-  min-width:160px;
+  min-width:140px;
 }
 
-.week-tab:hover{border-color:var(--copper);transform:translateY(-2px)}
 .week-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
-.week-tab.active .week-tab-sub{color:var(--gold)}
 
 .week-tab-label{
   font-family:'JetBrains Mono',monospace;
   font-size:10px;
   letter-spacing:1px;
   color:var(--copper);
+  display:block;
   text-transform:uppercase;
 }
 
 .week-tab.active .week-tab-label{color:var(--gold)}
-.week-tab-title{font-size:14px;font-weight:700}
-.week-tab-sub{font-size:11px;font-weight:400;color:var(--ink3)}
+
+.week-tab-title{display:block;font-size:14px;margin-top:0.25rem}
 
 .columns{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:2rem;
+  gap:1.5rem;
+}
+
+@media(max-width:768px){
+  .columns{grid-template-columns:1fr}
 }
 
 .column{
   background:#fff;
-  border-radius:14px;
+  border-radius:12px;
   border:1px solid var(--border);
   overflow:hidden;
 }
 
 .column-header{
-  padding:1.5rem;
-  background:linear-gradient(135deg, rgba(26,60,52,0.04), rgba(193,127,74,0.04));
+  padding:1.25rem;
+  background:rgba(193,127,74,0.05);
   border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
@@ -274,16 +240,16 @@ body{
 .column-title{display:flex;align-items:center;gap:0.75rem}
 
 .user-avatar{
-  width:44px;
-  height:44px;
+  width:40px;
+  height:40px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:700;
   color:#fff;
+  font-weight:700;
   font-family:'Libre Baskerville',serif;
-  font-size:20px;
+  font-size:18px;
 }
 
 .user-avatar.dani{background:linear-gradient(135deg, var(--pink), var(--copper))}
@@ -291,79 +257,58 @@ body{
 
 .column-name{
   font-family:'Libre Baskerville',serif;
-  font-size:22px;
+  font-size:20px;
   color:var(--forest);
-  font-weight:600;
 }
 
-.column-role{
-  font-size:12px;
-  color:var(--ink3);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  font-weight:500;
-}
+.column-role{font-size:11px;color:var(--ink3);text-transform:uppercase}
 
 .column-progress{
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
   font-family:'JetBrains Mono',monospace;
   font-size:13px;
   color:var(--copper);
   font-weight:700;
 }
 
-.column-body{padding:0}
-
-.task-section{border-bottom:1px solid var(--border)}
-.task-section:last-child{border-bottom:none}
-
-.task-section-header{
-  padding:1rem 1.5rem;
+.section-header{
+  padding:0.75rem 1.25rem;
   background:rgba(193,127,74,0.04);
   font-family:'JetBrains Mono',monospace;
   font-size:11px;
-  letter-spacing:1.5px;
+  letter-spacing:1px;
   text-transform:uppercase;
   color:var(--copper);
   font-weight:700;
   border-bottom:1px solid var(--border);
 }
 
-.task-list{list-style:none}
-
 .task{
-  padding:1rem 1.5rem;
+  padding:0.85rem 1.25rem;
   border-bottom:1px solid var(--border);
   display:flex;
   align-items:flex-start;
   gap:0.75rem;
-  transition:all 0.15s;
-  position:relative;
   cursor:pointer;
+  user-select:none;
 }
 
 .task:last-child{border-bottom:none}
 .task:hover{background:rgba(193,127,74,0.03)}
-.task.done{background:rgba(45,122,79,0.04)}
-.task.done .task-text{text-decoration:line-through;color:var(--ink3)}
 
 .task-check{
   width:22px;
   height:22px;
   border:2px solid var(--copper);
-  border-radius:6px;
+  border-radius:5px;
   flex-shrink:0;
   margin-top:1px;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:transparent;
-  font-size:14px;
-  font-weight:700;
-  transition:all 0.2s;
   background:#fff;
+  color:transparent;
+  font-weight:700;
+  font-size:14px;
 }
 
 .task.done .task-check{
@@ -372,35 +317,35 @@ body{
   color:#fff;
 }
 
-.task-content{flex:1;min-width:0}
-.task-text{font-size:14px;color:var(--ink);line-height:1.6;transition:all 0.2s}
+.task.done .task-text{
+  text-decoration:line-through;
+  color:var(--ink3);
+}
 
-.task-custom-badge{
+.task-content{flex:1;min-width:0}
+.task-text{font-size:13px;line-height:1.5}
+
+.task-badge{
   display:inline-block;
   background:rgba(193,127,74,0.15);
   color:var(--copper);
-  font-size:10px;
-  padding:0.15rem 0.5rem;
-  border-radius:4px;
+  font-size:9px;
+  padding:0.1rem 0.4rem;
+  border-radius:3px;
   font-weight:700;
-  letter-spacing:0.5px;
-  margin-left:0.5rem;
+  margin-left:0.4rem;
   font-family:'JetBrains Mono',monospace;
-  vertical-align:middle;
 }
 
 .task-date{
   font-family:'JetBrains Mono',monospace;
-  font-size:11px;
+  font-size:10px;
   color:var(--success);
-  margin-top:0.25rem;
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
+  margin-top:0.3rem;
+  display:none;
 }
 
-.task-date::before{content:'✓';font-weight:700}
-.task:not(.done) .task-date{display:none}
+.task.done .task-date{display:block}
 
 .task-delete{
   opacity:0;
@@ -411,23 +356,30 @@ body{
   padding:0.25rem 0.5rem;
   border-radius:4px;
   font-size:16px;
-  transition:opacity 0.2s, background 0.2s;
+  transition:opacity 0.2s;
 }
 
 .task:hover .task-delete{opacity:0.6}
 .task-delete:hover{opacity:1!important;background:rgba(220,38,38,0.1)}
 
+.empty{
+  padding:2rem 1.25rem;
+  text-align:center;
+  color:var(--ink3);
+  font-size:13px;
+  font-style:italic;
+}
+
 .loading{
   text-align:center;
   padding:3rem;
-  color:var(--ink3);
-  font-size:14px;
+  color:var(--ink2);
 }
 
-.loading-spinner{
+.spinner{
   display:inline-block;
-  width:24px;
-  height:24px;
+  width:28px;
+  height:28px;
   border:3px solid var(--border);
   border-top-color:var(--copper);
   border-radius:50%;
@@ -437,160 +389,105 @@ body{
 
 @keyframes spin{to{transform:rotate(360deg)}}
 
+.error-box{
+  background:rgba(220,38,38,0.1);
+  border:1px solid var(--danger);
+  border-left:4px solid var(--danger);
+  padding:1.25rem;
+  border-radius:8px;
+  margin-bottom:1rem;
+  color:var(--ink);
+  font-size:14px;
+}
+
+.error-box strong{color:var(--danger);display:block;margin-bottom:0.5rem}
+.error-box code{background:rgba(0,0,0,0.05);padding:0.1rem 0.4rem;border-radius:3px;font-size:12px}
+
 .modal{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(8px);
   z-index:1000;
   display:none;
   align-items:center;
   justify-content:center;
-  padding:2rem;
+  padding:1.5rem;
 }
 
-.modal.visible{display:flex}
+.modal.open{display:flex}
 
 .modal-content{
   background:#fff;
-  border-radius:16px;
-  padding:2.5rem;
-  max-width:550px;
+  border-radius:12px;
+  padding:2rem;
+  max-width:500px;
   width:100%;
-  max-height:90vh;
-  overflow-y:auto;
 }
 
 .modal-content h2{
   font-family:'Libre Baskerville',serif;
-  font-size:26px;
+  font-size:22px;
   color:var(--forest);
-  margin-bottom:0.5rem;
-}
-
-.modal-content p{
-  color:var(--ink3);
-  margin-bottom:1.5rem;
-  font-size:14px;
+  margin-bottom:1.25rem;
 }
 
 .modal-content label{
   display:block;
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
   color:var(--forest);
-  margin-bottom:0.5rem;
+  margin-bottom:0.4rem;
   margin-top:1rem;
   text-transform:uppercase;
-  letter-spacing:0.5px;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea{
   width:100%;
-  padding:0.75rem 1rem;
+  padding:0.7rem;
   border:2px solid var(--border);
+  border-radius:6px;
+  font-family:inherit;
+  font-size:14px;
+}
+
+.modal-content textarea{min-height:70px;resize:vertical}
+
+.modal-actions{display:flex;gap:0.75rem;margin-top:1.5rem}
+
+.btn{
+  flex:1;
+  padding:0.8rem;
+  border:none;
   border-radius:8px;
   font-family:inherit;
-  font-size:14px;
-  color:var(--ink);
-  transition:border-color 0.2s;
-}
-
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus{
-  outline:none;
-  border-color:var(--copper);
-}
-
-.modal-content textarea{
-  min-height:80px;
-  resize:vertical;
-  font-family:inherit;
-}
-
-.modal-actions{display:flex;gap:0.75rem;margin-top:2rem}
-
-.btn-modal{
-  flex:1;
-  padding:0.9rem;
-  border:none;
-  border-radius:10px;
-  font-family:inherit;
   font-weight:700;
-  font-size:14px;
+  font-size:13px;
   cursor:pointer;
-  transition:all 0.2s;
 }
 
 .btn-primary{background:var(--forest);color:#fff}
-.btn-primary:hover{background:#0f231e}
+.btn-secondary{background:transparent;color:var(--ink2);border:2px solid var(--border)}
 
-.btn-secondary{
-  background:transparent;
-  color:var(--ink2);
-  border:2px solid var(--border)!important;
-}
-
-.btn-secondary:hover{background:var(--cream)}
-
-.sync-indicator{
+.toast{
   position:fixed;
   bottom:1.5rem;
   right:1.5rem;
   background:#fff;
-  border:1px solid var(--border);
+  border-left:4px solid var(--success);
   padding:0.75rem 1.25rem;
-  border-radius:10px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  font-size:12px;
-  color:var(--ink2);
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
+  border-radius:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  font-size:13px;
+  z-index:200;
   opacity:0;
-  transform:translateY(10px);
+  transform:translateY(20px);
   transition:all 0.3s;
-  pointer-events:none;
-  z-index:100;
 }
 
-.sync-indicator.visible{opacity:1;transform:translateY(0)}
-
-.sync-dot{
-  width:8px;
-  height:8px;
-  background:var(--success);
-  border-radius:50%;
-  animation:pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse{
-  0%,100%{opacity:1}
-  50%{opacity:0.4}
-}
-
-.empty-state{
-  padding:2rem;
-  text-align:center;
-  color:var(--ink3);
-  font-size:14px;
-  font-style:italic;
-}
-
-@media(max-width:768px){
-  .columns{grid-template-columns:1fr}
-  .container{padding:1rem}
-  .header{padding:2rem 1rem 1.5rem}
-  .stats-bar{grid-template-columns:repeat(2, 1fr)}
-  .goal-card{flex-direction:column;text-align:center}
-  .goal-card-text-area{text-align:center}
-  .header-top{flex-direction:column;align-items:stretch}
-  .user-switcher{width:100%;justify-content:space-between}
-  .user-btn{flex:1;text-align:center}
-}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{border-left-color:var(--danger);color:var(--danger)}
 </style>
 </head>
 <body>
@@ -598,180 +495,189 @@ body{
 <!-- HEADER -->
 <div class="header">
   <div class="header-content">
-    <div class="header-top">
-      <div class="logo-area">
-        <div class="logo-mark">L</div>
-        <div>
-          <div class="logo-text">SPRINT 30 DIAS · LEGACI</div>
-          <h1>Vendas em <em>30 dias</em></h1>
-        </div>
-      </div>
-      <div class="user-switcher" id="userSwitcher">
-        <button class="user-btn active" data-user="both" type="button">Visão Geral</button>
-        <button class="user-btn" data-user="dani" type="button">Dani</button>
-        <button class="user-btn" data-user="mauricio" type="button">Maurício</button>
-      </div>
-    </div>
+    <h1>Sprint <em>30 dias</em> · Legaci</h1>
+    <p class="header-sub">Vendas em 30 dias · Da imersão à primeira venda</p>
 
-    <p class="header-sub">Da primeira venda à validação do modelo comercial</p>
-
-    <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-value" id="totalProgress">0%</div>
-        <div class="stat-label">Progresso Total</div>
-        <div class="progress-bar"><div class="progress-fill" id="totalBar" style="width:0%"></div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="daniProgress">0%</div>
-        <div class="stat-label">Dani · Comercial</div>
-        <div class="progress-bar"><div class="progress-fill" id="daniBar" style="width:0%"></div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="mauricioProgress">0%</div>
-        <div class="stat-label">Maurício · Produto</div>
-        <div class="progress-bar"><div class="progress-fill" id="mauricioBar" style="width:0%"></div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="weekProgress">0/0</div>
-        <div class="stat-label">Tarefas Concluídas</div>
-        <div class="progress-bar"><div class="progress-fill" id="taskBar" style="width:0%"></div></div>
-      </div>
+    <div class="user-switcher">
+      <button class="user-btn active" data-user="both">Visão Geral</button>
+      <button class="user-btn" data-user="dani">Dani</button>
+      <button class="user-btn" data-user="mauricio">Maurício</button>
     </div>
   </div>
 </div>
 
 <div class="container">
 
-  <div class="goal-card">
-    <div class="goal-card-text-area">
-      <div class="goal-card-label">META DO MÊS</div>
-      <div class="goal-card-text">Primeira venda no <em>dia 30</em> · 3-5 vendas fechadas</div>
+  <!-- ERROR BOX (oculto por padrão) -->
+  <div id="errorBox" style="display:none"></div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-label">Total</div>
     </div>
-    <button class="btn-add" id="btnAddTask" type="button">+ Adicionar Tarefa</button>
+    <div class="stat-card">
+      <div class="stat-value" id="statDani">—</div>
+      <div class="stat-label">Dani</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statMauricio">—</div>
+      <div class="stat-label">Maurício</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statDone">0/0</div>
+      <div class="stat-label">Concluídas</div>
+    </div>
   </div>
 
-  <div class="week-tabs" id="weekTabs">
-    <button class="week-tab active" data-week="1" type="button">
+  <div class="goal-card">
+    <div class="goal-text">🎯 Meta: 3-5 vendas até o <em>dia 30</em></div>
+    <button class="btn-add" id="btnAdd">+ Adicionar Tarefa</button>
+  </div>
+
+  <div class="week-tabs">
+    <button class="week-tab active" data-week="1">
       <span class="week-tab-label">Semana 1</span>
       <span class="week-tab-title">Onboarding</span>
-      <span class="week-tab-sub">Imersão e setup</span>
     </button>
-    <button class="week-tab" data-week="2" type="button">
+    <button class="week-tab" data-week="2">
       <span class="week-tab-label">Semana 2</span>
       <span class="week-tab-title">Aquecimento</span>
-      <span class="week-tab-sub">Conteúdo e ads</span>
     </button>
-    <button class="week-tab" data-week="3" type="button">
+    <button class="week-tab" data-week="3">
       <span class="week-tab-label">Semana 3</span>
-      <span class="week-tab-title">Primeiras Conversas</span>
-      <span class="week-tab-sub">Calls e propostas</span>
+      <span class="week-tab-title">Conversas</span>
     </button>
-    <button class="week-tab" data-week="4" type="button">
+    <button class="week-tab" data-week="4">
       <span class="week-tab-label">Semana 4</span>
-      <span class="week-tab-title">Fechar! 🎯</span>
-      <span class="week-tab-sub">Primeiras vendas</span>
+      <span class="week-tab-title">Fechar 🎯</span>
     </button>
   </div>
 
-  <div class="loading" id="loading">
-    <div class="loading-spinner"></div>
-    <div>Carregando dados do Supabase...</div>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div>Conectando ao Supabase...</div>
   </div>
 
-  <div class="columns" id="columns" style="display:none">
-    <div class="column" id="col-dani">
-      <div class="column-header">
-        <div class="column-title">
-          <div class="user-avatar dani">D</div>
-          <div>
-            <div class="column-name">Daniela</div>
-            <div class="column-role">Comercial · Marketing</div>
+  <div id="content" style="display:none">
+    <div class="columns">
+      <div class="column" id="col-dani">
+        <div class="column-header">
+          <div class="column-title">
+            <div class="user-avatar dani">D</div>
+            <div>
+              <div class="column-name">Daniela</div>
+              <div class="column-role">Comercial</div>
+            </div>
           </div>
+          <div class="column-progress" id="progress-dani">0/0</div>
         </div>
-        <div class="column-progress" id="dani-week-progress">0/0</div>
+        <div id="tasks-dani"></div>
       </div>
-      <div class="column-body" id="dani-tasks"></div>
-    </div>
 
-    <div class="column" id="col-mauricio">
-      <div class="column-header">
-        <div class="column-title">
-          <div class="user-avatar mauricio">M</div>
-          <div>
-            <div class="column-name">Maurício</div>
-            <div class="column-role">Produto · Operação</div>
+      <div class="column" id="col-mauricio">
+        <div class="column-header">
+          <div class="column-title">
+            <div class="user-avatar mauricio">M</div>
+            <div>
+              <div class="column-name">Maurício</div>
+              <div class="column-role">Produto</div>
+            </div>
           </div>
+          <div class="column-progress" id="progress-mauricio">0/0</div>
         </div>
-        <div class="column-progress" id="mauricio-week-progress">0/0</div>
+        <div id="tasks-mauricio"></div>
       </div>
-      <div class="column-body" id="mauricio-tasks"></div>
     </div>
   </div>
 
 </div>
 
-<!-- ADD TASK MODAL -->
-<div class="modal" id="addTaskModal">
+<!-- MODAL -->
+<div class="modal" id="modalAdd">
   <div class="modal-content">
-    <h2>+ Adicionar Tarefa</h2>
-    <p>Cria uma nova tarefa que vai aparecer no painel</p>
+    <h2>+ Nova Tarefa</h2>
 
-    <label>Quem vai fazer?</label>
-    <select id="newTaskUser">
-      <option value="dani">Daniela · Comercial</option>
-      <option value="mauricio">Maurício · Produto</option>
+    <label>Responsável</label>
+    <select id="inUser">
+      <option value="dani">Daniela</option>
+      <option value="mauricio">Maurício</option>
     </select>
 
-    <label>Em qual semana?</label>
-    <select id="newTaskWeek">
-      <option value="1">Semana 1 · Onboarding</option>
-      <option value="2">Semana 2 · Aquecimento</option>
-      <option value="3">Semana 3 · Primeiras Conversas</option>
-      <option value="4">Semana 4 · Fechar 🎯</option>
+    <label>Semana</label>
+    <select id="inWeek">
+      <option value="1">Semana 1</option>
+      <option value="2">Semana 2</option>
+      <option value="3">Semana 3</option>
+      <option value="4">Semana 4</option>
     </select>
 
-    <label>Seção / Categoria</label>
-    <input type="text" id="newTaskSection" placeholder="Ex: Vendas, Setup, Ads, Operação..." value="Tarefas Extras">
+    <label>Categoria</label>
+    <input type="text" id="inSection" value="Tarefas Extras">
 
-    <label>Descrição da tarefa</label>
-    <textarea id="newTaskText" placeholder="Ex: Ligar para 5 leads quentes da rede pessoal"></textarea>
+    <label>Descrição</label>
+    <textarea id="inText" placeholder="Descreva a tarefa..."></textarea>
 
     <div class="modal-actions">
-      <button class="btn-modal btn-secondary" id="btnCancel" type="button">Cancelar</button>
-      <button class="btn-modal btn-primary" id="btnSaveTask" type="button">Adicionar Tarefa</button>
+      <button class="btn btn-secondary" id="btnCancel">Cancelar</button>
+      <button class="btn btn-primary" id="btnSave">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- SYNC INDICATOR -->
-<div class="sync-indicator" id="syncIndicator">
-  <div class="sync-dot"></div>
-  <span id="syncText">Salvo!</span>
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- DEBUG -->
+<div id="debugPanel"></div>
+<button id="debugToggle" type="button">🐛 Debug</button>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+'use strict';
+
 // ============================================
-// CONFIGURAÇÃO SUPABASE
+// CONFIG
 // ============================================
 const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
 
-let supabase = null;
+// ============================================
+// DEBUG
+// ============================================
+const DEBUG = {
+  panel: null,
+  log(msg, type = 'info'){
+    console.log('[' + type + ']', msg);
+    if(!this.panel) this.panel = document.getElementById('debugPanel');
+    if(!this.panel) return;
+    const line = document.createElement('div');
+    line.className = 'log-' + type;
+    line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    this.panel.appendChild(line);
+    this.panel.scrollTop = this.panel.scrollHeight;
+  },
+  error(msg){this.log(msg, 'error')},
+  success(msg){this.log(msg, 'success')}
+};
 
 // ============================================
 // TAREFAS PADRÃO
 // ============================================
-const DEFAULT_TASKS = {
+const TASKS = {
   1: {
     dani: [
-      { section: "Dias 1-3 · Imersão Express", items: [
+      { name: "Dias 1-3 · Imersão Express", items: [
         "Leitura completa da documentação (spec, kit anti-crise, plano 5 anos)",
         "Assistir a 1 entrevista gravada completa",
         "Conversa de 2h com Maurício: tudo sobre o produto",
         "Acessar todos os sistemas (Supabase, painel admin, Notion)",
         "Conhecer ICP e personas detalhadas"
       ]},
-      { section: "Dias 4-7 · Setup Comercial", items: [
+      { name: "Dias 4-7 · Setup Comercial", items: [
         "Auditar Instagram atual (engajamento, alcance)",
         "Criar 5 criativos para Meta Ads (vídeo + carrossel + imagem)",
         "Configurar Meta Ads Manager + Pixel",
@@ -781,7 +687,7 @@ const DEFAULT_TASKS = {
       ]}
     ],
     mauricio: [
-      { section: "Dias 1-7 · Operação Pronta", items: [
+      { name: "Dias 1-7 · Operação Pronta", items: [
         "Garantir 3 entrevistadores disponíveis e treinados",
         "Testar pipeline ebook end-to-end",
         "Confirmar parceria Grafset (impressão)",
@@ -790,7 +696,7 @@ const DEFAULT_TASKS = {
         "Preparar contratos prontos para assinatura",
         "Ativar sistema de pagamento (PIX + cartão)"
       ]},
-      { section: "Desenvolvimento (paralelo)", items: [
+      { name: "Desenvolvimento (paralelo)", items: [
         "Continuar Legaci Memórias no Claude Code",
         "Priorizar pipeline do LIVRO primeiro (vendas)",
         "Definir reuniões semanais com Dani (segunda 9h)"
@@ -799,31 +705,31 @@ const DEFAULT_TASKS = {
   },
   2: {
     dani: [
-      { section: "Dias 8-14 · Aquecer Instagram", items: [
+      { name: "Dias 8-14 · Aquecer Instagram", items: [
         "Publicar 3 posts (segunda, quarta, sexta)",
         "Stories diários (bastidores + depoimentos antigos)",
         "Gravar e publicar 2 Reels com depoimentos reais",
         "Engajar com followers atuais (DMs, comentários)"
       ]},
-      { section: "Setup Ads", items: [
+      { name: "Setup Ads", items: [
         "Lançar campanha teste: R$ 30/dia (7 dias)",
         "Criar 3 anúncios simultâneos para teste A/B",
         "Definir objetivo: gerar leads (não vendas ainda)",
         "Meta: 30-40 leads em 7 dias"
       ]},
-      { section: "Prospecção Direta", items: [
+      { name: "Prospecção Direta", items: [
         "Identificar 20 contatos quentes da rede pessoal",
         "Mandar mensagem personalizada apresentando Legaci",
         "Marcar 5-8 calls de qualificação"
       ]}
     ],
     mauricio: [
-      { section: "Suporte à Dani", items: [
+      { name: "Suporte à Dani", items: [
         "Acompanhar primeiras conversas dela com leads",
         "Estar disponível para dúvidas (WhatsApp ativo)",
         "Validar discurso de vendas em conjunto"
       ]},
-      { section: "Desenvolvimento + Operação", items: [
+      { name: "Desenvolvimento + Operação", items: [
         "Continuar Legaci Memórias no Code",
         "Validar pipeline do livro com 1 cliente piloto",
         "Garantir backup de entrevistadores",
@@ -833,32 +739,32 @@ const DEFAULT_TASKS = {
   },
   3: {
     dani: [
-      { section: "Dias 15-21 · Vendas Reais", items: [
+      { name: "Dias 15-21 · Vendas Reais", items: [
         "Fazer 5-10 calls de qualificação com leads dos ads",
         "Fazer 3-5 calls com prospecção direta",
         "Enviar 8-12 propostas personalizadas",
         "Executar follow-up D+2 e D+5",
         "Refinar discurso baseado em objeções reais"
       ]},
-      { section: "Conteúdo", items: [
+      { name: "Conteúdo", items: [
         "Publicar mais 3 posts no Instagram",
         "Tentar criar 1 Reels com potencial viral",
         "Stories diários com perguntas para o público"
       ]},
-      { section: "Ajuste de Ads", items: [
-        "Pausar criativos com CTR menor que 2%",
+      { name: "Ajuste de Ads", items: [
+        "Pausar criativos com CTR baixo",
         "Dobrar budget nos que estão funcionando (R$ 50/dia)",
         "Criar mais 3 criativos baseados em dados"
       ]}
     ],
     mauricio: [
-      { section: "Apoio Direto", items: [
+      { name: "Apoio Direto", items: [
         "Participar de 2-3 calls com Dani (modo observador)",
         "Ajudar a refinar discurso baseado em objeções",
         "Estar disponível para calls grandes (Plano Premium)",
         "Garantir suporte técnico"
       ]},
-      { section: "Operação", items: [
+      { name: "Operação", items: [
         "Pré-agendar entrevistadores para possíveis fechamentos",
         "Testar fluxo completo end-to-end com cliente fictício",
         "Acelerar pipeline livro (transcrição + edição)"
@@ -867,32 +773,32 @@ const DEFAULT_TASKS = {
   },
   4: {
     dani: [
-      { section: "Dias 22-30 · Fechar 🎯", items: [
+      { name: "Dias 22-30 · Fechar", items: [
         "Follow-up agressivo (mas educado) em todas propostas",
         "Meta: 3-5 vendas fechadas até dia 30",
         "Coletar 50% do pagamento antecipado",
         "Agendar entrevistas pós-fechamento",
-        "Celebrar cada venda 🎉"
+        "Celebrar cada venda"
       ]},
-      { section: "Sistematização", items: [
+      { name: "Sistematização", items: [
         "Documentar o que funcionou no script",
         "Anotar objeções mais comuns",
         "Criar playbook de vendas (vivo)",
         "Definir metas para o mês seguinte"
       ]},
-      { section: "Escala de Ads", items: [
-        "Se CAC menor que R$ 250: aumentar para R$ 80/dia",
+      { name: "Escala de Ads", items: [
+        "Se CAC baixo: aumentar para R$ 80/dia",
         "Se CAC alto: otimizar criativos primeiro"
       ]}
     ],
     mauricio: [
-      { section: "Garantir Entrega Perfeita", items: [
+      { name: "Garantir Entrega Perfeita", items: [
         "Acompanhar PRIMEIRAS entrevistas pessoalmente",
         "Garantir qualidade do roteiro personalizado",
         "Pipeline ebook rodando sem falhas",
         "Cada cliente sai encantado (gera depoimento + indicação)"
       ]},
-      { section: "Desenvolvimento", items: [
+      { name: "Desenvolvimento", items: [
         "Continuar Legaci Memórias",
         "Não atrasar entregas técnicas",
         "Reunião final do mês com Dani (análise + plano mês 2)"
@@ -902,118 +808,156 @@ const DEFAULT_TASKS = {
 };
 
 // ============================================
-// ESTADO GLOBAL
+// STATE
 // ============================================
-let currentWeek = 1;
-let currentUser = 'both';
-let tasksState = {};
-let customTasks = [];
+const state = {
+  supabase: null,
+  week: 1,
+  user: 'both',
+  taskStatus: {}, // { id: { done, completedAt } }
+  customTasks: [] // [{ id, week, user, section, text }]
+};
 
 // ============================================
 // HELPERS
 // ============================================
-function sectionToId(section){
-  return section.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+function $(id){return document.getElementById(id)}
+
+function slugify(str){
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
 }
 
-function makeTaskId(week, user, section, idx){
-  return `default-w${week}-${user}-${sectionToId(section)}-${idx}`;
+function makeId(week, user, section, idx){
+  return 'default-w' + week + '-' + user + '-' + slugify(section) + '-' + idx;
 }
 
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+function formatDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
 }
 
-function formatDate(dateStr){
-  if(!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+function showToast(msg, isError){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
 }
 
-// ============================================
-// SYNC INDICATOR
-// ============================================
-let syncTimeout;
-function showSync(msg, isError = false){
-  const ind = document.getElementById('syncIndicator');
-  document.getElementById('syncText').textContent = msg;
-  ind.classList.add('visible');
-  ind.querySelector('.sync-dot').style.background = isError ? 'var(--danger)' : 'var(--success)';
-
-  clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    ind.classList.remove('visible');
-  }, 2500);
+function showError(title, msg){
+  const box = $('errorBox');
+  box.style.display = 'block';
+  box.className = 'error-box';
+  box.innerHTML = '<strong>' + title + '</strong>' + msg;
 }
 
 // ============================================
-// CARREGAR DADOS
+// SUPABASE - LOAD DATA
 // ============================================
-async function loadTasks(){
+async function loadData(){
+  DEBUG.log('Iniciando loadData...');
+
   try {
-    const { data, error } = await supabase
+    if(!state.supabase){
+      DEBUG.error('Cliente Supabase não está inicializado!');
+      throw new Error('Cliente Supabase não inicializado');
+    }
+
+    DEBUG.log('Fazendo SELECT em legaci_tasks...');
+    const { data, error } = await state.supabase
       .from('legaci_tasks')
       .select('*');
 
-    if(error) throw error;
+    if(error){
+      DEBUG.error('Erro no SELECT: ' + JSON.stringify(error));
+      throw error;
+    }
 
-    tasksState = {};
-    customTasks = [];
+    DEBUG.success('Dados carregados: ' + (data ? data.length : 0) + ' registros');
 
-    (data || []).forEach(task => {
-      tasksState[task.id] = {
-        done: task.done,
-        completedAt: task.completed_at
-      };
+    state.taskStatus = {};
+    state.customTasks = [];
 
-      if(task.id.startsWith('custom-')){
-        customTasks.push({
-          id: task.id,
-          week: task.week,
-          user: task.user_owner,
-          section: task.section,
-          text: task.text
-        });
-      }
-    });
+    if(data){
+      data.forEach(row => {
+        state.taskStatus[row.id] = {
+          done: row.done,
+          completedAt: row.completed_at
+        };
 
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('columns').style.display = 'grid';
-    renderTasks();
-    updateStats();
-    showSync('✓ Dados carregados');
+        if(row.id && row.id.indexOf('custom-') === 0){
+          state.customTasks.push({
+            id: row.id,
+            week: row.week,
+            user: row.user_owner,
+            section: row.section,
+            text: row.text
+          });
+        }
+      });
+    }
+
+    DEBUG.success('State atualizado. Renderizando...');
+
+    $('loading').style.display = 'none';
+    $('content').style.display = 'block';
+
+    render();
+    showToast('✓ Conectado!');
+
   } catch(err) {
-    console.error('Erro ao carregar:', err);
-    document.getElementById('loading').innerHTML =
-      '<p style="color:var(--danger);font-weight:600">Erro ao carregar dados</p>' +
-      '<p style="margin-top:0.5rem;font-size:13px">' + err.message + '</p>' +
-      '<p style="margin-top:1rem;font-size:12px;color:var(--ink3)">Verifique se a tabela <code>legaci_tasks</code> foi criada no Supabase</p>';
+    DEBUG.error('FALHA: ' + err.message);
+    $('loading').style.display = 'none';
+    showError('Erro ao conectar com Supabase', `
+      <p>${err.message || 'Erro desconhecido'}</p>
+      <p style="margin-top:0.75rem;font-size:13px">
+        <strong>Possíveis causas:</strong><br>
+        1. Tabela <code>legaci_tasks</code> não foi criada<br>
+        2. Policies de RLS estão bloqueando acesso<br>
+        3. URL ou Key do Supabase está errada
+      </p>
+      <p style="margin-top:0.75rem;font-size:13px">
+        <strong>SQL para criar a tabela:</strong>
+      </p>
+      <pre style="background:#fff;padding:0.75rem;border-radius:4px;font-size:11px;overflow-x:auto;margin-top:0.5rem">CREATE TABLE IF NOT EXISTS legaci_tasks (
+  id TEXT PRIMARY KEY,
+  done BOOLEAN DEFAULT FALSE,
+  completed_at TIMESTAMPTZ,
+  user_owner TEXT NOT NULL,
+  week INTEGER NOT NULL,
+  section TEXT NOT NULL,
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE legaci_tasks ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "open_all" ON legaci_tasks;
+CREATE POLICY "open_all" ON legaci_tasks
+  FOR ALL USING (true) WITH CHECK (true);</pre>
+    `);
   }
 }
 
 // ============================================
-// TOGGLE TAREFA
+// TOGGLE TASK
 // ============================================
 async function toggleTask(taskData){
-  const taskId = taskData.id;
-  const isDone = !tasksState[taskId]?.done;
+  const id = taskData.id;
+  const isDone = !(state.taskStatus[id] && state.taskStatus[id].done);
   const completedAt = isDone ? new Date().toISOString() : null;
 
+  DEBUG.log('Toggle: ' + id + ' → ' + (isDone ? 'DONE' : 'undone'));
+
   // UI otimista
-  tasksState[taskId] = { done: isDone, completedAt };
-  renderTasks();
-  updateStats();
-  showSync('Salvando...');
+  state.taskStatus[id] = { done: isDone, completedAt: completedAt };
+  render();
 
   try {
-    const { error } = await supabase
+    const { error } = await state.supabase
       .from('legaci_tasks')
       .upsert({
-        id: taskId,
+        id: id,
         done: isDone,
         completed_at: completedAt,
         user_owner: taskData.user,
@@ -1023,52 +967,41 @@ async function toggleTask(taskData){
       });
 
     if(error) throw error;
-    showSync(isDone ? '✓ Concluída!' : '↩ Desmarcada');
+
+    DEBUG.success('Salvo!');
+    showToast(isDone ? '✓ Concluída!' : '↩ Desmarcada');
   } catch(err) {
-    console.error('Erro ao salvar:', err);
-    showSync('Erro: ' + err.message, true);
-    tasksState[taskId] = { done: !isDone, completedAt: null };
-    renderTasks();
-    updateStats();
+    DEBUG.error('Erro ao salvar: ' + err.message);
+    // Reverter
+    state.taskStatus[id] = { done: !isDone, completedAt: null };
+    render();
+    showToast('Erro: ' + err.message, true);
   }
 }
 
 // ============================================
-// ADICIONAR TAREFA
+// ADD CUSTOM TASK
 // ============================================
-function openAddTaskModal(){
-  document.getElementById('newTaskUser').value = currentUser === 'mauricio' ? 'mauricio' : 'dani';
-  document.getElementById('newTaskWeek').value = currentWeek;
-  document.getElementById('newTaskSection').value = 'Tarefas Extras';
-  document.getElementById('newTaskText').value = '';
-  document.getElementById('addTaskModal').classList.add('visible');
-  setTimeout(() => document.getElementById('newTaskText').focus(), 100);
-}
-
-function closeAddTaskModal(){
-  document.getElementById('addTaskModal').classList.remove('visible');
-}
-
-async function addCustomTask(){
-  const user = document.getElementById('newTaskUser').value;
-  const week = parseInt(document.getElementById('newTaskWeek').value);
-  const section = document.getElementById('newTaskSection').value.trim() || 'Tarefas Extras';
-  const text = document.getElementById('newTaskText').value.trim();
+async function addTask(){
+  const user = $('inUser').value;
+  const week = parseInt($('inWeek').value);
+  const section = $('inSection').value.trim() || 'Tarefas Extras';
+  const text = $('inText').value.trim();
 
   if(!text){
     alert('Escreva a descrição da tarefa!');
     return;
   }
 
-  const taskId = `custom-w${week}-${user}-${sectionToId(section)}-${Date.now()}`;
+  const id = 'custom-w' + week + '-' + user + '-' + slugify(section) + '-' + Date.now();
 
-  showSync('Criando tarefa...');
+  DEBUG.log('Adicionando: ' + id);
 
   try {
-    const { error } = await supabase
+    const { error } = await state.supabase
       .from('legaci_tasks')
       .insert({
-        id: taskId,
+        id: id,
         done: false,
         completed_at: null,
         user_owner: user,
@@ -1079,199 +1012,197 @@ async function addCustomTask(){
 
     if(error) throw error;
 
-    customTasks.push({ id: taskId, week, user, section, text });
-    tasksState[taskId] = { done: false, completedAt: null };
+    state.customTasks.push({ id, week, user, section, text });
+    state.taskStatus[id] = { done: false, completedAt: null };
 
-    closeAddTaskModal();
+    $('modalAdd').classList.remove('open');
+    $('inText').value = '';
 
-    if(week !== currentWeek){
-      setWeek(week);
-    } else {
-      renderTasks();
-      updateStats();
+    if(week !== state.week){
+      state.week = week;
+      document.querySelectorAll('.week-tab').forEach(t => {
+        t.classList.toggle('active', parseInt(t.dataset.week) === week);
+      });
     }
 
-    showSync('✓ Tarefa adicionada!');
+    render();
+    DEBUG.success('Tarefa adicionada!');
+    showToast('✓ Tarefa criada!');
   } catch(err) {
-    console.error('Erro ao adicionar:', err);
-    alert('Erro ao adicionar tarefa: ' + err.message);
+    DEBUG.error('Erro ao adicionar: ' + err.message);
+    alert('Erro: ' + err.message);
   }
 }
 
 // ============================================
-// REMOVER TAREFA CUSTOMIZADA
+// DELETE CUSTOM TASK
 // ============================================
-async function deleteCustomTask(taskId){
-  if(!confirm('Tem certeza que quer remover essa tarefa?')) return;
+async function deleteTask(id){
+  if(!confirm('Remover essa tarefa?')) return;
 
-  showSync('Removendo...');
+  DEBUG.log('Deletando: ' + id);
 
   try {
-    const { error } = await supabase
+    const { error } = await state.supabase
       .from('legaci_tasks')
       .delete()
-      .eq('id', taskId);
+      .eq('id', id);
 
     if(error) throw error;
 
-    customTasks = customTasks.filter(t => t.id !== taskId);
-    delete tasksState[taskId];
+    state.customTasks = state.customTasks.filter(t => t.id !== id);
+    delete state.taskStatus[id];
 
-    renderTasks();
-    updateStats();
-    showSync('✓ Removida');
+    render();
+    DEBUG.success('Removido!');
+    showToast('✓ Removida');
   } catch(err) {
-    console.error('Erro ao remover:', err);
-    showSync('Erro: ' + err.message, true);
+    DEBUG.error('Erro ao remover: ' + err.message);
+    showToast('Erro: ' + err.message, true);
   }
 }
 
 // ============================================
-// RENDERIZAR
+// RENDER
 // ============================================
-function renderTasks(){
-  const showDani = currentUser === 'both' || currentUser === 'dani';
-  const showMauricio = currentUser === 'both' || currentUser === 'mauricio';
+function render(){
+  DEBUG.log('Render: semana=' + state.week + ', user=' + state.user);
 
-  document.getElementById('col-dani').style.display = showDani ? 'block' : 'none';
-  document.getElementById('col-mauricio').style.display = showMauricio ? 'block' : 'none';
+  const showDani = state.user === 'both' || state.user === 'dani';
+  const showMauricio = state.user === 'both' || state.user === 'mauricio';
 
-  document.getElementById('columns').style.gridTemplateColumns =
+  $('col-dani').style.display = showDani ? 'block' : 'none';
+  $('col-mauricio').style.display = showMauricio ? 'block' : 'none';
+
+  document.querySelector('.columns').style.gridTemplateColumns =
     (showDani && showMauricio) ? '1fr 1fr' : '1fr';
 
   renderColumn('dani');
   renderColumn('mauricio');
+  updateStats();
 }
 
 function renderColumn(user){
-  const container = document.getElementById(user + '-tasks');
-  const weekData = DEFAULT_TASKS[currentWeek][user];
+  const container = $('tasks-' + user);
   container.innerHTML = '';
-  let totalTasks = 0;
-  let doneTasks = 0;
+
+  let total = 0, done = 0;
 
   // Tarefas padrão
-  weekData.forEach(section => {
-    const sectionDiv = document.createElement('div');
-    sectionDiv.className = 'task-section';
+  const weekTasks = TASKS[state.week] && TASKS[state.week][user];
+  if(weekTasks){
+    weekTasks.forEach(section => {
+      const sectionEl = document.createElement('div');
 
-    const header = document.createElement('div');
-    header.className = 'task-section-header';
-    header.textContent = section.section;
-    sectionDiv.appendChild(header);
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.textContent = section.name;
+      sectionEl.appendChild(header);
 
-    const ul = document.createElement('ul');
-    ul.className = 'task-list';
+      section.items.forEach((text, idx) => {
+        const id = makeId(state.week, user, section.name, idx);
+        const status = state.taskStatus[id] || { done: false, completedAt: null };
+        total++;
+        if(status.done) done++;
 
-    section.items.forEach((text, idx) => {
-      const taskId = makeTaskId(currentWeek, user, section.section, idx);
-      const state = tasksState[taskId] || { done: false };
-      totalTasks++;
-      if(state.done) doneTasks++;
+        const taskEl = makeTaskElement({
+          id: id,
+          week: state.week,
+          user: user,
+          section: section.name,
+          text: text,
+          done: status.done,
+          completedAt: status.completedAt,
+          isCustom: false
+        });
 
-      const li = createTaskElement({
-        id: taskId,
-        week: currentWeek,
-        user: user,
-        section: section.section,
-        text: text,
-        done: state.done,
-        completedAt: state.completedAt,
-        isCustom: false
+        sectionEl.appendChild(taskEl);
       });
 
-      ul.appendChild(li);
+      container.appendChild(sectionEl);
+    });
+  }
+
+  // Tarefas customizadas dessa semana/user
+  const userCustom = state.customTasks.filter(t =>
+    t.week === state.week && t.user === user
+  );
+
+  if(userCustom.length > 0){
+    const groups = {};
+    userCustom.forEach(t => {
+      if(!groups[t.section]) groups[t.section] = [];
+      groups[t.section].push(t);
     });
 
-    sectionDiv.appendChild(ul);
-    container.appendChild(sectionDiv);
-  });
+    Object.keys(groups).forEach(sectionName => {
+      const sectionEl = document.createElement('div');
 
-  // Tarefas customizadas
-  const userCustomTasks = customTasks.filter(t => t.week === currentWeek && t.user === user);
-  const customBySections = {};
-  userCustomTasks.forEach(t => {
-    if(!customBySections[t.section]) customBySections[t.section] = [];
-    customBySections[t.section].push(t);
-  });
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.textContent = '⭐ ' + sectionName;
+      sectionEl.appendChild(header);
 
-  Object.keys(customBySections).forEach(sectionName => {
-    const sectionDiv = document.createElement('div');
-    sectionDiv.className = 'task-section';
+      groups[sectionName].forEach(task => {
+        const status = state.taskStatus[task.id] || { done: false, completedAt: null };
+        total++;
+        if(status.done) done++;
 
-    const header = document.createElement('div');
-    header.className = 'task-section-header';
-    header.textContent = '⭐ ' + sectionName;
-    sectionDiv.appendChild(header);
+        const taskEl = makeTaskElement({
+          id: task.id,
+          week: task.week,
+          user: task.user,
+          section: task.section,
+          text: task.text,
+          done: status.done,
+          completedAt: status.completedAt,
+          isCustom: true
+        });
 
-    const ul = document.createElement('ul');
-    ul.className = 'task-list';
-
-    customBySections[sectionName].forEach(task => {
-      const state = tasksState[task.id] || { done: false };
-      totalTasks++;
-      if(state.done) doneTasks++;
-
-      const li = createTaskElement({
-        id: task.id,
-        week: task.week,
-        user: task.user,
-        section: task.section,
-        text: task.text,
-        done: state.done,
-        completedAt: state.completedAt,
-        isCustom: true
+        sectionEl.appendChild(taskEl);
       });
 
-      ul.appendChild(li);
+      container.appendChild(sectionEl);
     });
+  }
 
-    sectionDiv.appendChild(ul);
-    container.appendChild(sectionDiv);
-  });
-
-  document.getElementById(user + '-week-progress').textContent = `${doneTasks}/${totalTasks}`;
+  $('progress-' + user).textContent = done + '/' + total;
 }
 
-// ============================================
-// CRIAR ELEMENTO DA TAREFA (sem onclick inline)
-// ============================================
-function createTaskElement(task){
-  const li = document.createElement('li');
+function makeTaskElement(task){
+  const li = document.createElement('div');
   li.className = 'task' + (task.done ? ' done' : '');
 
-  // Checkbox
   const check = document.createElement('div');
   check.className = 'task-check';
   check.textContent = '✓';
 
-  // Content
   const content = document.createElement('div');
   content.className = 'task-content';
 
-  const textDiv = document.createElement('div');
-  textDiv.className = 'task-text';
-  textDiv.textContent = task.text;
+  const textEl = document.createElement('div');
+  textEl.className = 'task-text';
+  textEl.textContent = task.text;
 
   if(task.isCustom){
     const badge = document.createElement('span');
-    badge.className = 'task-custom-badge';
-    badge.textContent = 'Custom';
-    textDiv.appendChild(badge);
+    badge.className = 'task-badge';
+    badge.textContent = 'CUSTOM';
+    textEl.appendChild(badge);
   }
 
-  content.appendChild(textDiv);
+  content.appendChild(textEl);
 
   if(task.completedAt){
-    const dateDiv = document.createElement('div');
-    dateDiv.className = 'task-date';
-    dateDiv.textContent = 'Concluído em ' + formatDate(task.completedAt);
-    content.appendChild(dateDiv);
+    const dateEl = document.createElement('div');
+    dateEl.className = 'task-date';
+    dateEl.textContent = '✓ ' + formatDate(task.completedAt);
+    content.appendChild(dateEl);
   }
 
-  // Event listener (em vez de onclick inline)
-  const handleClick = (e) => {
-    e.stopPropagation();
+  // Click handler — em todo o elemento
+  li.addEventListener('click', function(e){
+    if(e.target.classList.contains('task-delete')) return;
     toggleTask({
       id: task.id,
       week: task.week,
@@ -1279,153 +1210,159 @@ function createTaskElement(task){
       section: task.section,
       text: task.text
     });
-  };
-
-  check.addEventListener('click', handleClick);
-  content.addEventListener('click', handleClick);
+  });
 
   li.appendChild(check);
   li.appendChild(content);
 
-  // Delete button só pra customizadas
   if(task.isCustom){
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'task-delete';
-    deleteBtn.textContent = '×';
-    deleteBtn.title = 'Remover tarefa';
-    deleteBtn.type = 'button';
-    deleteBtn.addEventListener('click', (e) => {
+    const del = document.createElement('button');
+    del.className = 'task-delete';
+    del.textContent = '×';
+    del.type = 'button';
+    del.title = 'Remover';
+    del.addEventListener('click', function(e){
       e.stopPropagation();
-      deleteCustomTask(task.id);
+      deleteTask(task.id);
     });
-    li.appendChild(deleteBtn);
+    li.appendChild(del);
   }
 
   return li;
 }
 
-// ============================================
-// ESTATÍSTICAS
-// ============================================
 function updateStats(){
   let total = 0, done = 0;
-  let daniTotal = 0, daniDone = 0;
-  let mauricioTotal = 0, mauricioDone = 0;
+  let dTotal = 0, dDone = 0;
+  let mTotal = 0, mDone = 0;
 
-  Object.keys(DEFAULT_TASKS).forEach(week => {
-    ['dani', 'mauricio'].forEach(user => {
-      DEFAULT_TASKS[week][user].forEach(section => {
-        section.items.forEach((text, idx) => {
-          const taskId = makeTaskId(parseInt(week), user, section.section, idx);
-          const state = tasksState[taskId] || { done: false };
+  // Padrão
+  Object.keys(TASKS).forEach(w => {
+    const week = parseInt(w);
+    ['dani', 'mauricio'].forEach(u => {
+      TASKS[w][u].forEach(s => {
+        s.items.forEach((text, idx) => {
+          const id = makeId(week, u, s.name, idx);
+          const status = state.taskStatus[id] || { done: false };
           total++;
-          if(state.done) done++;
-          if(user === 'dani'){
-            daniTotal++;
-            if(state.done) daniDone++;
-          } else {
-            mauricioTotal++;
-            if(state.done) mauricioDone++;
-          }
+          if(status.done) done++;
+          if(u === 'dani'){ dTotal++; if(status.done) dDone++; }
+          else { mTotal++; if(status.done) mDone++; }
         });
       });
     });
   });
 
-  customTasks.forEach(task => {
-    const state = tasksState[task.id] || { done: false };
+  // Custom
+  state.customTasks.forEach(t => {
+    const status = state.taskStatus[t.id] || { done: false };
     total++;
-    if(state.done) done++;
-    if(task.user === 'dani'){
-      daniTotal++;
-      if(state.done) daniDone++;
-    } else {
-      mauricioTotal++;
-      if(state.done) mauricioDone++;
-    }
+    if(status.done) done++;
+    if(t.user === 'dani'){ dTotal++; if(status.done) dDone++; }
+    else { mTotal++; if(status.done) mDone++; }
   });
 
-  const totalPct = total ? Math.round((done/total)*100) : 0;
-  const daniPct = daniTotal ? Math.round((daniDone/daniTotal)*100) : 0;
-  const mauricioPct = mauricioTotal ? Math.round((mauricioDone/mauricioTotal)*100) : 0;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const dPct = dTotal ? Math.round((dDone/dTotal)*100) : 0;
+  const mPct = mTotal ? Math.round((mDone/mTotal)*100) : 0;
 
-  document.getElementById('totalProgress').textContent = totalPct + '%';
-  document.getElementById('daniProgress').textContent = daniPct + '%';
-  document.getElementById('mauricioProgress').textContent = mauricioPct + '%';
-  document.getElementById('weekProgress').textContent = `${done}/${total}`;
-
-  document.getElementById('totalBar').style.width = totalPct + '%';
-  document.getElementById('daniBar').style.width = daniPct + '%';
-  document.getElementById('mauricioBar').style.width = mauricioPct + '%';
-  document.getElementById('taskBar').style.width = totalPct + '%';
+  $('statTotal').textContent = pct + '%';
+  $('statDani').textContent = dPct + '%';
+  $('statMauricio').textContent = mPct + '%';
+  $('statDone').textContent = done + '/' + total;
 }
 
 // ============================================
-// NAVEGAÇÃO
+// INIT
 // ============================================
-function setWeek(week){
-  currentWeek = week;
-  document.querySelectorAll('.week-tab').forEach(t => {
-    t.classList.toggle('active', parseInt(t.dataset.week) === week);
-  });
-  renderTasks();
-}
+function setupEvents(){
+  DEBUG.log('Configurando event listeners...');
 
-function setUser(user){
-  currentUser = user;
-  document.querySelectorAll('.user-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.user === user);
-  });
-  renderTasks();
-}
-
-// ============================================
-// INIT - USANDO EVENT LISTENERS (não inline)
-// ============================================
-function initEventListeners(){
-  // Botões de semana
+  // Week tabs
   document.querySelectorAll('.week-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const week = parseInt(btn.dataset.week);
-      setWeek(week);
+    btn.addEventListener('click', function(){
+      const week = parseInt(this.dataset.week);
+      DEBUG.log('Click week: ' + week);
+      state.week = week;
+      document.querySelectorAll('.week-tab').forEach(t => {
+        t.classList.toggle('active', parseInt(t.dataset.week) === week);
+      });
+      render();
     });
   });
 
-  // Botões de usuário
+  // User tabs
   document.querySelectorAll('.user-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const user = btn.dataset.user;
-      setUser(user);
+    btn.addEventListener('click', function(){
+      const user = this.dataset.user;
+      DEBUG.log('Click user: ' + user);
+      state.user = user;
+      document.querySelectorAll('.user-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.user === user);
+      });
+      render();
     });
   });
 
-  // Botão adicionar tarefa
-  document.getElementById('btnAddTask').addEventListener('click', openAddTaskModal);
-
-  // Modal
-  document.getElementById('btnCancel').addEventListener('click', closeAddTaskModal);
-  document.getElementById('btnSaveTask').addEventListener('click', addCustomTask);
-
-  // Fechar modal ao clicar fora
-  document.getElementById('addTaskModal').addEventListener('click', e => {
-    if(e.target.id === 'addTaskModal') closeAddTaskModal();
+  // Add button
+  $('btnAdd').addEventListener('click', function(){
+    DEBUG.log('Abrindo modal de adicionar');
+    $('inUser').value = state.user === 'mauricio' ? 'mauricio' : 'dani';
+    $('inWeek').value = state.week;
+    $('inSection').value = 'Tarefas Extras';
+    $('inText').value = '';
+    $('modalAdd').classList.add('open');
   });
+
+  $('btnCancel').addEventListener('click', function(){
+    $('modalAdd').classList.remove('open');
+  });
+
+  $('btnSave').addEventListener('click', addTask);
+
+  $('modalAdd').addEventListener('click', function(e){
+    if(e.target.id === 'modalAdd') this.classList.remove('open');
+  });
+
+  // Debug toggle
+  $('debugToggle').addEventListener('click', function(){
+    const panel = $('debugPanel');
+    panel.classList.toggle('visible');
+    this.textContent = panel.classList.contains('visible') ? '🐛 Esconder' : '🐛 Debug';
+  });
+
+  DEBUG.success('Event listeners OK');
 }
 
 function init(){
+  DEBUG.log('=== INICIANDO APP ===');
+
+  // Verifica se Supabase carregou
+  if(typeof window.supabase === 'undefined' || !window.supabase.createClient){
+    DEBUG.error('Biblioteca Supabase NÃO carregou!');
+    $('loading').style.display = 'none';
+    showError('Biblioteca Supabase não carregou',
+      '<p>Verifique sua conexão de internet. A biblioteca não foi baixada do CDN.</p>'
+    );
+    return;
+  }
+
+  DEBUG.success('Biblioteca Supabase OK');
+
   try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    initEventListeners();
-    loadTasks();
+    state.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    DEBUG.success('Cliente Supabase criado');
+
+    setupEvents();
+    loadData();
   } catch(err) {
-    console.error('Erro na inicialização:', err);
-    document.getElementById('loading').innerHTML =
-      '<p style="color:var(--danger);font-weight:600">Erro ao inicializar</p>' +
-      '<p style="margin-top:0.5rem;font-size:13px">' + err.message + '</p>';
+    DEBUG.error('Erro no init: ' + err.message);
+    $('loading').style.display = 'none';
+    showError('Erro ao inicializar', '<p>' + err.message + '</p>');
   }
 }
 
-// Aguarda DOM carregar
+// Iniciar quando DOM estiver pronto
 if(document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', init);
 } else {
