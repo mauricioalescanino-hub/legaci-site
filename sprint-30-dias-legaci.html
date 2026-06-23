@@ -20,6 +20,7 @@
   --warning:#D97706;
   --blue:#2563EB;
   --pink:#EC4899;
+  --danger:#DC2626;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -32,7 +33,6 @@ body{
   min-height:100vh;
 }
 
-/* HEADER */
 .header{
   background:linear-gradient(135deg, var(--forest), #0f231e);
   color:#fff;
@@ -51,12 +51,7 @@ body{
   pointer-events:none;
 }
 
-.header-content{
-  max-width:1400px;
-  margin:0 auto;
-  position:relative;
-  z-index:2;
-}
+.header-content{max-width:1400px;margin:0 auto;position:relative;z-index:2}
 
 .header-top{
   display:flex;
@@ -67,11 +62,7 @@ body{
   margin-bottom:2rem;
 }
 
-.logo-area{
-  display:flex;
-  align-items:center;
-  gap:1rem;
-}
+.logo-area{display:flex;align-items:center;gap:1rem}
 
 .logo-mark{
   font-family:'Libre Baskerville',serif;
@@ -112,10 +103,7 @@ body{
   opacity:0.6;
 }
 
-.user-btn.active{
-  background:var(--copper);
-  opacity:1;
-}
+.user-btn.active{background:var(--copper);opacity:1}
 
 .header h1{
   font-family:'Libre Baskerville',serif;
@@ -124,18 +112,10 @@ body{
   margin-bottom:0.5rem;
 }
 
-.header h1 em{
-  color:var(--gold);
-  font-style:italic;
-}
+.header h1 em{color:var(--gold);font-style:italic}
 
-.header-sub{
-  font-size:16px;
-  opacity:0.85;
-  font-weight:300;
-}
+.header-sub{font-size:16px;opacity:0.85;font-weight:300}
 
-/* STATS BAR */
 .stats-bar{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
@@ -182,14 +162,64 @@ body{
   border-radius:3px;
 }
 
-/* CONTAINER */
-.container{
-  max-width:1400px;
-  margin:0 auto;
-  padding:2rem;
+.container{max-width:1400px;margin:0 auto;padding:2rem}
+
+.goal-card{
+  background:linear-gradient(135deg, var(--copper), var(--gold));
+  color:#fff;
+  padding:1.5rem 2rem;
+  border-radius:14px;
+  margin-bottom:2rem;
+  text-align:center;
+  box-shadow:0 8px 24px rgba(193,127,74,0.25);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
 }
 
-/* WEEK TABS */
+.goal-card-text-area{flex:1;text-align:left}
+
+.goal-card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  opacity:0.9;
+  margin-bottom:0.5rem;
+}
+
+.goal-card-text{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(18px, 2.5vw, 24px);
+  font-weight:400;
+}
+
+.goal-card-text em{font-style:italic}
+
+.btn-add{
+  background:rgba(255,255,255,0.2);
+  border:2px solid rgba(255,255,255,0.4);
+  color:#fff;
+  padding:0.75rem 1.5rem;
+  border-radius:10px;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  white-space:nowrap;
+}
+
+.btn-add:hover{
+  background:rgba(255,255,255,0.3);
+  transform:translateY(-2px);
+}
+
 .week-tabs{
   display:flex;
   gap:0.5rem;
@@ -218,20 +248,9 @@ body{
   min-width:160px;
 }
 
-.week-tab:hover{
-  border-color:var(--copper);
-  transform:translateY(-2px);
-}
-
-.week-tab.active{
-  background:var(--forest);
-  color:#fff;
-  border-color:var(--forest);
-}
-
-.week-tab.active .week-tab-sub{
-  color:var(--gold);
-}
+.week-tab:hover{border-color:var(--copper);transform:translateY(-2px)}
+.week-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+.week-tab.active .week-tab-sub{color:var(--gold)}
 
 .week-tab-label{
   font-family:'JetBrains Mono',monospace;
@@ -241,22 +260,10 @@ body{
   text-transform:uppercase;
 }
 
-.week-tab.active .week-tab-label{
-  color:var(--gold);
-}
+.week-tab.active .week-tab-label{color:var(--gold)}
+.week-tab-title{font-size:14px;font-weight:700}
+.week-tab-sub{font-size:11px;font-weight:400;color:var(--ink3)}
 
-.week-tab-title{
-  font-size:14px;
-  font-weight:700;
-}
-
-.week-tab-sub{
-  font-size:11px;
-  font-weight:400;
-  color:var(--ink3);
-}
-
-/* COLUMNS */
 .columns{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -279,11 +286,7 @@ body{
   justify-content:space-between;
 }
 
-.column-title{
-  display:flex;
-  align-items:center;
-  gap:0.75rem;
-}
+.column-title{display:flex;align-items:center;gap:0.75rem}
 
 .user-avatar{
   width:44px;
@@ -298,13 +301,8 @@ body{
   font-size:20px;
 }
 
-.user-avatar.dani{
-  background:linear-gradient(135deg, var(--pink), var(--copper));
-}
-
-.user-avatar.mauricio{
-  background:linear-gradient(135deg, var(--blue), var(--forest));
-}
+.user-avatar.dani{background:linear-gradient(135deg, var(--pink), var(--copper))}
+.user-avatar.mauricio{background:linear-gradient(135deg, var(--blue), var(--forest))}
 
 .column-name{
   font-family:'Libre Baskerville',serif;
@@ -331,18 +329,10 @@ body{
   font-weight:700;
 }
 
-.column-body{
-  padding:0;
-}
+.column-body{padding:0}
 
-/* TASK SECTION */
-.task-section{
-  border-bottom:1px solid var(--border);
-}
-
-.task-section:last-child{
-  border-bottom:none;
-}
+.task-section{border-bottom:1px solid var(--border)}
+.task-section:last-child{border-bottom:none}
 
 .task-section-header{
   padding:1rem 1.5rem;
@@ -356,9 +346,7 @@ body{
   border-bottom:1px solid var(--border);
 }
 
-.task-list{
-  list-style:none;
-}
+.task-list{list-style:none}
 
 .task{
   padding:1rem 1.5rem;
@@ -366,27 +354,14 @@ body{
   display:flex;
   align-items:flex-start;
   gap:0.75rem;
-  cursor:pointer;
   transition:all 0.15s;
   position:relative;
 }
 
-.task:last-child{
-  border-bottom:none;
-}
-
-.task:hover{
-  background:rgba(193,127,74,0.03);
-}
-
-.task.done{
-  background:rgba(45,122,79,0.04);
-}
-
-.task.done .task-text{
-  text-decoration:line-through;
-  color:var(--ink3);
-}
+.task:last-child{border-bottom:none}
+.task:hover{background:rgba(193,127,74,0.03)}
+.task.done{background:rgba(45,122,79,0.04)}
+.task.done .task-text{text-decoration:line-through;color:var(--ink3)}
 
 .task-check{
   width:22px;
@@ -403,6 +378,7 @@ body{
   font-weight:700;
   transition:all 0.2s;
   background:#fff;
+  cursor:pointer;
 }
 
 .task.done .task-check{
@@ -411,16 +387,20 @@ body{
   color:#fff;
 }
 
-.task-content{
-  flex:1;
-  min-width:0;
-}
-
-.task-text{
-  font-size:14px;
-  color:var(--ink);
-  line-height:1.6;
-  transition:all 0.2s;
+.task-content{flex:1;min-width:0;cursor:pointer}
+.task-text{font-size:14px;color:var(--ink);line-height:1.6;transition:all 0.2s}
+.task-custom-badge{
+  display:inline-block;
+  background:rgba(193,127,74,0.15);
+  color:var(--copper);
+  font-size:10px;
+  padding:0.15rem 0.5rem;
+  border-radius:4px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  margin-left:0.5rem;
+  font-family:'JetBrains Mono',monospace;
+  vertical-align:middle;
 }
 
 .task-date{
@@ -433,16 +413,24 @@ body{
   gap:0.5rem;
 }
 
-.task-date::before{
-  content:'✓';
-  font-weight:700;
+.task-date::before{content:'✓';font-weight:700}
+.task:not(.done) .task-date{display:none}
+
+.task-delete{
+  opacity:0;
+  background:transparent;
+  border:none;
+  color:var(--danger);
+  cursor:pointer;
+  padding:0.25rem 0.5rem;
+  border-radius:4px;
+  font-size:16px;
+  transition:opacity 0.2s, background 0.2s;
 }
 
-.task:not(.done) .task-date{
-  display:none;
-}
+.task:hover .task-delete{opacity:0.6}
+.task-delete:hover{opacity:1!important;background:rgba(220,38,38,0.1)}
 
-/* LOADING */
 .loading{
   text-align:center;
   padding:3rem;
@@ -461,128 +449,111 @@ body{
   margin-bottom:1rem;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* SETUP MODAL */
-.setup-modal{
+.modal{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.7);
   backdrop-filter:blur(8px);
   z-index:1000;
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:center;
   padding:2rem;
 }
 
-.setup-modal.hidden{
-  display:none;
-}
+.modal.visible{display:flex}
 
-.setup-content{
+.modal-content{
   background:#fff;
   border-radius:16px;
   padding:2.5rem;
-  max-width:600px;
+  max-width:550px;
   width:100%;
   max-height:90vh;
   overflow-y:auto;
 }
 
-.setup-content h2{
+.modal-content h2{
   font-family:'Libre Baskerville',serif;
-  font-size:28px;
+  font-size:26px;
   color:var(--forest);
-  margin-bottom:1rem;
+  margin-bottom:0.5rem;
 }
 
-.setup-content p{
-  color:var(--ink2);
-  margin-bottom:1rem;
+.modal-content p{
+  color:var(--ink3);
+  margin-bottom:1.5rem;
   font-size:14px;
 }
 
-.setup-content pre{
-  background:#f5f5f5;
-  padding:1rem;
-  border-radius:8px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;
-  overflow-x:auto;
-  margin:1rem 0;
-  line-height:1.6;
-}
-
-.setup-content label{
+.modal-content label{
   display:block;
   font-size:13px;
-  font-weight:600;
+  font-weight:700;
   color:var(--forest);
   margin-bottom:0.5rem;
   margin-top:1rem;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
 }
 
-.setup-content input{
+.modal-content input,
+.modal-content select,
+.modal-content textarea{
   width:100%;
   padding:0.75rem 1rem;
-  border:1px solid var(--border);
+  border:2px solid var(--border);
   border-radius:8px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+  transition:border-color 0.2s;
 }
 
-.setup-content button{
-  width:100%;
-  margin-top:1.5rem;
-  padding:1rem;
-  background:var(--forest);
-  color:#fff;
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus{
+  outline:none;
+  border-color:var(--copper);
+}
+
+.modal-content textarea{
+  min-height:80px;
+  resize:vertical;
+  font-family:inherit;
+}
+
+.modal-actions{
+  display:flex;
+  gap:0.75rem;
+  margin-top:2rem;
+}
+
+.btn-modal{
+  flex:1;
+  padding:0.9rem;
   border:none;
   border-radius:10px;
   font-family:inherit;
   font-weight:700;
-  font-size:15px;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-
-.setup-content button:hover{
-  background:#0f231e;
-}
-
-.setup-tabs{
-  display:flex;
-  gap:0.5rem;
-  margin-bottom:1.5rem;
-  border-bottom:2px solid var(--border);
-}
-
-.setup-tab{
-  padding:0.75rem 1.25rem;
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  font-family:inherit;
-  font-weight:600;
-  color:var(--ink3);
   font-size:14px;
-  margin-bottom:-2px;
-  border-bottom:3px solid transparent;
+  cursor:pointer;
   transition:all 0.2s;
 }
 
-.setup-tab.active{
-  color:var(--forest);
-  border-bottom-color:var(--copper);
+.btn-primary{background:var(--forest);color:#fff}
+.btn-primary:hover{background:#0f231e}
+
+.btn-secondary{
+  background:transparent;
+  color:var(--ink2);
+  border:2px solid var(--border)!important;
 }
 
-.setup-tab-content{display:none}
-.setup-tab-content.active{display:block}
+.btn-secondary:hover{background:var(--cream)}
 
-/* SYNC INDICATOR */
 .sync-indicator{
   position:fixed;
   bottom:1.5rem;
@@ -604,10 +575,7 @@ body{
   z-index:100;
 }
 
-.sync-indicator.visible{
-  opacity:1;
-  transform:translateY(0);
-}
+.sync-indicator.visible{opacity:1;transform:translateY(0)}
 
 .sync-dot{
   width:8px;
@@ -622,104 +590,17 @@ body{
   50%{opacity:0.4}
 }
 
-/* MOBILE */
 @media(max-width:768px){
   .columns{grid-template-columns:1fr}
   .container{padding:1rem}
   .header{padding:2rem 1rem 1.5rem}
   .stats-bar{grid-template-columns:repeat(2, 1fr)}
-}
-
-/* GOAL CARD */
-.goal-card{
-  background:linear-gradient(135deg, var(--copper), var(--gold));
-  color:#fff;
-  padding:1.5rem 2rem;
-  border-radius:14px;
-  margin-bottom:2rem;
-  text-align:center;
-  box-shadow:0 8px 24px rgba(193,127,74,0.25);
-}
-
-.goal-card-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  opacity:0.9;
-  margin-bottom:0.5rem;
-}
-
-.goal-card-text{
-  font-family:'Libre Baskerville',serif;
-  font-size:clamp(20px, 3vw, 28px);
-  font-weight:400;
-}
-
-.goal-card-text em{
-  font-style:italic;
+  .goal-card{flex-direction:column;text-align:center}
+  .goal-card-text-area{text-align:center}
 }
 </style>
 </head>
 <body>
-
-<!-- SETUP MODAL -->
-<div class="setup-modal" id="setupModal">
-  <div class="setup-content">
-    <h2>🔧 Configurar Supabase</h2>
-    <p>Pra começar a usar, conecte ao seu Supabase. Os dados ficam salvos lá e sincronizam entre você e a Dani.</p>
-
-    <div class="setup-tabs">
-      <button class="setup-tab active" onclick="showSetupTab('config')">Configurar</button>
-      <button class="setup-tab" onclick="showSetupTab('sql')">SQL (Setup do Banco)</button>
-    </div>
-
-    <div class="setup-tab-content active" id="tab-config">
-      <label>Supabase URL</label>
-      <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
-
-      <label>Supabase Anon Key</label>
-      <input type="text" id="supabaseKey" placeholder="eyJhbGci...">
-
-      <button onclick="saveConfig()">Conectar e Começar</button>
-
-      <p style="margin-top:1.5rem;font-size:12px;color:var(--ink3)">
-        💡 Antes de conectar, rode o SQL da aba ao lado no seu Supabase pra criar a tabela.
-      </p>
-    </div>
-
-    <div class="setup-tab-content" id="tab-sql">
-      <p>Cole este SQL no <strong>SQL Editor</strong> do seu Supabase:</p>
-      <pre>-- Tabela de tarefas Legaci
-CREATE TABLE IF NOT EXISTS legaci_tasks (
-  id TEXT PRIMARY KEY,
-  done BOOLEAN DEFAULT FALSE,
-  completed_at TIMESTAMPTZ,
-  user_owner TEXT NOT NULL,
-  week INTEGER NOT NULL,
-  section TEXT NOT NULL,
-  text TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Permitir acesso público (cuidado: ajuste conforme necessidade)
-ALTER TABLE legaci_tasks ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Permitir leitura pública" ON legaci_tasks
-FOR SELECT USING (true);
-
-CREATE POLICY "Permitir update público" ON legaci_tasks
-FOR UPDATE USING (true);
-
-CREATE POLICY "Permitir insert público" ON legaci_tasks
-FOR INSERT WITH CHECK (true);</pre>
-
-      <p style="margin-top:1rem;font-size:12px;color:var(--ink3)">
-        ⚠️ As políticas acima são abertas. Pra produção, considere autenticação.
-      </p>
-    </div>
-  </div>
-</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -733,9 +614,9 @@ FOR INSERT WITH CHECK (true);</pre>
         </div>
       </div>
       <div class="user-switcher">
-        <button class="user-btn active" onclick="setUser('both')">Visão Geral</button>
-        <button class="user-btn" onclick="setUser('dani')">Dani</button>
-        <button class="user-btn" onclick="setUser('mauricio')">Maurício</button>
+        <button class="user-btn active" data-user="both" onclick="setUser('both', event)">Visão Geral</button>
+        <button class="user-btn" data-user="dani" onclick="setUser('dani', event)">Dani</button>
+        <button class="user-btn" data-user="mauricio" onclick="setUser('mauricio', event)">Maurício</button>
       </div>
     </div>
 
@@ -766,45 +647,44 @@ FOR INSERT WITH CHECK (true);</pre>
   </div>
 </div>
 
-<!-- CONTAINER -->
 <div class="container">
 
   <div class="goal-card">
-    <div class="goal-card-label">META DO MÊS</div>
-    <div class="goal-card-text">Primeira venda no <em>dia 30</em> · 3-5 vendas fechadas até o fim do mês</div>
+    <div class="goal-card-text-area">
+      <div class="goal-card-label">META DO MÊS</div>
+      <div class="goal-card-text">Primeira venda no <em>dia 30</em> · 3-5 vendas fechadas</div>
+    </div>
+    <button class="btn-add" onclick="openAddTaskModal()">+ Adicionar Tarefa</button>
   </div>
 
-  <!-- WEEK TABS -->
   <div class="week-tabs">
-    <button class="week-tab active" onclick="setWeek(1)">
+    <button class="week-tab active" data-week="1" onclick="setWeek(1, event)">
       <span class="week-tab-label">Semana 1</span>
       <span class="week-tab-title">Onboarding</span>
       <span class="week-tab-sub">Imersão e setup</span>
     </button>
-    <button class="week-tab" onclick="setWeek(2)">
+    <button class="week-tab" data-week="2" onclick="setWeek(2, event)">
       <span class="week-tab-label">Semana 2</span>
       <span class="week-tab-title">Aquecimento</span>
       <span class="week-tab-sub">Conteúdo e ads</span>
     </button>
-    <button class="week-tab" onclick="setWeek(3)">
+    <button class="week-tab" data-week="3" onclick="setWeek(3, event)">
       <span class="week-tab-label">Semana 3</span>
       <span class="week-tab-title">Primeiras Conversas</span>
       <span class="week-tab-sub">Calls e propostas</span>
     </button>
-    <button class="week-tab" onclick="setWeek(4)">
+    <button class="week-tab" data-week="4" onclick="setWeek(4, event)">
       <span class="week-tab-label">Semana 4</span>
       <span class="week-tab-title">Fechar! 🎯</span>
       <span class="week-tab-sub">Primeiras vendas</span>
     </button>
   </div>
 
-  <!-- LOADING -->
   <div class="loading" id="loading">
     <div class="loading-spinner"></div>
-    <div>Carregando dados...</div>
+    <div>Carregando dados do Supabase...</div>
   </div>
 
-  <!-- COLUMNS -->
   <div class="columns" id="columns" style="display:none">
     <div class="column" id="col-dani">
       <div class="column-header">
@@ -837,6 +717,39 @@ FOR INSERT WITH CHECK (true);</pre>
 
 </div>
 
+<!-- ADD TASK MODAL -->
+<div class="modal" id="addTaskModal">
+  <div class="modal-content">
+    <h2>+ Adicionar Tarefa</h2>
+    <p>Cria uma nova tarefa que vai aparecer no painel</p>
+
+    <label>Quem vai fazer?</label>
+    <select id="newTaskUser">
+      <option value="dani">Daniela · Comercial</option>
+      <option value="mauricio">Maurício · Produto</option>
+    </select>
+
+    <label>Em qual semana?</label>
+    <select id="newTaskWeek">
+      <option value="1">Semana 1 · Onboarding</option>
+      <option value="2">Semana 2 · Aquecimento</option>
+      <option value="3">Semana 3 · Primeiras Conversas</option>
+      <option value="4">Semana 4 · Fechar 🎯</option>
+    </select>
+
+    <label>Seção / Categoria</label>
+    <input type="text" id="newTaskSection" placeholder="Ex: Vendas, Setup, Ads, Operação..." value="Tarefas Extras">
+
+    <label>Descrição da tarefa</label>
+    <textarea id="newTaskText" placeholder="Ex: Ligar para 5 leads quentes da rede pessoal"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-modal btn-secondary" onclick="closeAddTaskModal()">Cancelar</button>
+      <button class="btn-modal btn-primary" onclick="addCustomTask()">Adicionar Tarefa</button>
+    </div>
+  </div>
+</div>
+
 <!-- SYNC INDICATOR -->
 <div class="sync-indicator" id="syncIndicator">
   <div class="sync-dot"></div>
@@ -845,10 +758,18 @@ FOR INSERT WITH CHECK (true);</pre>
 
 <script>
 // ============================================
-// CONFIGURAÇÃO DAS TAREFAS
+// SUPABASE - PRÉ-CONFIGURADO
 // ============================================
-const TASKS_DATA = {
-  1: { // SEMANA 1
+const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
+
+let supabase = null;
+
+// ============================================
+// TAREFAS PADRÃO (PRÉ-DEFINIDAS)
+// ============================================
+const DEFAULT_TASKS = {
+  1: {
     dani: [
       { section: "Dias 1-3 · Imersão Express", items: [
         "Leitura completa da documentação (spec, kit anti-crise, plano 5 anos)",
@@ -883,7 +804,7 @@ const TASKS_DATA = {
       ]}
     ]
   },
-  2: { // SEMANA 2
+  2: {
     dani: [
       { section: "Dias 8-14 · Aquecer Instagram", items: [
         "Publicar 3 posts (segunda, quarta, sexta)",
@@ -911,19 +832,19 @@ const TASKS_DATA = {
       ]},
       { section: "Desenvolvimento + Operação", items: [
         "Continuar Legaci Memórias no Code",
-        "Validar pipeline do livro com 1 cliente piloto (se possível)",
+        "Validar pipeline do livro com 1 cliente piloto",
         "Garantir backup de entrevistadores",
         "Documentar processo end-to-end"
       ]}
     ]
   },
-  3: { // SEMANA 3
+  3: {
     dani: [
       { section: "Dias 15-21 · Vendas Reais", items: [
         "Fazer 5-10 calls de qualificação com leads dos ads",
         "Fazer 3-5 calls com prospecção direta",
         "Enviar 8-12 propostas personalizadas",
-        "Executar follow-up D+2 e D+5 (template kit anti-crise)",
+        "Executar follow-up D+2 e D+5",
         "Refinar discurso baseado em objeções reais"
       ]},
       { section: "Conteúdo", items: [
@@ -951,7 +872,7 @@ const TASKS_DATA = {
       ]}
     ]
   },
-  4: { // SEMANA 4
+  4: {
     dani: [
       { section: "Dias 22-30 · Fechar! 🎯", items: [
         "Follow-up agressivo (mas educado) em todas propostas",
@@ -990,47 +911,25 @@ const TASKS_DATA = {
 // ============================================
 // ESTADO GLOBAL
 // ============================================
-let supabase = null;
 let currentWeek = 1;
 let currentUser = 'both';
-let tasksState = {}; // { taskId: { done, completedAt } }
+let tasksState = {};
+let customTasks = []; // Tarefas adicionadas pelo usuário
 
 // ============================================
-// SUPABASE SETUP
+// HELPERS
 // ============================================
-function loadConfig(){
-  const url = localStorage.getItem('legaci_supabase_url');
-  const key = localStorage.getItem('legaci_supabase_key');
-  if(url && key){
-    supabase = window.supabase.createClient(url, key);
-    document.getElementById('setupModal').classList.add('hidden');
-    initApp();
-  }
+function sectionToId(section){
+  return section.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 }
 
-function saveConfig(){
-  const url = document.getElementById('supabaseUrl').value.trim();
-  const key = document.getElementById('supabaseKey').value.trim();
-  if(!url || !key){
-    alert('Preencha URL e Key');
-    return;
-  }
-  localStorage.setItem('legaci_supabase_url', url);
-  localStorage.setItem('legaci_supabase_key', key);
-  supabase = window.supabase.createClient(url, key);
-  document.getElementById('setupModal').classList.add('hidden');
-  initApp();
-}
-
-function showSetupTab(tab){
-  document.querySelectorAll('.setup-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.setup-tab-content').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
+function makeTaskId(week, user, section, idx, isCustom = false){
+  const prefix = isCustom ? 'custom' : 'default';
+  return `${prefix}-w${week}-${user}-${sectionToId(section)}-${idx}`;
 }
 
 // ============================================
-// CARREGAR DADOS DO SUPABASE
+// CARREGAR DADOS
 // ============================================
 async function loadTasks(){
   try {
@@ -1040,13 +939,25 @@ async function loadTasks(){
 
     if(error) throw error;
 
-    // Mapear estado
     tasksState = {};
+    customTasks = [];
+
     (data || []).forEach(task => {
       tasksState[task.id] = {
         done: task.done,
         completedAt: task.completed_at
       };
+
+      // Se for tarefa customizada (id começa com "custom-")
+      if(task.id.startsWith('custom-')){
+        customTasks.push({
+          id: task.id,
+          week: task.week,
+          user: task.user_owner,
+          section: task.section,
+          text: task.text
+        });
+      }
     });
 
     document.getElementById('loading').style.display = 'none';
@@ -1056,17 +967,19 @@ async function loadTasks(){
   } catch(err) {
     console.error('Erro ao carregar:', err);
     showSync('Erro: ' + err.message, true);
+    document.getElementById('loading').innerHTML =
+      '<p style="color:var(--danger)">Erro ao carregar: ' + err.message + '</p>' +
+      '<p style="margin-top:1rem;font-size:13px">Verifique se a tabela <code>legaci_tasks</code> foi criada no Supabase</p>';
   }
 }
 
 // ============================================
-// SALVAR TAREFA
+// SALVAR TAREFA (toggle done)
 // ============================================
 async function toggleTask(taskId, week, user, section, text){
   const isDone = !tasksState[taskId]?.done;
   const completedAt = isDone ? new Date().toISOString() : null;
 
-  // Atualizar UI imediatamente
   tasksState[taskId] = { done: isDone, completedAt };
   renderTasks();
   updateStats();
@@ -1086,11 +999,10 @@ async function toggleTask(taskId, week, user, section, text){
       });
 
     if(error) throw error;
-    showSync('✓ Salvo no Supabase');
+    showSync(isDone ? '✓ Tarefa concluída!' : '↩ Desmarcado');
   } catch(err) {
     console.error('Erro ao salvar:', err);
     showSync('Erro: ' + err.message, true);
-    // Reverter estado
     tasksState[taskId] = { done: !isDone, completedAt: null };
     renderTasks();
     updateStats();
@@ -1098,62 +1010,193 @@ async function toggleTask(taskId, week, user, section, text){
 }
 
 // ============================================
+// ADICIONAR NOVA TAREFA
+// ============================================
+function openAddTaskModal(){
+  document.getElementById('newTaskUser').value = currentUser === 'mauricio' ? 'mauricio' : 'dani';
+  document.getElementById('newTaskWeek').value = currentWeek;
+  document.getElementById('newTaskSection').value = 'Tarefas Extras';
+  document.getElementById('newTaskText').value = '';
+  document.getElementById('addTaskModal').classList.add('visible');
+  setTimeout(() => document.getElementById('newTaskText').focus(), 100);
+}
+
+function closeAddTaskModal(){
+  document.getElementById('addTaskModal').classList.remove('visible');
+}
+
+async function addCustomTask(){
+  const user = document.getElementById('newTaskUser').value;
+  const week = parseInt(document.getElementById('newTaskWeek').value);
+  const section = document.getElementById('newTaskSection').value.trim() || 'Tarefas Extras';
+  const text = document.getElementById('newTaskText').value.trim();
+
+  if(!text){
+    alert('Escreva a descrição da tarefa!');
+    return;
+  }
+
+  const taskId = `custom-w${week}-${user}-${sectionToId(section)}-${Date.now()}`;
+
+  showSync('Criando tarefa...');
+
+  try {
+    const { error } = await supabase
+      .from('legaci_tasks')
+      .insert({
+        id: taskId,
+        done: false,
+        completed_at: null,
+        user_owner: user,
+        week: week,
+        section: section,
+        text: text
+      });
+
+    if(error) throw error;
+
+    // Adicionar localmente
+    customTasks.push({ id: taskId, week, user, section, text });
+    tasksState[taskId] = { done: false, completedAt: null };
+
+    closeAddTaskModal();
+    renderTasks();
+    updateStats();
+    showSync('✓ Tarefa adicionada!');
+
+    // Navegar para a semana da nova tarefa se necessário
+    if(week !== currentWeek){
+      setWeek(week);
+    }
+  } catch(err) {
+    console.error('Erro ao adicionar:', err);
+    alert('Erro ao adicionar tarefa: ' + err.message);
+  }
+}
+
+// ============================================
+// REMOVER TAREFA CUSTOMIZADA
+// ============================================
+async function deleteCustomTask(taskId, event){
+  event.stopPropagation();
+  if(!confirm('Tem certeza que quer remover essa tarefa?')) return;
+
+  showSync('Removendo...');
+
+  try {
+    const { error } = await supabase
+      .from('legaci_tasks')
+      .delete()
+      .eq('id', taskId);
+
+    if(error) throw error;
+
+    customTasks = customTasks.filter(t => t.id !== taskId);
+    delete tasksState[taskId];
+
+    renderTasks();
+    updateStats();
+    showSync('✓ Tarefa removida');
+  } catch(err) {
+    console.error('Erro ao remover:', err);
+    showSync('Erro: ' + err.message, true);
+  }
+}
+
+// ============================================
 // RENDERIZAR
 // ============================================
 function renderTasks(){
-  const weekData = TASKS_DATA[currentWeek];
   const showDani = currentUser === 'both' || currentUser === 'dani';
   const showMauricio = currentUser === 'both' || currentUser === 'mauricio';
 
   document.getElementById('col-dani').style.display = showDani ? 'block' : 'none';
   document.getElementById('col-mauricio').style.display = showMauricio ? 'block' : 'none';
 
-  // Ajustar colunas se só 1 visível
   document.getElementById('columns').style.gridTemplateColumns =
     (showDani && showMauricio) ? '1fr 1fr' : '1fr';
 
-  // Dani
-  renderColumn('dani', weekData.dani);
-  // Maurício
-  renderColumn('mauricio', weekData.mauricio);
+  renderColumn('dani');
+  renderColumn('mauricio');
 }
 
-function renderColumn(user, sections){
+function renderColumn(user){
   const container = document.getElementById(user + '-tasks');
+  const weekData = DEFAULT_TASKS[currentWeek][user];
   let html = '';
   let totalTasks = 0;
   let doneTasks = 0;
 
-  sections.forEach(section => {
+  // Tarefas padrão
+  weekData.forEach(section => {
     html += `<div class="task-section">`;
-    html += `<div class="task-section-header">${section.section}</div>`;
+    html += `<div class="task-section-header">${escapeHtml(section.section)}</div>`;
     html += `<ul class="task-list">`;
 
     section.items.forEach((text, idx) => {
-      const taskId = `w${currentWeek}-${user}-${section.section.replace(/[^a-z0-9]/gi, '_')}-${idx}`;
+      const taskId = makeTaskId(currentWeek, user, section.section, idx);
       const state = tasksState[taskId] || { done: false };
       totalTasks++;
       if(state.done) doneTasks++;
 
       const dateText = state.completedAt
         ? new Date(state.completedAt).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
           })
         : '';
 
-      html += `
-        <li class="task ${state.done ? 'done' : ''}" onclick="toggleTask('${taskId}', ${currentWeek}, '${user}', '${section.section.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')">
-          <div class="task-check">✓</div>
-          <div class="task-content">
-            <div class="task-text">${text}</div>
-            <div class="task-date">Concluído em ${dateText}</div>
-          </div>
-        </li>
-      `;
+      html += renderTaskHtml({
+        id: taskId,
+        week: currentWeek,
+        user: user,
+        section: section.section,
+        text: text,
+        done: state.done,
+        dateText: dateText,
+        isCustom: false
+      });
+    });
+
+    html += `</ul></div>`;
+  });
+
+  // Agrupar tarefas customizadas por seção
+  const userCustomTasks = customTasks.filter(t => t.week === currentWeek && t.user === user);
+  const customBySections = {};
+  userCustomTasks.forEach(t => {
+    if(!customBySections[t.section]) customBySections[t.section] = [];
+    customBySections[t.section].push(t);
+  });
+
+  // Renderizar tarefas customizadas
+  Object.keys(customBySections).forEach(sectionName => {
+    html += `<div class="task-section">`;
+    html += `<div class="task-section-header">⭐ ${escapeHtml(sectionName)}</div>`;
+    html += `<ul class="task-list">`;
+
+    customBySections[sectionName].forEach(task => {
+      const state = tasksState[task.id] || { done: false };
+      totalTasks++;
+      if(state.done) doneTasks++;
+
+      const dateText = state.completedAt
+        ? new Date(state.completedAt).toLocaleDateString('pt-BR', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          })
+        : '';
+
+      html += renderTaskHtml({
+        id: task.id,
+        week: task.week,
+        user: task.user,
+        section: task.section,
+        text: task.text,
+        done: state.done,
+        dateText: dateText,
+        isCustom: true
+      });
     });
 
     html += `</ul></div>`;
@@ -1161,6 +1204,30 @@ function renderColumn(user, sections){
 
   container.innerHTML = html;
   document.getElementById(user + '-week-progress').textContent = `${doneTasks}/${totalTasks}`;
+}
+
+function renderTaskHtml(task){
+  const customBadge = task.isCustom ? '<span class="task-custom-badge">Custom</span>' : '';
+  const deleteBtn = task.isCustom
+    ? `<button class="task-delete" onclick="deleteCustomTask('${task.id}', event)" title="Remover tarefa">×</button>`
+    : '';
+
+  return `
+    <li class="task ${task.done ? 'done' : ''}">
+      <div class="task-check" onclick="toggleTask('${task.id}', ${task.week}, '${task.user}', ${JSON.stringify(task.section)}, ${JSON.stringify(task.text)})">✓</div>
+      <div class="task-content" onclick="toggleTask('${task.id}', ${task.week}, '${task.user}', ${JSON.stringify(task.section)}, ${JSON.stringify(task.text)})">
+        <div class="task-text">${escapeHtml(task.text)}${customBadge}</div>
+        <div class="task-date">Concluído em ${task.dateText}</div>
+      </div>
+      ${deleteBtn}
+    </li>
+  `;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 // ============================================
@@ -1171,11 +1238,12 @@ function updateStats(){
   let daniTotal = 0, daniDone = 0;
   let mauricioTotal = 0, mauricioDone = 0;
 
-  Object.keys(TASKS_DATA).forEach(week => {
+  // Padrão
+  Object.keys(DEFAULT_TASKS).forEach(week => {
     ['dani', 'mauricio'].forEach(user => {
-      TASKS_DATA[week][user].forEach(section => {
+      DEFAULT_TASKS[week][user].forEach(section => {
         section.items.forEach((text, idx) => {
-          const taskId = `w${week}-${user}-${section.section.replace(/[^a-z0-9]/gi, '_')}-${idx}`;
+          const taskId = makeTaskId(parseInt(week), user, section.section, idx);
           const state = tasksState[taskId] || { done: false };
           total++;
           if(state.done) done++;
@@ -1189,6 +1257,20 @@ function updateStats(){
         });
       });
     });
+  });
+
+  // Customizadas
+  customTasks.forEach(task => {
+    const state = tasksState[task.id] || { done: false };
+    total++;
+    if(state.done) done++;
+    if(task.user === 'dani'){
+      daniTotal++;
+      if(state.done) daniDone++;
+    } else {
+      mauricioTotal++;
+      if(state.done) mauricioDone++;
+    }
   });
 
   const totalPct = total ? Math.round((done/total)*100) : 0;
@@ -1209,18 +1291,19 @@ function updateStats(){
 // ============================================
 // NAVEGAÇÃO
 // ============================================
-function setWeek(week){
+function setWeek(week, event){
   currentWeek = week;
-  document.querySelectorAll('.week-tab').forEach((t, i) => {
-    t.classList.toggle('active', i + 1 === week);
+  document.querySelectorAll('.week-tab').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.week) === week);
   });
   renderTasks();
 }
 
-function setUser(user){
+function setUser(user, event){
   currentUser = user;
-  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.user-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.user === user);
+  });
   renderTasks();
 }
 
@@ -1232,23 +1315,30 @@ function showSync(msg, isError = false){
   const ind = document.getElementById('syncIndicator');
   document.getElementById('syncText').textContent = msg;
   ind.classList.add('visible');
-  ind.querySelector('.sync-dot').style.background = isError ? '#DC2626' : 'var(--success)';
+  ind.querySelector('.sync-dot').style.background = isError ? 'var(--danger)' : 'var(--success)';
 
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
     ind.classList.remove('visible');
-  }, 2000);
+  }, 2500);
 }
+
+// ============================================
+// FECHAR MODAL AO CLICAR FORA
+// ============================================
+document.getElementById('addTaskModal').addEventListener('click', e => {
+  if(e.target.id === 'addTaskModal') closeAddTaskModal();
+});
 
 // ============================================
 // INIT
 // ============================================
 function initApp(){
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   loadTasks();
 }
 
-// Iniciar
-loadConfig();
+initApp();
 </script>
 
 </body>
