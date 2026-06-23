@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeção Financeira · Legaci</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1A3C34;
+  --copper:#C17F4A;
+  --cream:#F8F6F2;
+  --gold:#D4AF37;
+  --ink:#111010;
+  --ink2:rgba(17,16,16,0.75);
+  --ink3:rgba(17,16,16,0.5);
+  --border:rgba(17,16,16,0.08);
+  --success:#2D7A4F;
+  --warning:#D97706;
+  --danger:#DC2626;
+  --blue:#2563EB;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Bricolage Grotesque',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+}
+
+.header{
+  background:linear-gradient(135deg, var(--forest), #0f231e);
+  color:#fff;
+  padding:2rem 1.5rem;
+}
+
+.header-content{max-width:1200px;margin:0 auto}
+
+.header-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--gold);
+  text-transform:uppercase;
+  margin-bottom:0.5rem;
+}
+
+.header h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(26px, 4vw, 38px);
+  font-weight:400;
+  margin-bottom:0.5rem;
+}
+
+.header h1 em{color:var(--gold);font-style:italic}
+.header-sub{font-size:15px;opacity:0.85}
+
+.container{max-width:1200px;margin:0 auto;padding:1.5rem}
+
+.philosophy{
+  background:linear-gradient(135deg, rgba(45,122,79,0.08), rgba(193,127,74,0.04));
+  border-left:4px solid var(--success);
+  padding:1rem 1.25rem;
+  border-radius:8px;
+  margin-bottom:1.5rem;
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.7;
+}
+
+.philosophy strong{color:var(--success);display:block;margin-bottom:0.4rem}
+
+.scenarios{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:0.75rem;
+  margin-bottom:1.5rem;
+}
+
+.scenario{
+  background:#fff;
+  border:2px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+  cursor:pointer;
+  text-align:left;
+  font-family:inherit;
+  color:inherit;
+  transition:all 0.15s;
+}
+
+.scenario:hover{border-color:var(--copper)}
+
+.scenario.active{
+  border-color:var(--copper);
+  background:linear-gradient(135deg, rgba(193,127,74,0.06), rgba(212,175,55,0.04));
+}
+
+.scenario-meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:var(--copper);
+  text-transform:uppercase;
+  margin-bottom:0.25rem;
+}
+
+.scenario-name{
+  font-family:'Libre Baskerville',serif;
+  font-size:18px;
+  color:var(--forest);
+  margin-bottom:0.25rem;
+}
+
+.scenario-desc{font-size:12px;color:var(--ink3)}
+
+.hero-metrics{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:1rem;
+  margin-bottom:1.5rem;
+}
+
+.hero-metric{
+  background:#fff;
+  border-radius:12px;
+  padding:1.25rem;
+  border:1px solid var(--border);
+  text-align:center;
+}
+
+.hero-metric.gold{
+  background:linear-gradient(135deg, var(--copper), var(--gold));
+  color:#fff;
+  border:none;
+}
+
+.hero-metric-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:700;
+  opacity:0.8;
+  margin-bottom:0.5rem;
+}
+
+.hero-metric-value{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(22px, 4vw, 32px);
+  font-weight:700;
+  line-height:1;
+  margin-bottom:0.25rem;
+}
+
+.hero-metric-sub{font-size:12px;opacity:0.75}
+
+.section{margin-bottom:1.5rem}
+
+.section-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:18px;
+  color:var(--forest);
+  margin-bottom:0.75rem;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+
+.section-title::before{
+  content:'';
+  width:3px;
+  height:18px;
+  background:var(--copper);
+  border-radius:2px;
+}
+
+.controls{
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:1.25rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:1.25rem;
+}
+
+.control-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  font-weight:700;
+  color:var(--forest);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  margin-bottom:0.5rem;
+}
+
+.control-value{
+  font-family:'JetBrains Mono',monospace;
+  color:var(--copper);
+}
+
+.control-slider{
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  height:6px;
+  background:var(--border);
+  border-radius:3px;
+}
+
+.control-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  background:var(--copper);
+  border-radius:50%;
+  cursor:pointer;
+  border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+
+.control-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  background:var(--copper);
+  border-radius:50%;
+  cursor:pointer;
+  border:3px solid #fff;
+}
+
+.costs-info{
+  background:rgba(37,99,235,0.06);
+  border-left:4px solid var(--blue);
+  padding:1rem 1.25rem;
+  border-radius:8px;
+  font-size:13px;
+  color:var(--ink2);
+  margin-bottom:1.5rem;
+  line-height:1.7;
+}
+
+.costs-info strong{color:var(--forest)}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+  gap:0.75rem;
+  margin-bottom:1.5rem;
+}
+
+.summary-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.summary-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--ink3);
+  font-weight:700;
+  margin-bottom:0.4rem;
+}
+
+.summary-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:20px;
+  font-weight:700;
+  color:var(--forest);
+  line-height:1.1;
+}
+
+.summary-sub{font-size:11px;color:var(--ink3);margin-top:0.2rem}
+
+.analysis{
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:1.25rem;
+  margin-bottom:1.5rem;
+}
+
+.analysis h3{
+  font-family:'Libre Baskerville',serif;
+  font-size:18px;
+  color:var(--forest);
+  margin-bottom:1rem;
+}
+
+.analysis-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:0.75rem;
+}
+
+.analysis-item{
+  padding:0.85rem;
+  background:var(--cream);
+  border-radius:8px;
+  border-left:3px solid var(--copper);
+}
+
+.analysis-item.success{border-left-color:var(--success);background:rgba(45,122,79,0.04)}
+.analysis-item.warning{border-left-color:var(--warning);background:rgba(217,119,6,0.04)}
+.analysis-item.danger{border-left-color:var(--danger);background:rgba(220,38,38,0.04)}
+
+.analysis-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--ink3);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  margin-bottom:0.4rem;
+}
+
+.analysis-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px;
+  font-weight:700;
+  color:var(--forest);
+}
+
+.analysis-sub{font-size:11px;color:var(--ink2);margin-top:0.3rem;line-height:1.4}
+
+.chart-wrap{
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:1.25rem;
+  margin-bottom:1.5rem;
+}
+
+.chart-wrap h3{
+  font-family:'Libre Baskerville',serif;
+  font-size:16px;
+  color:var(--forest);
+  margin-bottom:1rem;
+}
+
+.chart{height:280px}
+
+.chart-legend{
+  display:flex;
+  gap:1rem;
+  margin-top:0.75rem;
+  flex-wrap:wrap;
+  justify-content:center;
+  font-size:12px;
+  color:var(--ink2);
+}
+
+.legend-item{display:flex;align-items:center;gap:0.4rem}
+.legend-dot{width:10px;height:10px;border-radius:2px}
+
+.table-wrap{
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+
+.table-head{
+  padding:1rem 1.25rem;
+  background:linear-gradient(135deg, rgba(26,60,52,0.04), rgba(193,127,74,0.04));
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:0.5rem;
+}
+
+.table-head h3{
+  font-family:'Libre Baskerville',serif;
+  font-size:16px;
+  color:var(--forest);
+}
+
+.table-legend{
+  display:flex;
+  gap:1rem;
+  font-size:11px;
+  color:var(--ink3);
+}
+
+.table-legend span{display:flex;align-items:center;gap:0.3rem}
+
+.legend-square{
+  width:10px;
+  height:10px;
+  border-radius:2px;
+}
+
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th{
+  text-align:right;
+  padding:0.6rem 0.75rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--ink3);
+  font-weight:700;
+  border-bottom:2px solid var(--border);
+  white-space:nowrap;
+  background:rgba(0,0,0,0.02);
+}
+
+th:first-child{text-align:left}
+
+td{
+  padding:0.55rem 0.75rem;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--ink2);
+  white-space:nowrap;
+}
+
+td:first-child{text-align:left;font-weight:700;color:var(--forest)}
+
+tr:hover td{background:rgba(193,127,74,0.03)}
+
+.cell-pos{color:var(--success);font-weight:700}
+.cell-neg{color:var(--danger);font-weight:700}
+.cell-zero{color:var(--ink3)}
+
+.row-phase-1{background:rgba(217,119,6,0.04)}
+.row-phase-2{background:rgba(193,127,74,0.04)}
+.row-phase-3{background:rgba(45,122,79,0.06)}
+
+.row-milestone td:first-child{color:var(--copper)!important}
+
+.badge{
+  display:inline-block;
+  padding:0.1rem 0.4rem;
+  border-radius:3px;
+  font-size:9px;
+  font-weight:700;
+  margin-left:0.4rem;
+  vertical-align:middle;
+}
+
+.badge-meta{background:var(--gold);color:var(--ink)}
+.badge-break{background:var(--success);color:#fff}
+.badge-pro{background:var(--copper);color:#fff}
+
+.phases-bar{
+  display:flex;
+  background:#fff;
+  border-radius:10px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+
+.phase{
+  flex:1;
+  padding:1rem;
+  border-right:1px solid var(--border);
+  text-align:center;
+}
+
+.phase:last-child{border-right:none}
+
+.phase-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:0.3rem;
+}
+
+.phase-name{
+  font-family:'Libre Baskerville',serif;
+  font-size:15px;
+  color:var(--forest);
+  margin-bottom:0.3rem;
+}
+
+.phase-months{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink3);
+}
+
+.phase.phase-1 .phase-label{color:var(--warning)}
+.phase.phase-2 .phase-label{color:var(--copper)}
+.phase.phase-3 .phase-label{color:var(--success)}
+
+.meta-target-box{
+  background:linear-gradient(135deg, rgba(212,175,55,0.1), rgba(193,127,74,0.05));
+  border:2px solid var(--gold);
+  padding:1rem 1.25rem;
+  border-radius:10px;
+  margin-bottom:1.5rem;
+  text-align:center;
+}
+
+.meta-target-box strong{
+  font-family:'Libre Baskerville',serif;
+  font-size:18px;
+  color:var(--forest);
+  display:block;
+  margin-bottom:0.25rem;
+}
+
+.meta-target-box span{
+  font-size:13px;
+  color:var(--ink2);
+}
+
+@media(max-width:768px){
+  .scenarios{grid-template-columns:1fr}
+  .hero-metrics{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+  .container{padding:1rem}
+  .phases-bar{flex-direction:column}
+  .phase{border-right:none;border-bottom:1px solid var(--border)}
+  .phase:last-child{border-bottom:none}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-content">
+    <div class="header-tag">PROJEÇÃO FINANCEIRA · LEGACI</div>
+    <h1>R$ 15k cada em <em>12 meses</em></h1>
+    <p class="header-sub">Usando caixa acumulado para acelerar a meta com segurança</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- FILOSOFIA -->
+  <div class="philosophy">
+    <strong>🎯 Como funciona a aceleração inteligente:</strong>
+    Fase 1: empresa constrói caixa (sem pró-labore). Fase 2: quando há lucro + reserva, começa retirada gradual. 
+    <strong>O segredo:</strong> quando o caixa acumulado excede a reserva mínima, o excedente é usado para complementar o pró-labore — acelerando a chegada nos R$ 15k cada. 
+    A empresa <strong>nunca opera no negativo</strong>, mas usa a "gordura" do caixa de forma inteligente.
+  </div>
+
+  <!-- CENÁRIOS -->
+  <div class="scenarios" id="scenarios">
+    <button class="scenario" data-key="aggressive">
+      <div class="scenario-meta">CENÁRIO 1</div>
+      <div class="scenario-name">🚀 Agressivo</div>
+      <div class="scenario-desc">Crescimento rápido</div>
+    </button>
+    <button class="scenario active" data-key="hybrid">
+      <div class="scenario-meta">RECOMENDADO</div>
+      <div class="scenario-name">⭐ Híbrido</div>
+      <div class="scenario-desc">Equilíbrio sustentável</div>
+    </button>
+    <button class="scenario" data-key="safe">
+      <div class="scenario-meta">CENÁRIO 3</div>
+      <div class="scenario-name">🛡️ Seguro</div>
+      <div class="scenario-desc">Crescimento conservador</div>
+    </button>
+  </div>
+
+  <!-- META TARGET -->
+  <div class="meta-target-box">
+    <strong>🎯 Meta: R$ 15k cada (R$ 30k total) em 12 meses</strong>
+    <span>Você define quando atingir e o sistema calcula automaticamente o caminho</span>
+  </div>
+
+  <!-- HERO METRICS -->
+  <div class="hero-metrics">
+    <div class="hero-metric">
+      <div class="hero-metric-label">Primeiro pró-labore</div>
+      <div class="hero-metric-value" id="firstProMonth">—</div>
+      <div class="hero-metric-sub" id="firstProValue">—</div>
+    </div>
+    <div class="hero-metric gold">
+      <div class="hero-metric-label">R$ 15k cada em</div>
+      <div class="hero-metric-value" id="metaMonth">—</div>
+      <div class="hero-metric-sub">Meta atingida</div>
+    </div>
+    <div class="hero-metric">
+      <div class="hero-metric-label">Caixa Mês 24</div>
+      <div class="hero-metric-value" id="finalCash">—</div>
+      <div class="hero-metric-sub">Acumulado total</div>
+    </div>
+  </div>
+
+  <!-- FASES -->
+  <div class="phases-bar">
+    <div class="phase phase-1">
+      <div class="phase-label">FASE 1</div>
+      <div class="phase-name">🌱 Construir Caixa</div>
+      <div class="phase-months" id="phase1Months">Sem pró-labore</div>
+    </div>
+    <div class="phase phase-2">
+      <div class="phase-label">FASE 2</div>
+      <div class="phase-name">📈 Aceleração</div>
+      <div class="phase-months" id="phase2Months">Pró-labore crescente</div>
+    </div>
+    <div class="phase phase-3">
+      <div class="phase-label">FASE 3</div>
+      <div class="phase-name">🎯 Meta Travada</div>
+      <div class="phase-months" id="phase3Months">R$ 15k cada</div>
+    </div>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="section">
+    <div class="section-title">⚙️ Variáveis</div>
+    <div class="controls">
+      <div>
+        <div class="control-label">
+          <span>Meta: atingir em</span>
+          <span class="control-value" id="valTarget">12 meses</span>
+        </div>
+        <input type="range" class="control-slider" id="target" min="6" max="18" value="12" step="1">
+      </div>
+
+      <div>
+        <div class="control-label">
+          <span>Ticket Livro</span>
+          <span class="control-value" id="valTicket">R$ 900</span>
+        </div>
+        <input type="range" class="control-slider" id="ticket" min="500" max="2000" value="900" step="50">
+      </div>
+
+      <div>
+        <div class="control-label">
+          <span>Preço Clube/mês</span>
+          <span class="control-value" id="valClube">R$ 97</span>
+        </div>
+        <input type="range" class="control-slider" id="clube" min="47" max="297" value="97" step="10">
+      </div>
+
+      <div>
+        <div class="control-label">
+          <span>Pró-labore alvo (cada)</span>
+          <span class="control-value" id="valProl">R$ 15.000</span>
+        </div>
+        <input type="range" class="control-slider" id="prolabore" min="5000" max="30000" value="15000" step="1000">
+      </div>
+
+      <div>
+        <div class="control-label">
+          <span>Reserva mínima (meses)</span>
+          <span class="control-value" id="valReserve">2 meses</span>
+        </div>
+        <input type="range" class="control-slider" id="reserve" min="1" max="6" value="2" step="1">
+      </div>
+
+      <div>
+        <div class="control-label">
+          <span>Investimento Ads</span>
+          <span class="control-value" id="valAds">Moderado</span>
+        </div>
+        <input type="range" class="control-slider" id="adsLevel" min="1" max="3" value="2" step="1">
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOS -->
+  <div class="costs-info">
+    <strong>💸 Custos operacionais:</strong>
+    R$ 365 em média por livro ·
+    R$ 19/mês por assinante Clube ·
+    R$ 800/mês fixos (softwares, hosting)
+  </div>
+
+  <!-- RESUMO -->
+  <div class="summary">
+    <div class="summary-card">
+      <div class="summary-label">Livros vendidos</div>
+      <div class="summary-value" id="sumBooks">0</div>
+      <div class="summary-sub">total 24 meses</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Assinantes finais</div>
+      <div class="summary-value" id="sumSubs">0</div>
+      <div class="summary-sub">no mês 24</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Receita total</div>
+      <div class="summary-value" id="sumRev">R$ 0</div>
+      <div class="summary-sub">24 meses</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Pró-labore total</div>
+      <div class="summary-value" id="sumProl">R$ 0</div>
+      <div class="summary-sub">pago aos 2 sócios</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Investido em ads</div>
+      <div class="summary-value" id="sumAds">R$ 0</div>
+      <div class="summary-sub">24 meses</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Receita Mês 24</div>
+      <div class="summary-value" id="rev24">R$ 0</div>
+      <div class="summary-sub">por mês no fim</div>
+    </div>
+  </div>
+
+  <!-- ANÁLISE -->
+  <div class="analysis">
+    <h3>📊 Análise do cenário</h3>
+    <div class="analysis-grid" id="analysisGrid"></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-wrap">
+    <h3>📈 Evolução mensal</h3>
+    <div class="chart">
+      <canvas id="chart"></canvas>
+    </div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--copper)"></div>Receita</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Pró-labore</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Caixa acumulado</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Custos + Ads</div>
+    </div>
+  </div>
+
+  <!-- TABELA -->
+  <div class="table-wrap">
+    <div class="table-head">
+      <h3>📅 Mês a mês</h3>
+      <div class="table-legend">
+        <span><div class="legend-square" style="background:rgba(217,119,6,0.2)"></div>Construir</span>
+        <span><div class="legend-square" style="background:rgba(193,127,74,0.2)"></div>Acelerar</span>
+        <span><div class="legend-square" style="background:rgba(45,122,79,0.2)"></div>Meta</span>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Mês</th>
+            <th>Livros</th>
+            <th>Clube</th>
+            <th>Receita</th>
+            <th>Custos</th>
+            <th>Ads</th>
+            <th>Lucro Op</th>
+            <th>Pró-labore</th>
+            <th>Cada</th>
+            <th>Caixa</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const SCENARIOS = {
+  aggressive: {
+    name: '🚀 Agressivo',
+    books:    [5, 12, 20, 30, 35, 38, 40, 42, 45, 47, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 75],
+    subs:     [0, 0, 10, 25, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 325, 350, 375, 400, 425, 450],
+    adsMult:  1.5
+  },
+  hybrid: {
+    name: '⭐ Híbrido',
+    books:    [5, 10, 17, 24, 30, 35, 38, 40, 42, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60],
+    subs:     [0, 0, 8, 18, 32, 50, 70, 90, 110, 130, 150, 170, 190, 210, 230, 250, 270, 290, 310, 330, 350, 370, 390, 410],
+    adsMult:  1.0
+  },
+  safe: {
+    name: '🛡️ Seguro',
+    books:    [3, 7, 12, 18, 24, 28, 32, 35, 37, 39, 41, 43, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+    subs:     [0, 0, 5, 12, 22, 38, 55, 75, 95, 115, 135, 155, 175, 195, 215, 235, 255, 275, 295, 315, 335, 355, 375, 395],
+    adsMult:  0.7
+  }
+};
+
+const COST_PER_BOOK = 365;
+const COST_PER_SUB = 19;
+const FIXED_COSTS = 800;
+
+const state = {
+  scenario: 'hybrid',
+  ticket: 900,
+  clube: 97,
+  prolabore: 15000,
+  target: 12,        // meses pra atingir a meta
+  adsLevel: 2,
+  reserve: 2
+};
+
+// ============================================
+// CÁLCULO COM ACELERAÇÃO INTELIGENTE
+// ============================================
+function calculate(){
+  const sc = SCENARIOS[state.scenario];
+  const adsMultLevel = state.adsLevel === 1 ? 0.6 : (state.adsLevel === 3 ? 1.3 : 1.0);
+  const finalAdsMult = sc.adsMult * adsMultLevel;
+
+  const months = [];
+  let cumCash = 0;
+  let firstProMonth = null;
+  let firstProValue = 0;
+  let metaMonth = null;
+
+  // Trajetória ideal de pró-labore para atingir a meta no mês target
+  // Crescimento gradual e exponencial até o target
+  function idealProlabore(month){
+    if(month <= 2) return 0; // primeiros 2 meses sempre sem pró-labore
+    if(month >= state.target) return state.prolabore;
+
+    // Crescimento exponencial suave de 0 até state.prolabore
+    const progress = (month - 2) / (state.target - 2);
+    // Curva mais agressiva no início, suaviza no fim
+    const curved = Math.pow(progress, 0.75);
+    return Math.round((state.prolabore * curved) / 500) * 500;
+  }
+
+  for(let i = 0; i < 24; i++){
+    const month = i + 1;
+    const books = sc.books[i];
+    const subs = sc.subs[i];
+
+    // RECEITA
+    const revBooks = books * state.ticket;
+    const revClube = subs * state.clube;
+    const revenue = revBooks + revClube;
+
+    // CUSTOS OPERACIONAIS
+    const costBooks = books * COST_PER_BOOK;
+    const costSubs = subs * COST_PER_SUB;
+    const costs = costBooks + costSubs + FIXED_COSTS;
+
+    // ADS
+    const ads = Math.round(books * 200 * finalAdsMult);
+
+    // LUCRO OPERACIONAL
+    const opProfit = revenue - costs - ads;
+
+    // ===========================================
+    // PRÓ-LABORE COM ACELERAÇÃO INTELIGENTE
+    // ===========================================
+    // 1. Calcula o pró-labore IDEAL para o mês (trajetória da meta)
+    // 2. Verifica se há fontes pra cobrir:
+    //    - Lucro operacional do mês
+    //    - Excesso de caixa acumulado (acima da reserva)
+    // 3. Pega o menor entre IDEAL e DISPONÍVEL
+    // 4. Mantém reserva sempre intacta
+    // ===========================================
+
+    const idealPerPerson = idealProlabore(month);
+    const idealTotal = idealPerPerson * 2;
+
+    // Reserva mínima (custos + ads × meses de reserva)
+    const reserveNeeded = (costs + ads) * state.reserve;
+
+    // Caixa disponível acima da reserva (excedente)
+    const cashAvailable = Math.max(0, cumCash - reserveNeeded);
+
+    // Fontes possíveis para pagar pró-labore:
+    // - Lucro operacional positivo do mês
+    // - Excedente de caixa acumulado
+    const sourcesAvailable = Math.max(0, opProfit) + cashAvailable;
+
+    let prolabore = 0;
+    let prolaborePerPerson = 0;
+
+    if(sourcesAvailable >= 2000){ // mínimo R$ 1k cada para valer a pena
+      // Pega o menor entre o ideal e o disponível
+      prolabore = Math.min(idealTotal, sourcesAvailable);
+
+      // Arredonda para múltiplos de R$ 1.000 (R$ 500 cada)
+      prolabore = Math.floor(prolabore / 1000) * 1000;
+      prolaborePerPerson = prolabore / 2;
+
+      // Se ficou muito baixo (< R$ 1k cada), zera
+      if(prolaborePerPerson < 1000){
+        prolabore = 0;
+        prolaborePerPerson = 0;
+      }
+    }
+
+    // Verificação final: depois de pagar pró-labore, ainda mantém reserva?
+    const cashAfter = cumCash + opProfit - prolabore;
+    if(cashAfter < reserveNeeded){
+      // Reduz pró-labore para manter reserva
+      const maxAllowed = Math.max(0, cumCash + opProfit - reserveNeeded);
+      prolabore = Math.floor(maxAllowed / 1000) * 1000;
+      prolaborePerPerson = prolabore / 2;
+
+      if(prolaborePerPerson < 1000){
+        prolabore = 0;
+        prolaborePerPerson = 0;
+      }
+    }
+
+    // Registrar marcos
+    if(!firstProMonth && prolaborePerPerson > 0){
+      firstProMonth = month;
+      firstProValue = prolaborePerPerson;
+    }
+    if(!metaMonth && prolaborePerPerson >= state.prolabore){
+      metaMonth = month;
+    }
+
+    // LUCRO LÍQUIDO E CAIXA
+    const netProfit = opProfit - prolabore;
+    cumCash += netProfit;
+
+    // FASE
+    let phase = 1;
+    if(prolaborePerPerson > 0 && prolaborePerPerson < state.prolabore) phase = 2;
+    if(prolaborePerPerson >= state.prolabore) phase = 3;
+
+    months.push({
+      month,
+      books,
+      subs,
+      revenue,
+      costs,
+      ads,
+      opProfit,
+      prolabore,
+      prolaborePerPerson,
+      netProfit,
+      cumCash,
+      reserveNeeded,
+      phase,
+      isFirstPro: month === firstProMonth,
+      isMeta: month === metaMonth
+    });
+  }
+
+  return { months, firstProMonth, firstProValue, metaMonth };
+}
+
+function fmt(v){
+  if(v === 0) return 'R$ 0';
+  if(Math.abs(v) >= 1000){
+    return 'R$ ' + (v/1000).toFixed(1).replace('.', ',') + 'k';
+  }
+  return 'R$ ' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function fmtFull(v){
+  return 'R$ ' + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+}
+
+function render(){
+  const data = calculate();
+
+  // HERO METRICS
+  document.getElementById('firstProMonth').textContent =
+    data.firstProMonth ? 'Mês ' + data.firstProMonth : '—';
+  document.getElementById('firstProValue').textContent =
+    data.firstProMonth ? fmt(data.firstProValue) + ' cada' : 'Aguardando lucro';
+
+  document.getElementById('metaMonth').textContent =
+    data.metaMonth ? 'Mês ' + data.metaMonth : 'Não em 24m';
+
+  const lastMonth = data.months[23];
+  document.getElementById('finalCash').textContent = fmt(lastMonth.cumCash);
+
+  // FASES
+  document.getElementById('phase1Months').textContent =
+    data.firstProMonth ? `Meses 1-${data.firstProMonth - 1}` : 'Toda a projeção';
+
+  document.getElementById('phase2Months').textContent =
+    data.firstProMonth && data.metaMonth ?
+      `Meses ${data.firstProMonth}-${data.metaMonth - 1}` :
+      data.firstProMonth ? `A partir do Mês ${data.firstProMonth}` : '—';
+
+  document.getElementById('phase3Months').textContent =
+    data.metaMonth ? `A partir do Mês ${data.metaMonth}` : '—';
+
+  // SUMMARY
+  const totalRev = data.months.reduce((s, m) => s + m.revenue, 0);
+  const totalProl = data.months.reduce((s, m) => s + m.prolabore, 0);
+  const totalAds = data.months.reduce((s, m) => s + m.ads, 0);
+  const totalBooks = data.months.reduce((s, m) => s + m.books, 0);
+
+  document.getElementById('sumBooks').textContent = totalBooks;
+  document.getElementById('sumSubs').textContent = lastMonth.subs;
+  document.getElementById('sumRev').textContent = fmt(totalRev);
+  document.getElementById('sumProl').textContent = fmt(totalProl);
+  document.getElementById('sumAds').textContent = fmt(totalAds);
+  document.getElementById('rev24').textContent = fmt(lastMonth.revenue);
+
+  renderAnalysis(data, totalRev, totalProl);
+  renderTable(data);
+  renderChart(data);
+}
+
+function renderAnalysis(data, totalRev, totalProl){
+  const grid = document.getElementById('analysisGrid');
+  const lastMonth = data.months[23];
+
+  let minCash = Infinity;
+  let minCashMonth = 0;
+  data.months.forEach(m => {
+    if(m.cumCash < minCash){
+      minCash = m.cumCash;
+      minCashMonth = m.month;
+    }
+  });
+
+  const prolPerPartner = totalProl / 2;
+  const targetMet = data.metaMonth && data.metaMonth <= state.target;
+
+  const items = [
+    {
+      label: 'Atingiu meta de ' + state.target + ' meses?',
+      value: targetMet ? '✅ Sim' : data.metaMonth ? '⚠️ Mês ' + data.metaMonth : '❌ Não',
+      sub: targetMet ?
+        'Conseguimos chegar antes ou no prazo!' :
+        data.metaMonth ?
+          'Atrasou ' + (data.metaMonth - state.target) + ' meses' :
+          'Aumente ticket ou ajuste cenário',
+      type: targetMet ? 'success' : data.metaMonth ? 'warning' : 'danger'
+    },
+    {
+      label: 'Empresa nunca negativa',
+      value: minCash >= 0 ? '✅ Sim' : '⚠️ Não',
+      sub: minCash >= 0 ?
+        'Empresa sempre com caixa positivo' :
+        'Déficit máximo: ' + fmt(Math.abs(minCash)) + ' no mês ' + minCashMonth,
+      type: minCash >= 0 ? 'success' : 'warning'
+    },
+    {
+      label: 'Primeiro pró-labore',
+      value: data.firstProMonth ? 'Mês ' + data.firstProMonth : 'Não em 24m',
+      sub: data.firstProMonth ?
+        fmt(data.firstProValue) + ' por sócio' :
+        'Ajuste variáveis',
+      type: data.firstProMonth && data.firstProMonth <= 4 ? 'success' :
+            data.firstProMonth && data.firstProMonth <= 8 ? 'warning' : 'danger'
+    },
+    {
+      label: 'Pró-labore por sócio',
+      value: fmt(prolPerPartner),
+      sub: 'Total recebido em 24 meses',
+      type: 'success'
+    },
+    {
+      label: 'Caixa final',
+      value: fmt(lastMonth.cumCash),
+      sub: 'Disponível para reinvestir',
+      type: lastMonth.cumCash > 50000 ? 'success' : lastMonth.cumCash > 0 ? 'warning' : 'danger'
+    },
+    {
+      label: 'MRR no mês 24',
+      value: fmt(lastMonth.subs * state.clube),
+      sub: lastMonth.subs + ' assinantes ativos',
+      type: 'success'
+    }
+  ];
+
+  grid.innerHTML = items.map(item => `
+    <div class="analysis-item ${item.type}">
+      <div class="analysis-label">${item.label}</div>
+      <div class="analysis-value">${item.value}</div>
+      <div class="analysis-sub">${item.sub}</div>
+    </div>
+  `).join('');
+}
+
+function renderTable(data){
+  const tbody = document.getElementById('tbody');
+  let html = '';
+
+  data.months.forEach(m => {
+    const cashCls = m.cumCash >= 0 ? 'cell-pos' : 'cell-neg';
+    const prolCls = m.prolabore === 0 ? 'cell-zero' : 'cell-pos';
+    const opCls = m.opProfit >= 0 ? 'cell-pos' : 'cell-neg';
+
+    let rowCls = 'row-phase-' + m.phase;
+    if(m.isFirstPro || m.isMeta) rowCls += ' row-milestone';
+
+    let badge = '';
+    if(m.isMeta) badge = '<span class="badge badge-meta">META 15K</span>';
+    else if(m.isFirstPro) badge = '<span class="badge badge-pro">PRIMEIRO PRÓ</span>';
+
+    html += `
+      <tr class="${rowCls}">
+        <td>Mês ${m.month}${badge}</td>
+        <td>${m.books}</td>
+        <td>${m.subs}</td>
+        <td>${fmt(m.revenue)}</td>
+        <td>${fmt(m.costs)}</td>
+        <td>${fmt(m.ads)}</td>
+        <td class="${opCls}">${fmt(m.opProfit)}</td>
+        <td class="${prolCls}">${m.prolabore > 0 ? fmt(m.prolabore) : '—'}</td>
+        <td class="${prolCls}">${m.prolaborePerPerson > 0 ? fmt(m.prolaborePerPerson) : '—'}</td>
+        <td class="${cashCls}">${fmt(m.cumCash)}</td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function renderChart(data){
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const W = rect.width;
+  const H = rect.height;
+  const pad = { top: 20, right: 15, bottom: 30, left: 55 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const vals = data.months.flatMap(m => [m.revenue, m.costs + m.ads, m.prolabore, m.cumCash]);
+  const max = Math.max(...vals);
+  const min = Math.min(...vals, 0);
+  const range = max - min || 1;
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillStyle = '#999';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'right';
+
+  for(let i = 0; i <= 4; i++){
+    const y = pad.top + (ch * (1 - i/4));
+    const v = min + (range * i/4);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillText(fmt(v), pad.left - 6, y + 3);
+  }
+
+  if(min < 0){
+    const zy = pad.top + ch * (max / range);
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(pad.left, zy);
+    ctx.lineTo(W - pad.right, zy);
+    ctx.stroke();
+  }
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#999';
+  data.months.forEach((m, i) => {
+    if(i % 3 === 0 || i === 23){
+      const x = pad.left + (cw * (i / 23));
+      ctx.fillText('M' + m.month, x, H - pad.bottom + 16);
+    }
+  });
+
+  function draw(values, color, w = 2, fill = false){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = pad.left + (cw * (i / 23));
+      const y = pad.top + ch * ((max - v) / range);
+      if(i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    if(fill){
+      ctx.lineTo(pad.left + cw, pad.top + ch);
+      ctx.lineTo(pad.left, pad.top + ch);
+      ctx.closePath();
+      ctx.fillStyle = color + '15';
+      ctx.fill();
+    }
+  }
+
+  draw(data.months.map(m => m.revenue), '#C17F4A', 3, true);
+  draw(data.months.map(m => m.costs + m.ads), '#DC2626', 2);
+  draw(data.months.map(m => m.prolabore), '#2563EB', 2.5);
+  draw(data.months.map(m => m.cumCash), '#2D7A4F', 3);
+
+  // Linha vertical: meta target (12 meses)
+  const targetIdx = state.target - 1;
+  if(targetIdx < 24){
+    const x = pad.left + (cw * (targetIdx / 23));
+    ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.top);
+    ctx.lineTo(x, pad.top + ch);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(212,175,55,0.8)';
+    ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText('alvo', x, pad.top + ch + 28);
+  }
+
+  // Marcos
+  if(data.firstProMonth){
+    const idx = data.firstProMonth - 1;
+    const x = pad.left + (cw * (idx / 23));
+    ctx.strokeStyle = '#C17F4A';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.top);
+    ctx.lineTo(x, pad.top + ch);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#C17F4A';
+    ctx.font = 'bold 9px Bricolage Grotesque';
+    ctx.textAlign = 'center';
+    ctx.fillText('1º pró-labore', x, pad.top - 4);
+  }
+
+  if(data.metaMonth){
+    const idx = data.metaMonth - 1;
+    const x = pad.left + (cw * (idx / 23));
+    ctx.strokeStyle = '#D4AF37';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.top);
+    ctx.lineTo(x, pad.top + ch);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#D4AF37';
+    ctx.font = 'bold 10px Bricolage Grotesque';
+    ctx.textAlign = 'center';
+    ctx.fillText('🎯 META', x, pad.top + 12);
+  }
+}
+
+function setupControls(){
+  const $ = id => document.getElementById(id);
+
+  $('target').addEventListener('input', e => {
+    state.target = parseInt(e.target.value);
+    $('valTarget').textContent = state.target + ' meses';
+    render();
+  });
+
+  $('ticket').addEventListener('input', e => {
+    state.ticket = parseInt(e.target.value);
+    $('valTicket').textContent = fmtFull(state.ticket);
+    render();
+  });
+
+  $('clube').addEventListener('input', e => {
+    state.clube = parseInt(e.target.value);
+    $('valClube').textContent = fmtFull(state.clube);
+    render();
+  });
+
+  $('prolabore').addEventListener('input', e => {
+    state.prolabore = parseInt(e.target.value);
+    $('valProl').textContent = fmtFull(state.prolabore);
+    render();
+  });
+
+  $('reserve').addEventListener('input', e => {
+    state.reserve = parseInt(e.target.value);
+    $('valReserve').textContent = state.reserve + (state.reserve === 1 ? ' mês' : ' meses');
+    render();
+  });
+
+  $('adsLevel').addEventListener('input', e => {
+    state.adsLevel = parseInt(e.target.value);
+    const labels = ['Conservador', 'Moderado', 'Agressivo'];
+    $('valAds').textContent = labels[state.adsLevel - 1];
+    render();
+  });
+
+  document.querySelectorAll('.scenario').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.scenario = btn.dataset.key;
+      document.querySelectorAll('.scenario').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+
+  window.addEventListener('resize', () => render());
+}
+
+setupControls();
+render();
+</script>
+
+</body>
+</html>
