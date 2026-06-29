@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Faturamento · Legaci</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --forest:#1A3C34;--copper:#C17F4A;--cream:#F8F6F2;--gold:#D4AF37;
+  --ink:#111010;--ink2:rgba(17,16,16,.72);--ink3:rgba(17,16,16,.45);
+  --border:rgba(17,16,16,.09);
+  --success:#2D7A4F;--danger:#DC2626;--warning:#D97706;--blue:#2563EB;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Bricolage Grotesque',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;min-height:100vh}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--forest),#0d1f1a);color:#fff;padding:2rem 1.5rem;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(193,127,74,.18),transparent 55%),radial-gradient(ellipse at 85% 20%,rgba(212,175,55,.12),transparent 50%);pointer-events:none}
+.header-inner{max-width:1300px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.logo-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:.4rem}
+.header h1{font-family:'Libre Baskerville',serif;font-size:clamp(20px,3.5vw,34px);font-weight:400;line-height:1.15}
+.header h1 em{color:var(--gold);font-style:italic}
+.header-sub{margin-top:.3rem;font-size:13px;opacity:.8}
+.header-right{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+
+/* SYNC STATUS */
+.sync-status{
+  display:flex;align-items:center;gap:.5rem;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  padding:.45rem .9rem;border-radius:20px;font-size:12px;font-weight:600;
+}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+.sync-status.saved .sync-dot{background:#4ade80;animation:none}
+.sync-status.saving .sync-dot{background:var(--gold);animation:pulse 0.8s infinite}
+.sync-status.error .sync-dot{background:var(--danger);animation:none}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.btn-add-scenario{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;padding:.65rem 1.3rem;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-add-scenario:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+
+/* LAYOUT */
+.main{max-width:1300px;margin:0 auto;padding:1.75rem 1.5rem;display:grid;grid-template-columns:380px 1fr;gap:1.75rem;align-items:start}
+
+/* CARD */
+.card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:1.5rem}
+.card:last-child{margin-bottom:0}
+.card-head{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:linear-gradient(135deg,rgba(26,60,52,.04),rgba(193,127,74,.03))}
+.card-head h3{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--forest)}
+.card-body{padding:1.1rem 1.25rem}
+
+/* PRODUCT ITEM */
+.product-item{border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;margin-bottom:.65rem;background:var(--cream);transition:all .15s}
+.product-item:last-child{margin-bottom:0}
+.product-item:hover{border-color:var(--copper);background:#fff}
+.pi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem}
+.pi-name{font-weight:700;font-size:13px;color:var(--forest)}
+.pi-cat{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:.15rem .45rem;border-radius:4px;font-weight:700}
+.cat-livro{background:rgba(193,127,74,.15);color:var(--copper)}
+.cat-clube{background:rgba(45,122,79,.12);color:var(--success)}
+.cat-custom{background:rgba(37,99,235,.12);color:var(--blue)}
+.pi-desc{font-size:11px;color:var(--ink3);margin-bottom:.5rem}
+.pi-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
+.pn{background:#fff;border:1px solid var(--border);border-radius:6px;padding:.35rem .55rem}
+.pn-label{font-size:9px;color:var(--ink3);display:block;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.1rem}
+.pn-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--forest)}
+.pn-margin .pn-val{color:var(--success)}
+.pi-costs{margin-top:.6rem;background:#fff;border:1px solid var(--border);border-radius:7px;padding:.55rem .75rem}
+.pi-costs-title{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--ink3);margin-bottom:.4rem}
+.pi-cost-line{display:flex;justify-content:space-between;font-size:11px;color:var(--ink2);padding:.1rem 0;border-bottom:1px solid rgba(0,0,0,.04)}
+.pi-cost-line:last-child{border-bottom:none;margin-top:.3rem;padding-top:.3rem;font-weight:700;color:var(--forest)}
+.pi-actions{display:flex;gap:.35rem;margin-top:.6rem}
+.btn-sm{padding:.3rem .7rem;font-size:11px;font-weight:700;border-radius:5px;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:transparent;transition:all .15s}
+.btn-edit{color:var(--copper);border-color:rgba(193,127,74,.4)}
+.btn-edit:hover{background:rgba(193,127,74,.08)}
+.btn-del{color:var(--danger);border-color:rgba(220,38,38,.35)}
+.btn-del:hover{background:rgba(220,38,38,.07)}
+
+/* FORMS */
+.f-row{margin-bottom:.9rem}
+.f-row:last-child{margin-bottom:0}
+.f-label{display:block;font-size:10px;font-weight:700;color:var(--forest);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.35rem}
+.f-input{width:100%;padding:.6rem .85rem;border:2px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;transition:border-color .2s}
+.f-input:focus{outline:none;border-color:var(--copper)}
+.f-row-2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}
+.btn-primary{width:100%;padding:.75rem;background:var(--forest);color:#fff;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-top:.2rem}
+.btn-primary:hover{background:#0f231e}
+.btn-ghost{width:100%;padding:.7rem;background:transparent;color:var(--ink2);border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.btn-ghost:hover{background:var(--cream);border-color:var(--copper);color:var(--forest)}
+
+/* COST EDITOR */
+.cost-editor{background:var(--cream);border-radius:9px;padding:.9rem;border:1px solid var(--border);margin-bottom:.9rem}
+.cost-editor-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--forest);margin-bottom:.65rem}
+.cost-item-row{display:grid;grid-template-columns:1fr 110px 28px;gap:.4rem;margin-bottom:.4rem;align-items:center}
+.cost-item-row:last-child{margin-bottom:0}
+.ci-input{padding:.45rem .65rem;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:12px;color:var(--ink);background:#fff;width:100%}
+.ci-input:focus{outline:none;border-color:var(--copper)}
+.ci-amount{padding:.45rem .5rem;border:1.5px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--forest);text-align:right;background:#fff;width:100%}
+.ci-amount:focus{outline:none;border-color:var(--copper)}
+.ci-del{background:transparent;border:1px solid rgba(220,38,38,.3);border-radius:5px;color:var(--danger);cursor:pointer;font-size:14px;padding:.2rem .4rem;height:30px;display:flex;align-items:center;justify-content:center}
+.ci-del:hover{background:rgba(220,38,38,.07)}
+.btn-add-cost{background:transparent;border:1.5px dashed var(--copper);border-radius:6px;color:var(--copper);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:.45rem .75rem;width:100%;text-align:center;margin-top:.5rem}
+.btn-add-cost:hover{background:rgba(193,127,74,.06)}
+.cost-total{display:flex;justify-content:space-between;align-items:center;margin-top:.65rem;padding-top:.55rem;border-top:1px solid var(--border);font-size:12px;font-weight:700;color:var(--forest)}
+.cost-total span{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--copper)}
+
+/* TAX */
+.tax-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.tax-note{font-size:11px;color:var(--ink3);margin-top:.5rem;font-style:italic}
+
+/* SCENARIO */
+.scenario-card{background:#fff;border-radius:14px;border:2px solid var(--border);overflow:hidden;margin-bottom:1.5rem;transition:border-color .2s}
+.scenario-card:last-child{margin-bottom:0}
+.scenario-card:hover{border-color:rgba(193,127,74,.4)}
+.scenario-card.goal-hit{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.1)}
+.sc-head{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.sc-head-left{display:flex;align-items:center;gap:.75rem}
+.sc-num{font-family:'Libre Baskerville',serif;font-size:30px;font-weight:700;color:var(--copper);line-height:1}
+.sc-name{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--forest)}
+.sc-meta{font-size:11px;color:var(--ink3)}
+.sc-head-right{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.b-hit{background:rgba(45,122,79,.12);color:var(--success)}
+.b-close{background:rgba(217,119,6,.12);color:var(--warning)}
+.b-miss{background:rgba(220,38,38,.1);color:var(--danger)}
+.btn-icon{background:transparent;border:1px solid var(--border);border-radius:6px;padding:.35rem .65rem;cursor:pointer;font-size:13px;transition:all .15s}
+.btn-icon:hover{background:var(--cream);border-color:var(--copper)}
+.btn-icon.del:hover{background:rgba(220,38,38,.07);border-color:var(--danger)}
+
+/* RESULTS */
+.res-banner{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.res-cell{padding:.9rem 1.1rem;border-right:1px solid var(--border)}
+.res-cell:last-child{border-right:none}
+.res-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--ink3);margin-bottom:.3rem}
+.res-val{font-family:'Libre Baskerville',serif;font-size:clamp(16px,2vw,24px);font-weight:700;line-height:1}
+.res-sub{font-size:10px;color:var(--ink3);margin-top:.2rem}
+.res-bruto .res-val{color:var(--copper)}
+.res-custo .res-val{color:var(--danger)}
+.res-tax .res-val{color:var(--warning)}
+.res-net{background:linear-gradient(135deg,rgba(45,122,79,.05),rgba(212,175,55,.04))}
+.res-net .res-val{color:var(--success)}
+
+/* QTY TABLE */
+.qty-wrap{overflow-x:auto}
+.qty-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.qty-tbl th{text-align:left;padding:.55rem .9rem;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);font-weight:700;border-bottom:2px solid var(--border);background:rgba(0,0,0,.02);white-space:nowrap}
+.qty-tbl th:not(:first-child){text-align:right}
+.qty-tbl td{padding:.5rem .9rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.qty-tbl td:not(:first-child){text-align:right;font-family:'JetBrains Mono',monospace}
+.qty-tbl tr:last-child td{border-bottom:none}
+.qty-tbl tr:hover td{background:rgba(193,127,74,.025)}
+.td-name{font-weight:600;font-size:13px;color:var(--forest)}
+.td-sub{font-size:10px;color:var(--ink3)}
+.qty-in{width:74px;padding:.35rem .5rem;border:1.5px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--forest);text-align:center;background:var(--cream);transition:border-color .15s}
+.qty-in:focus{outline:none;border-color:var(--copper);background:#fff}
+.qty-in:hover{border-color:rgba(193,127,74,.5)}
+.c-pos{color:var(--success);font-weight:700}
+.c-neg{color:var(--danger);font-weight:700}
+.c-zero{color:var(--ink3)}
+
+/* FOOTER */
+.sc-foot{padding:.9rem 1.4rem;background:linear-gradient(135deg,rgba(212,175,55,.07),rgba(193,127,74,.04));border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.sc-foot-left .fl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--copper);font-weight:700;margin-bottom:.15rem}
+.sc-foot-left .fv{font-size:13px;color:var(--forest);font-weight:600}
+.sc-foot-right{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.target-row{display:flex;align-items:center;gap:.4rem;font-size:12px;color:var(--ink2)}
+.target-in{width:115px;padding:.3rem .55rem;border:1.5px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;background:#fff}
+.target-in:focus{outline:none;border-color:var(--gold)}
+.diff-box{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:.25rem .65rem;background:#fff;border-radius:6px;border:1px solid var(--border)}
+
+/* COMPARISON */
+.cmp-section{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-top:1.5rem}
+.cmp-head{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(26,60,52,.04),rgba(193,127,74,.03))}
+.cmp-head h3{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--forest)}
+.cmp-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.cmp-tbl th{padding:.55rem 1rem;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);font-weight:700;border-bottom:2px solid var(--border);background:rgba(0,0,0,.02);text-align:right}
+.cmp-tbl th:first-child{text-align:left}
+.cmp-tbl td{padding:.55rem 1rem;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;text-align:right;color:var(--ink2)}
+.cmp-tbl td:first-child{text-align:left;font-weight:700;font-family:inherit;font-size:12px;color:var(--ink2)}
+.cmp-tbl tr:last-child td{border-bottom:none}
+.cmp-best{color:var(--success)!important;font-weight:700}
+.cmp-net td{font-weight:700;color:var(--forest)!important}
+
+/* LOADING OVERLAY */
+.loading-overlay{position:fixed;inset:0;background:rgba(26,60,52,.92);backdrop-filter:blur(4px);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:#fff}
+.loading-overlay.hidden{display:none}
+.loading-spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:'Libre Baskerville',serif;font-size:20px;opacity:.9}
+.loading-sub{font-size:13px;opacity:.6}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem;color:var(--ink3);font-size:13px;font-style:italic}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:1.75rem;max-width:520px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.18)}
+.modal h2{font-family:'Libre Baskerville',serif;font-size:20px;color:var(--forest);margin-bottom:1.35rem}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:1.35rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#fff;border-left:4px solid var(--success);padding:.7rem 1.1rem;border-radius:7px;box-shadow:0 8px 24px rgba(0,0,0,.1);font-size:12px;font-weight:700;z-index:2000;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;color:var(--ink)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.warn{border-left-color:var(--warning)}
+.toast.err{border-left-color:var(--danger)}
+
+@media(max-width:960px){.main{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .res-banner{grid-template-columns:1fr 1fr}
+  .res-cell{border-right:none;border-bottom:1px solid var(--border)}
+  .modal{padding:1.25rem}
+  .modal-btns{grid-template-columns:1fr}
+  .header-right{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Carregando dados...</div>
+  <div class="loading-sub">Conectando ao Supabase</div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo-tag">Simulador de Faturamento · Legaci</div>
+      <h1>Faturamento e <em>metas de vendas</em></h1>
+      <p class="header-sub">Dados salvos automaticamente · Edição colaborativa com a Dani</p>
+    </div>
+    <div class="header-right">
+      <div class="sync-status" id="syncStatus">
+        <div class="sync-dot"></div>
+        <span id="syncLabel">Conectando...</span>
+      </div>
+      <button class="btn-add-scenario" id="btnAddScenario">+ Novo Cenário</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- PAINEL ESQUERDO -->
+  <aside>
+    <div class="card">
+      <div class="card-head">
+        <h3>📦 Produtos</h3>
+        <button class="btn-sm btn-edit" id="btnAddProduct">+ Produto</button>
+      </div>
+      <div class="card-body" id="productList">
+        <div class="empty">Carregando...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>🧾 Impostos</h3></div>
+      <div class="card-body">
+        <div class="f-row">
+          <label class="f-label">Regime tributário</label>
+          <select class="f-input" id="taxRegime" onchange="applyRegime()">
+            <option value="custom">Customizado</option>
+            <option value="mei">MEI (5%)</option>
+            <option value="s1">Simples — Anexo I (4%)</option>
+            <option value="s3" selected>Simples — Anexo III (6%)</option>
+            <option value="s5">Simples — Anexo V (15,5%)</option>
+            <option value="presumido">Lucro Presumido (~13,33%)</option>
+          </select>
+        </div>
+        <div class="tax-grid">
+          <div>
+            <label class="f-label">Alíquota (%)</label>
+            <input type="number" class="f-input" id="taxRate" value="6" min="0" max="100" step="0.1" oninput="taxChanged()">
+          </div>
+          <div>
+            <label class="f-label">Base de cálculo</label>
+            <select class="f-input" id="taxBase" onchange="taxChanged()">
+              <option value="gross">Fat. Bruto</option>
+              <option value="profit">Lucro Bruto</option>
+            </select>
+          </div>
+        </div>
+        <p class="tax-note">Dados salvos automaticamente no Supabase.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>💡 Como usar</h3></div>
+      <div class="card-body">
+        <ul style="list-style:none;font-size:12px;color:var(--ink2);display:flex;flex-direction:column;gap:.55rem">
+          <li>1️⃣ Produtos já vêm pré-carregados com os planos Legaci</li>
+          <li>2️⃣ <strong>Edite custos</strong> com descrição detalhada por item</li>
+          <li>3️⃣ Configure o <strong>regime de imposto</strong></li>
+          <li>4️⃣ Crie cenários e <strong>preencha quantidades</strong> — calcula na hora</li>
+          <li>5️⃣ Tudo é <strong>salvo automaticamente</strong> no Supabase</li>
+          <li>6️⃣ <strong>Compartilhe o link</strong> com a Dani para edição colaborativa</li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENÁRIOS -->
+  <div id="scenariosCol">
+    <div id="scenariosList">
+      <div class="empty" style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:3rem" id="emptyMsg">
+        Nenhum cenário ainda. Clique em <strong>+ Novo Cenário</strong> para começar.
+      </div>
+    </div>
+    <div class="cmp-section" id="cmpSection" style="display:none">
+      <div class="cmp-head"><h3>⚖️ Comparação de Cenários</h3></div>
+      <div style="overflow-x:auto"><table class="cmp-tbl" id="cmpTable"></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRODUTO -->
+<div class="overlay" id="prodModal">
+  <div class="modal">
+    <h2 id="prodModalTitle">Adicionar Produto</h2>
+    <input type="hidden" id="pid">
+    <div class="f-row">
+      <label class="f-label">Nome do produto</label>
+      <input type="text" class="f-input" id="pName" placeholder="Ex: Legaci Livro A">
+    </div>
+    <div class="f-row-2">
+      <div>
+        <label class="f-label">Categoria</label>
+        <select class="f-input" id="pCat">
+          <option value="livro">📚 Livro Legaci</option>
+          <option value="clube">🌳 Legaci Memórias</option>
+          <option value="custom">⭐ Customizado</option>
+        </select>
+      </div>
+      <div>
+        <label class="f-label">Tipo</label>
+        <select class="f-input" id="pType">
+          <option value="onetime">Venda única</option>
+          <option value="recurring">Assinatura/mês</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-row-2">
+      <div>
+        <label class="f-label">Preço de venda (R$)</label>
+        <input type="number" class="f-input" id="pPrice" placeholder="0" min="0" step="0.01">
+      </div>
+      <div>
+        <label class="f-label">Descrição curta</label>
+        <input type="text" class="f-input" id="pDesc" placeholder="Ex: Plano Entrada · 60 pág.">
+      </div>
+    </div>
+    <div class="cost-editor">
+      <div class="cost-editor-title">💸 Detalhamento de Custos</div>
+      <div id="costItemsEditor"></div>
+      <button class="btn-add-cost" onclick="addCostItem()">+ Adicionar item de custo</button>
+      <div class="cost-total">
+        <span>Custo total unitário</span>
+        <span id="modalTotalCost">R$ 0</span>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ghost" onclick="closeProdModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveProduct()">Salvar Produto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CENÁRIO -->
+<div class="overlay" id="scModal">
+  <div class="modal">
+    <h2>Novo Cenário</h2>
+    <div class="f-row">
+      <label class="f-label">Nome do cenário</label>
+      <input type="text" class="f-input" id="scName" placeholder="Ex: Meta Mês 6 / Conservador / Agressivo">
+    </div>
+    <div class="f-row">
+      <label class="f-label">Meta de lucro líquido (R$) — opcional</label>
+      <input type="number" class="f-input" id="scTarget" placeholder="Ex: 20000">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ghost" onclick="closeScModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveScenario()">Criar Cenário</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ─── SUPABASE CONFIG ──────────────────────────────────────
+const SUPABASE_URL = 'https://kbkexacjvnzaxipedjow.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtia2V4YWNqdm56YXhpcGVkam93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzMjgsImV4cCI6MjA5Mjg5MDMyOH0.jYrZvjCGMthX5Xe299l75VBmr9KyIx_TwB0UAE_R-RU';
+const STATE_KEY    = 'legaci_sim_v1';
+
+let sb = null;
+
+// ─── ESTADO ───────────────────────────────────────────────
+const S = {
+  products: [],
+  scenarios: [],
+  taxRate: 6,
+  taxBase: 'gross',
+};
+
+let pid = 1, sid = 1, ciid = 1;
+let modalCostItems = [];
+let saveTimer = null;
+let isSaving = false;
+let blockRealtimeUntil = 0;
+
+// ─── DEFAULTS ─────────────────────────────────────────────
+const DEFAULTS = {
+  products: [
+    { id: 'p1', name: 'Livro Legaci A',     category: 'livro', type: 'onetime',   price: 690,  desc: 'Plano Entrada · 1 sessão · 60 pág.',       costItems: [{id:'c1',desc:'Entrevistador',amount:110},{id:'c2',desc:'Editor',amount:150},{id:'c3',desc:'Impressão (Grafset)',amount:75},{id:'c4',desc:'Envio / frete',amount:25},{id:'c5',desc:'Transcrição IA (Whisper)',amount:5}] },
+    { id: 'p2', name: 'Livro Legaci B',     category: 'livro', type: 'onetime',   price: 1290, desc: 'Plano Completo · 2 sessões · audiobook',    costItems: [{id:'c6',desc:'Entrevistador (2 sessões)',amount:220},{id:'c7',desc:'Editor',amount:150},{id:'c8',desc:'Impressão (Grafset)',amount:75},{id:'c9',desc:'Narração audiobook',amount:80},{id:'c10',desc:'Envio / frete',amount:25},{id:'c11',desc:'Transcrição IA',amount:5}] },
+    { id: 'p3', name: 'Livro Legaci C',     category: 'livro', type: 'onetime',   price: 2490, desc: 'Plano Premium · presencial · documentário', costItems: [{id:'c12',desc:'Entrevistador (3 sessões)',amount:330},{id:'c13',desc:'Editor',amount:200},{id:'c14',desc:'Impressão premium',amount:120},{id:'c15',desc:'Narração audiobook',amount:80},{id:'c16',desc:'Documentário (vídeo)',amount:300},{id:'c17',desc:'Envio / frete',amount:25},{id:'c18',desc:'Transcrição IA',amount:5}] },
+    { id: 'p4', name: 'Legaci Memórias A',  category: 'clube', type: 'recurring', price: 57,   desc: 'Plano Solo · 1 narrador',                  costItems: [{id:'c19',desc:'Plataforma (Supabase/infra)',amount:3},{id:'c20',desc:'Transcrição IA (Whisper)',amount:5},{id:'c21',desc:'Livro anual (R$ 75 ÷ 12)',amount:6.25},{id:'c22',desc:'Suporte e atendimento',amount:5}] },
+    { id: 'p5', name: 'Legaci Memórias B',  category: 'clube', type: 'recurring', price: 97,   desc: 'Plano Família · 3 narradores ⭐',           costItems: [{id:'c23',desc:'Plataforma (Supabase/infra)',amount:3},{id:'c24',desc:'Transcrição IA (3 narradores)',amount:5},{id:'c25',desc:'Livro anual (R$ 75 ÷ 12)',amount:6.25},{id:'c26',desc:'Suporte e atendimento',amount:5}] },
+    { id: 'p6', name: 'Legaci Memórias C',  category: 'clube', type: 'recurring', price: 197,  desc: 'Plano Legado · ilimitado',                 costItems: [{id:'c27',desc:'Plataforma (Supabase/infra)',amount:4},{id:'c28',desc:'Transcrição IA (ilimitados)',amount:8},{id:'c29',desc:'Livro anual premium (÷ 12)',amount:8},{id:'c30',desc:'Suporte e atendimento',amount:5}] },
+  ],
+  scenarios: [],
+  taxRate: 6,
+  taxBase: 'gross',
+};
+
+// ─── SUPABASE: CARREGAR ───────────────────────────────────
+async function loadFromSupabase(){
+  try {
+    setSyncStatus('saving', 'Carregando...');
+    const { data, error } = await sb.from('sim_state').select('state').eq('id', STATE_KEY).single();
+
+    if(error && error.code === 'PGRST116'){
+      // Não existe — criar com defaults
+      console.log('Nenhum dado encontrado, criando com defaults...');
+      Object.assign(S, JSON.parse(JSON.stringify(DEFAULTS)));
+      await saveToSupabase(false);
+    } else if(error){
+      throw error;
+    } else {
+      // Carregar estado salvo
+      const saved = data.state;
+      S.products  = saved.products  || DEFAULTS.products;
+      S.scenarios = saved.scenarios || [];
+      S.taxRate   = saved.taxRate   !== undefined ? saved.taxRate : 6;
+      S.taxBase   = saved.taxBase   || 'gross';
+    }
+
+    // Aplicar taxRate no campo
+    document.getElementById('taxRate').value = S.taxRate;
+    document.getElementById('taxBase').value = S.taxBase;
+
+    renderProducts();
+    renderScenarios();
+    setSyncStatus('saved', 'Salvo');
+    document.getElementById('loadingOverlay').classList.add('hidden');
+
+    // Inscrever no realtime
+    subscribeRealtime();
+  } catch(err){
+    console.error('Erro ao carregar:', err);
+    setSyncStatus('error', 'Erro');
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    toast('Erro ao conectar ao Supabase: ' + err.message, 'err');
+
+    // Usar dados default mesmo assim
+    Object.assign(S, JSON.parse(JSON.stringify(DEFAULTS)));
+    renderProducts();
+    renderScenarios();
+  }
+}
+
+// ─── SUPABASE: SALVAR ─────────────────────────────────────
+async function saveToSupabase(showIndicator = true){
+  if(showIndicator) setSyncStatus('saving', 'Salvando...');
+
+  const state = {
+    products:  S.products,
+    scenarios: S.scenarios,
+    taxRate:   S.taxRate,
+    taxBase:   S.taxBase,
+    updatedAt: new Date().toISOString(),
+  };
+
+  try {
+    const { error } = await sb.from('sim_state').upsert({
+      id: STATE_KEY,
+      state: state,
+      updated_at: new Date().toISOString(),
+    });
+    if(error) throw error;
+
+    blockRealtimeUntil = Date.now() + 3000;
+    if(showIndicator) setSyncStatus('saved', 'Salvo ✓');
+  } catch(err){
+    console.error('Erro ao salvar:', err);
+    setSyncStatus('error', 'Erro ao salvar');
+    if(showIndicator) toast('Erro ao salvar: ' + err.message, 'err');
+  }
+}
+
+// ─── DEBOUNCE SAVE ────────────────────────────────────────
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveToSupabase(), 1000);
+}
+
+// ─── REALTIME: SINC COLABORATIVA ─────────────────────────
+function subscribeRealtime(){
+  sb.channel('sim_state_changes')
+    .on('postgres_changes', {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'sim_state',
+      filter: `id=eq.${STATE_KEY}`,
+    }, (payload) => {
+      // Ignorar se fomos nós que salvamos
+      if(Date.now() < blockRealtimeUntil) return;
+
+      const saved = payload.new.state;
+      if(!saved) return;
+
+      S.products  = saved.products  || S.products;
+      S.scenarios = saved.scenarios || S.scenarios;
+      S.taxRate   = saved.taxRate   !== undefined ? saved.taxRate : S.taxRate;
+      S.taxBase   = saved.taxBase   || S.taxBase;
+
+      document.getElementById('taxRate').value = S.taxRate;
+      document.getElementById('taxBase').value = S.taxBase;
+
+      renderProducts();
+      renderScenarios();
+      setSyncStatus('saved', 'Atualizado ↻');
+      toast('Dani atualizou o simulador! ↻', 'warn');
+    })
+    .subscribe();
+}
+
+// ─── SYNC STATUS ──────────────────────────────────────────
+function setSyncStatus(type, label){
+  const el  = document.getElementById('syncStatus');
+  const lbl = document.getElementById('syncLabel');
+  el.className = 'sync-status ' + type;
+  lbl.textContent = label;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+function totalCost(p){ return (p.costItems||[]).reduce((s,c)=>s+(parseFloat(c.amount)||0),0); }
+function mgn(price,cost){ return price?((price-cost)/price*100):0; }
+
+function R(v){
+  const neg=v<0; const abs=Math.abs(v); let s;
+  if(abs===0) s='R$ 0';
+  else if(abs>=1e6) s='R$ '+(abs/1e6).toFixed(2).replace('.',',')+'M';
+  else if(abs>=1000) s='R$ '+(abs/1000).toFixed(1).replace('.',',')+'k';
+  else s='R$ '+abs.toFixed(2).replace('.',',');
+  return neg?'−'+s:s;
+}
+function P(v){ return v.toFixed(1).replace('.',',')+'%'; }
+function esc(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
+function uid(){ return 'x'+(Date.now().toString(36)+Math.random().toString(36).slice(2)); }
+
+// ─── CÁLCULO ──────────────────────────────────────────────
+function calc(scenario){
+  const rate=(parseFloat(S.taxRate)||0)/100;
+  const base=S.taxBase;
+  let gross=0,cost=0;
+  const lines=[];
+  S.products.forEach(p=>{
+    const q=parseInt(scenario.qty[p.id])||0; if(!q) return;
+    const uc=totalCost(p);
+    const lg=p.price*q, lc=uc*q;
+    gross+=lg; cost+=lc;
+    lines.push({p,q,lg,lc,contrib:lg-lc});
+  });
+  const grossProfit=gross-cost;
+  const taxBaseVal=base==='gross'?gross:Math.max(0,grossProfit);
+  const tax=Math.max(0,taxBaseVal*rate);
+  const net=gross-cost-tax;
+  return{gross,cost,grossProfit,tax,net,lines};
+}
+
+// ─── RENDER PRODUTOS ──────────────────────────────────────
+function renderProducts(){
+  const el=document.getElementById('productList');
+  if(!S.products.length){ el.innerHTML='<div class="empty">Nenhum produto. Clique em "+ Produto".</div>'; return; }
+  el.innerHTML=S.products.map(p=>{
+    const uc=totalCost(p); const m=mgn(p.price,uc);
+    const cc=p.category==='livro'?'cat-livro':p.category==='clube'?'cat-clube':'cat-custom';
+    const cl=p.category==='livro'?'Livro':p.category==='clube'?'Clube':'Custom';
+    const costLines=(p.costItems||[]).map(ci=>`<div class="pi-cost-line"><span>${esc(ci.desc)}</span><span>${R(ci.amount)}</span></div>`).join('');
+    return `<div class="product-item">
+      <div class="pi-top"><span class="pi-name">${esc(p.name)}</span><span class="pi-cat ${cc}">${cl}</span></div>
+      ${p.desc?`<div class="pi-desc">${esc(p.desc)}</div>`:''}
+      <div class="pi-nums">
+        <div class="pn"><span class="pn-label">Preço</span><span class="pn-val">${R(p.price)}</span></div>
+        <div class="pn"><span class="pn-label">Custo</span><span class="pn-val">${R(uc)}</span></div>
+        <div class="pn pn-margin"><span class="pn-label">Margem</span><span class="pn-val">${P(m)}</span></div>
+      </div>
+      ${p.costItems&&p.costItems.length?`<div class="pi-costs">
+        <div class="pi-costs-title">Composição do custo</div>
+        ${costLines}
+        <div class="pi-cost-line"><span>Total</span><span>${R(uc)}</span></div>
+      </div>`:''}
+      <div class="pi-actions">
+        <button class="btn-sm btn-edit" onclick="openEditProduct('${p.id}')">✏️ Editar</button>
+        <button class="btn-sm btn-del" onclick="delProduct('${p.id}')">🗑 Remover</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER CENÁRIOS ──────────────────────────────────────
+function renderScenarios(){
+  const el=document.getElementById('scenariosList');
+  const em=document.getElementById('emptyMsg');
+  if(!S.scenarios.length){
+    em.style.display=''; el.innerHTML=''; el.appendChild(em);
+    document.getElementById('cmpSection').style.display='none'; return;
+  }
+  em.style.display='none';
+
+  el.innerHTML=S.scenarios.map((sc,i)=>{
+    const c=calc(sc);
+    const hitGoal=sc.target&&c.net>=sc.target;
+    const nearGoal=sc.target&&c.net>=sc.target*0.85;
+    const bCls=!sc.target?'':hitGoal?'b-hit':nearGoal?'b-close':'b-miss';
+    const bTxt=!sc.target?'':hitGoal?'✅ Meta atingida':nearGoal?'⚡ Quase lá':'❌ Abaixo da meta';
+    const taxLbl=S.taxBase==='gross'?'Fat. Bruto':'Lucro Bruto';
+
+    return `<div class="scenario-card${hitGoal?' goal-hit':''}" id="sc${sc.id}">
+      <div class="sc-head">
+        <div class="sc-head-left">
+          <span class="sc-num">${String(i+1).padStart(2,'0')}</span>
+          <div>
+            <div class="sc-name">${esc(sc.name)}</div>
+            ${sc.target?`<div class="sc-meta">Meta: ${R(sc.target)} lucro líquido</div>`:''}
+          </div>
+        </div>
+        <div class="sc-head-right">
+          ${bCls?`<span class="badge ${bCls}">${bTxt}</span>`:''}
+          <button class="btn-icon del" onclick="delScenario('${sc.id}')">🗑</button>
+        </div>
+      </div>
+
+      <div class="res-banner">
+        <div class="res-cell res-bruto">
+          <div class="res-label">Faturamento Bruto</div>
+          <div class="res-val">${R(c.gross)}</div>
+          <div class="res-sub">Receita total</div>
+        </div>
+        <div class="res-cell res-custo">
+          <div class="res-label">Custos</div>
+          <div class="res-val">${R(c.cost)}</div>
+          <div class="res-sub">Produção + operação</div>
+        </div>
+        <div class="res-cell res-tax">
+          <div class="res-label">Imposto (${P(parseFloat(S.taxRate)||0)})</div>
+          <div class="res-val">${R(c.tax)}</div>
+          <div class="res-sub">Sobre ${taxLbl}</div>
+        </div>
+        <div class="res-cell res-net">
+          <div class="res-label">Lucro Líquido</div>
+          <div class="res-val">${R(c.net)}</div>
+          <div class="res-sub">Margem ${c.gross?P(c.net/c.gross*100):'—'}</div>
+        </div>
+      </div>
+
+      <div class="qty-wrap">
+        <table class="qty-tbl">
+          <thead><tr>
+            <th>Produto</th><th>Qtd/mês</th><th>Fat. Bruto</th>
+            <th>Custo Unit.</th><th>Custo Total</th><th>Margem</th><th>Contribuição</th>
+          </tr></thead>
+          <tbody>
+            ${S.products.map(p=>{
+              const uc=totalCost(p);
+              const q=parseInt(sc.qty[p.id])||0;
+              const lg=p.price*q, lc=uc*q, contrib=lg-lc;
+              const m=mgn(p.price,uc);
+              return `<tr>
+                <td><div class="td-name">${esc(p.name)}</div><div class="td-sub">${R(p.price)}${p.type==='recurring'?'/mês':''}</div></td>
+                <td><input type="number" class="qty-in" value="${q}" min="0" placeholder="0"
+                  oninput="setQtyLive('${sc.id}','${p.id}',this)"></td>
+                <td class="${lg>0?'c-pos':'c-zero'}">${R(lg)}</td>
+                <td>${R(uc)}</td>
+                <td class="${lc>0?'c-neg':'c-zero'}">${lc>0?R(lc):'—'}</td>
+                <td>${P(m)}</td>
+                <td class="${contrib>0?'c-pos':contrib<0?'c-neg':'c-zero'}">${R(contrib)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sc-foot">
+        <div class="sc-foot-left">
+          <div class="fl">Lucro Bruto (antes impostos)</div>
+          <div class="fv">${R(c.grossProfit)} · margem ${c.gross?P(c.grossProfit/c.gross*100):'—'}</div>
+        </div>
+        <div class="sc-foot-right">
+          <div class="target-row">
+            <span>🎯 Meta lucro líquido (R$):</span>
+            <input type="number" class="target-in" value="${sc.target||''}" placeholder="Ex: 20000"
+              oninput="setTargetLive('${sc.id}',this.value)">
+          </div>
+          ${sc.target?`<div class="diff-box" style="color:${c.net>=sc.target?'var(--success)':'var(--danger)'}">
+            ${c.net>=sc.target?'+':''}${R(c.net-sc.target)}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderComparison();
+}
+
+// ─── QTY LIVE UPDATE (sem re-render completo) ─────────────
+function setQtyLive(scId, pId, inputEl){
+  const sc=S.scenarios.find(s=>s.id===scId); if(!sc) return;
+  sc.qty[pId]=Math.max(0,parseInt(inputEl.value)||0);
+  updateScenarioResults(scId);
+  scheduleSave();
+}
+
+function setTargetLive(scId, val){
+  const sc=S.scenarios.find(s=>s.id===scId); if(!sc) return;
+  sc.target=parseFloat(val)||null;
+  updateScenarioResults(scId);
+  scheduleSave();
+}
+
+function updateScenarioResults(scId){
+  const sc=S.scenarios.find(s=>s.id===scId); if(!sc) return;
+  const c=calc(sc);
+  const el=document.getElementById('sc'+scId); if(!el) return;
+
+  // Banner
+  const cells=el.querySelectorAll('.res-cell');
+  if(cells[0]) cells[0].querySelector('.res-val').textContent=R(c.gross);
+  if(cells[1]) cells[1].querySelector('.res-val').textContent=R(c.cost);
+  if(cells[2]) cells[2].querySelector('.res-val').textContent=R(c.tax);
+  if(cells[3]){
+    cells[3].querySelector('.res-val').textContent=R(c.net);
+    cells[3].querySelector('.res-sub').textContent='Margem '+(c.gross?P(c.net/c.gross*100):'—');
+  }
+
+  // Linhas da tabela
+  el.querySelectorAll('.qty-tbl tbody tr').forEach((row,i)=>{
+    const p=S.products[i]; if(!p) return;
+    const uc=totalCost(p);
+    const q=parseInt(sc.qty[p.id])||0;
+    const lg=p.price*q, lc=uc*q, contrib=lg-lc;
+    const tds=row.querySelectorAll('td');
+    if(tds[2]){tds[2].textContent=R(lg); tds[2].className=lg>0?'c-pos':'c-zero';}
+    if(tds[4]){tds[4].textContent=lc>0?R(lc):'—'; tds[4].className=lc>0?'c-neg':'c-zero';}
+    if(tds[6]){tds[6].textContent=R(contrib); tds[6].className=contrib>0?'c-pos':contrib<0?'c-neg':'c-zero';}
+  });
+
+  // Footer
+  const foot=el.querySelector('.sc-foot-left .fv');
+  if(foot) foot.textContent=R(c.grossProfit)+' · margem '+(c.gross?P(c.grossProfit/c.gross*100):'—');
+
+  // Badge e diff
+  const headRight=el.querySelector('.sc-head-right');
+  if(headRight){
+    const hitGoal=sc.target&&c.net>=sc.target;
+    const nearGoal=sc.target&&c.net>=sc.target*0.85;
+    const bCls=!sc.target?'':hitGoal?'b-hit':nearGoal?'b-close':'b-miss';
+    const bTxt=!sc.target?'':hitGoal?'✅ Meta atingida':nearGoal?'⚡ Quase lá':'❌ Abaixo da meta';
+    let badge=headRight.querySelector('.badge');
+    if(bCls){ if(!badge){badge=document.createElement('span');headRight.prepend(badge);} badge.className='badge '+bCls; badge.textContent=bTxt; }
+    else if(badge) badge.remove();
+  }
+
+  const footRight=el.querySelector('.sc-foot-right');
+  if(footRight&&sc.target){
+    let diff=footRight.querySelector('.diff-box');
+    if(!diff){diff=document.createElement('div');diff.className='diff-box';footRight.appendChild(diff);}
+    const ok=c.net>=sc.target;
+    diff.style.color=ok?'var(--success)':'var(--danger)';
+    diff.textContent=(ok?'+':'')+R(c.net-sc.target);
+  }
+
+  el.classList.toggle('goal-hit',!!(sc.target&&c.net>=sc.target));
+  renderComparison();
+}
+
+// ─── COMPARAÇÃO ───────────────────────────────────────────
+function renderComparison(){
+  if(S.scenarios.length<2){ document.getElementById('cmpSection').style.display='none'; return; }
+  document.getElementById('cmpSection').style.display='block';
+  const calcs=S.scenarios.map(sc=>({sc,c:calc(sc)}));
+  const rows=[
+    {label:'Faturamento Bruto',fn:c=>c.gross,      fmt:R},
+    {label:'Custo Total',      fn:c=>c.cost,       fmt:R,low:true},
+    {label:'Lucro Bruto',      fn:c=>c.grossProfit,fmt:R},
+    {label:'Imposto',          fn:c=>c.tax,        fmt:R,low:true},
+    {label:'Lucro Líquido',    fn:c=>c.net,        fmt:R,bold:true},
+    {label:'Margem líquida',   fn:c=>c.gross?c.net/c.gross*100:0,fmt:P},
+  ];
+  const header=`<tr><th>Métrica</th>${calcs.map(({sc})=>`<th>${esc(sc.name)}</th>`).join('')}</tr>`;
+  const body=rows.map(row=>{
+    const vals=calcs.map(({c})=>row.fn(c));
+    const best=row.low?vals.indexOf(Math.min(...vals)):vals.indexOf(Math.max(...vals));
+    return `<tr${row.bold?' class="cmp-net"':''}>
+      <td>${row.label}</td>
+      ${vals.map((v,i)=>`<td class="${i===best&&calcs.length>1?'cmp-best':''}"${row.bold?' style="font-weight:700"':''}>
+        ${row.fmt(v)}${i===best&&calcs.length>1?' 🏆':''}
+      </td>`).join('')}
+    </tr>`;
+  }).join('');
+  document.getElementById('cmpTable').innerHTML=`<thead>${header}</thead><tbody>${body}</tbody>`;
+}
+
+// ─── MODAL PRODUTO: COST ITEMS ────────────────────────────
+function renderModalCostItems(){
+  const el=document.getElementById('costItemsEditor');
+  if(!modalCostItems.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--ink3);text-align:center;padding:.5rem">Nenhum custo. Clique em "+ Adicionar" abaixo.</div>';
+    updateModalTotal(); return;
+  }
+  el.innerHTML=modalCostItems.map(ci=>`
+    <div class="cost-item-row">
+      <input type="text" class="ci-input" value="${esc(ci.desc)}" placeholder="Ex: Entrevistador"
+        oninput="updateCIDesc('${ci.id}',this.value)">
+      <input type="number" class="ci-amount" value="${ci.amount}" placeholder="0" min="0" step="0.01"
+        oninput="updateCIAmount('${ci.id}',this.value)">
+      <button class="ci-del" onclick="removeCostItem('${ci.id}')">×</button>
+    </div>`).join('');
+  updateModalTotal();
+}
+
+function addCostItem(){
+  modalCostItems.push({id:uid(),desc:'',amount:0});
+  renderModalCostItems();
+  setTimeout(()=>{ const ins=document.querySelectorAll('#costItemsEditor .ci-input'); if(ins.length) ins[ins.length-1].focus(); },50);
+}
+
+function removeCostItem(id){
+  modalCostItems=modalCostItems.filter(c=>c.id!==id);
+  renderModalCostItems();
+}
+
+function updateCIDesc(id,val){ const ci=modalCostItems.find(c=>c.id===id); if(ci) ci.desc=val; }
+function updateCIAmount(id,val){ const ci=modalCostItems.find(c=>c.id===id); if(ci){ ci.amount=parseFloat(val)||0; updateModalTotal(); } }
+function updateModalTotal(){
+  const t=modalCostItems.reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
+  document.getElementById('modalTotalCost').textContent=R(t);
+}
+
+// ─── PRODUTO ACTIONS ──────────────────────────────────────
+function openAddProduct(){
+  document.getElementById('prodModalTitle').textContent='Adicionar Produto';
+  document.getElementById('pid').value='';
+  ['pName','pDesc'].forEach(id=>document.getElementById(id).value='');
+  ['pPrice'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pCat').value='livro';
+  document.getElementById('pType').value='onetime';
+  modalCostItems=[];
+  renderModalCostItems();
+  document.getElementById('prodModal').classList.add('open');
+  setTimeout(()=>document.getElementById('pName').focus(),80);
+}
+
+function openEditProduct(id){
+  const p=S.products.find(x=>x.id===id); if(!p) return;
+  document.getElementById('prodModalTitle').textContent='Editar Produto';
+  document.getElementById('pid').value=id;
+  document.getElementById('pName').value=p.name;
+  document.getElementById('pCat').value=p.category;
+  document.getElementById('pType').value=p.type;
+  document.getElementById('pPrice').value=p.price;
+  document.getElementById('pDesc').value=p.desc||'';
+  modalCostItems=(p.costItems||[]).map(ci=>({...ci}));
+  renderModalCostItems();
+  document.getElementById('prodModal').classList.add('open');
+}
+
+function closeProdModal(){ document.getElementById('prodModal').classList.remove('open'); }
+
+function saveProduct(){
+  const name=document.getElementById('pName').value.trim();
+  const price=parseFloat(document.getElementById('pPrice').value)||0;
+  if(!name){ alert('Informe o nome do produto'); return; }
+  if(!price){ alert('Informe o preço de venda'); return; }
+
+  const data={
+    name, category:document.getElementById('pCat').value,
+    type:document.getElementById('pType').value,
+    price, desc:document.getElementById('pDesc').value.trim(),
+    costItems:modalCostItems.filter(ci=>ci.desc||ci.amount>0).map(ci=>({...ci})),
+  };
+
+  const eid=document.getElementById('pid').value;
+  if(eid){
+    const p=S.products.find(x=>x.id===eid);
+    if(p) Object.assign(p,data);
+    toast('Produto atualizado!');
+  } else {
+    data.id=uid();
+    S.products.push(data);
+    S.scenarios.forEach(sc=>{ if(sc.qty[data.id]===undefined) sc.qty[data.id]=0; });
+    toast('Produto adicionado!');
+  }
+
+  closeProdModal();
+  renderProducts();
+  renderScenarios();
+  scheduleSave();
+}
+
+function delProduct(id){
+  if(!confirm('Remover este produto de todos os cenários?')) return;
+  S.products=S.products.filter(p=>p.id!==id);
+  S.scenarios.forEach(sc=>delete sc.qty[id]);
+  renderProducts();
+  renderScenarios();
+  scheduleSave();
+  toast('Produto removido.');
+}
+
+// ─── CENÁRIO ACTIONS ──────────────────────────────────────
+function openAddScenario(){
+  document.getElementById('scName').value='';
+  document.getElementById('scTarget').value='';
+  document.getElementById('scModal').classList.add('open');
+  setTimeout(()=>document.getElementById('scName').focus(),80);
+}
+
+function closeScModal(){ document.getElementById('scModal').classList.remove('open'); }
+
+function saveScenario(){
+  const name=document.getElementById('scName').value.trim();
+  const target=parseFloat(document.getElementById('scTarget').value)||null;
+  if(!name){ alert('Informe o nome do cenário'); return; }
+  const qty={};
+  S.products.forEach(p=>{ qty[p.id]=0; });
+  S.scenarios.push({id:uid(),name,target,qty});
+  closeScModal();
+  renderScenarios();
+  scheduleSave();
+  toast('Cenário criado!');
+}
+
+function delScenario(id){
+  if(!confirm('Remover este cenário?')) return;
+  S.scenarios=S.scenarios.filter(s=>s.id!==id);
+  renderScenarios();
+  scheduleSave();
+  toast('Cenário removido.');
+}
+
+// ─── IMPOSTO ──────────────────────────────────────────────
+function applyRegime(){
+  const map={mei:5,s1:4,s3:6,s5:15.5,presumido:13.33};
+  const v=map[document.getElementById('taxRegime').value];
+  if(v!==undefined){ document.getElementById('taxRate').value=v; S.taxRate=v; }
+  taxChanged();
+}
+
+function taxChanged(){
+  S.taxRate=parseFloat(document.getElementById('taxRate').value)||0;
+  S.taxBase=document.getElementById('taxBase').value;
+  renderScenarios();
+  scheduleSave();
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type||'');
+  setTimeout(()=>t.className='toast',2500);
+}
+
+// ─── EVENTOS ──────────────────────────────────────────────
+document.getElementById('btnAddProduct').addEventListener('click',openAddProduct);
+document.getElementById('btnAddScenario').addEventListener('click',openAddScenario);
+document.getElementById('prodModal').addEventListener('click',e=>{ if(e.target.id==='prodModal') closeProdModal(); });
+document.getElementById('scModal').addEventListener('click',e=>{ if(e.target.id==='scModal') closeScModal(); });
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init(){
+  try {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    await loadFromSupabase();
+  } catch(err){
+    console.error('Init error:', err);
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    setSyncStatus('error', 'Erro de conexão');
+    Object.assign(S, JSON.parse(JSON.stringify(DEFAULTS)));
+    renderProducts();
+    renderScenarios();
+    toast('Sem conexão com Supabase. Operando offline.', 'err');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
