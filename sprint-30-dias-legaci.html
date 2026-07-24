@@ -347,20 +347,32 @@ body{
 
 .task.done .task-date{display:block}
 
-.task-delete{
+.task-actions{
+  display:flex;
+  gap:0.2rem;
+  align-items:center;
+  flex-shrink:0;
   opacity:0;
-  background:transparent;
-  border:none;
-  color:var(--danger);
-  cursor:pointer;
-  padding:0.25rem 0.5rem;
-  border-radius:4px;
-  font-size:16px;
-  transition:opacity 0.2s;
+  transition:opacity 0.15s;
 }
 
-.task:hover .task-delete{opacity:0.6}
-.task-delete:hover{opacity:1!important;background:rgba(220,38,38,0.1)}
+.task:hover .task-actions{opacity:1}
+
+.task-delete,.task-edit{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:0.2rem 0.4rem;
+  border-radius:4px;
+  font-size:14px;
+  line-height:1;
+  transition:background 0.15s;
+}
+
+.task-delete{color:var(--danger)}
+.task-edit{color:var(--copper)}
+.task-delete:hover{background:rgba(220,38,38,0.1)}
+.task-edit:hover{background:rgba(193,127,74,0.12)}
 
 .empty{
   padding:2rem 1.25rem;
@@ -592,6 +604,24 @@ body{
     </div>
   </div>
 
+</div>
+
+<!-- MODAL EDITAR TAREFA -->
+<div class="modal" id="modalEdit">
+  <div class="modal-content">
+    <h2>✏️ Editar Tarefa</h2>
+    <input type="hidden" id="editTaskId">
+    <input type="hidden" id="editTaskUser">
+    <input type="hidden" id="editTaskWeek">
+    <input type="hidden" id="editTaskSection">
+    <input type="hidden" id="editTaskIsCustom">
+    <label>Descrição</label>
+    <textarea id="editTaskText" placeholder="Descreva a tarefa..." style="min-height:80px"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="btnEditCancel">Cancelar</button>
+      <button class="btn btn-primary" id="btnEditSave">Salvar</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL -->
@@ -882,10 +912,12 @@ async function loadData(){
       data.forEach(row => {
         state.taskStatus[row.id] = {
           done: row.done,
-          completedAt: row.completed_at
+          completedAt: row.completed_at,
+          deleted: row.deleted || false,
+          textOverride: row.text || null
         };
 
-        if(row.id && row.id.indexOf('custom-') === 0){
+        if(row.id && row.id.indexOf('custom-') === 0 && !row.deleted){
           state.customTasks.push({
             id: row.id,
             week: row.week,
@@ -1035,28 +1067,119 @@ async function addTask(){
 }
 
 // ============================================
-// DELETE CUSTOM TASK
+// OPEN EDIT MODAL
 // ============================================
-async function deleteTask(id){
-  if(!confirm('Remover essa tarefa?')) return;
+function openEditModal(task){
+  $('editTaskId').value      = task.id;
+  $('editTaskUser').value    = task.user;
+  $('editTaskWeek').value    = task.week;
+  $('editTaskSection').value = task.section;
+  $('editTaskIsCustom').value= task.isCustom ? '1' : '0';
+  $('editTaskText').value    = task.text;
+  $('modalEdit').classList.add('open');
+  setTimeout(() => $('editTaskText').focus(), 80);
+}
 
-  DEBUG.log('Deletando: ' + id);
+// ============================================
+// SAVE EDITED TASK
+// ============================================
+async function saveEditTask(){
+  const id       = $('editTaskId').value;
+  const newText  = $('editTaskText').value.trim();
+  const user     = $('editTaskUser').value;
+  const week     = parseInt($('editTaskWeek').value);
+  const section  = $('editTaskSection').value;
+  const isCustom = $('editTaskIsCustom').value === '1';
+
+  if(!newText){ alert('Escreva o texto da tarefa!'); return; }
+
+  DEBUG.log('Editando: ' + id);
 
   try {
+    const status = state.taskStatus[id] || { done: false };
+
     const { error } = await state.supabase
       .from('legaci_tasks')
-      .delete()
-      .eq('id', id);
+      .upsert({
+        id: id,
+        done: status.done || false,
+        completed_at: status.completedAt || null,
+        deleted: false,
+        user_owner: user,
+        week: week,
+        section: section,
+        text: newText
+      });
 
     if(error) throw error;
 
-    state.customTasks = state.customTasks.filter(t => t.id !== id);
-    delete state.taskStatus[id];
+    // Atualizar state local
+    if(!state.taskStatus[id]) state.taskStatus[id] = { done: false, completedAt: null };
+    state.taskStatus[id].textOverride = newText;
+
+    // Se for custom, atualizar o array também
+    if(isCustom){
+      const ct = state.customTasks.find(t => t.id === id);
+      if(ct) ct.text = newText;
+    }
+
+    $('modalEdit').classList.remove('open');
+    render();
+    showToast('✓ Tarefa atualizada!');
+    DEBUG.success('Editado!');
+  } catch(err){
+    DEBUG.error('Erro ao editar: ' + err.message);
+    showToast('Erro: ' + err.message, true);
+  }
+}
+
+// ============================================
+// DELETE QUALQUER TAREFA (default ou custom)
+// ============================================
+async function deleteAnyTask(task){
+  if(!confirm('Remover essa tarefa?\n\n"' + task.text + '"')) return;
+
+  DEBUG.log('Deletando: ' + task.id);
+
+  try {
+    if(task.isCustom){
+      // Custom: deletar de verdade
+      const { error } = await state.supabase
+        .from('legaci_tasks')
+        .delete()
+        .eq('id', task.id);
+
+      if(error) throw error;
+
+      state.customTasks = state.customTasks.filter(t => t.id !== task.id);
+      delete state.taskStatus[task.id];
+    } else {
+      // Default: marcar como deleted no Supabase
+      const status = state.taskStatus[task.id] || { done: false };
+
+      const { error } = await state.supabase
+        .from('legaci_tasks')
+        .upsert({
+          id: task.id,
+          done: status.done || false,
+          completed_at: status.completedAt || null,
+          deleted: true,
+          user_owner: task.user,
+          week: task.week,
+          section: task.section,
+          text: task.text
+        });
+
+      if(error) throw error;
+
+      if(!state.taskStatus[task.id]) state.taskStatus[task.id] = {};
+      state.taskStatus[task.id].deleted = true;
+    }
 
     render();
+    showToast('✓ Tarefa removida');
     DEBUG.success('Removido!');
-    showToast('✓ Removida');
-  } catch(err) {
+  } catch(err){
     DEBUG.error('Erro ao remover: ' + err.message);
     showToast('Erro: ' + err.message, true);
   }
@@ -1101,16 +1224,23 @@ function renderColumn(user){
 
       section.items.forEach((text, idx) => {
         const id = makeId(state.week, user, section.name, idx);
-        const status = state.taskStatus[id] || { done: false, completedAt: null };
+        const status = state.taskStatus[id] || { done: false, completedAt: null, deleted: false };
+
+        // Pular tarefas deletadas
+        if(status.deleted) return;
+
         total++;
         if(status.done) done++;
+
+        // Usar texto editado se existir
+        const displayText = status.textOverride || text;
 
         const taskEl = makeTaskElement({
           id: id,
           week: state.week,
           user: user,
           section: section.name,
-          text: text,
+          text: displayText,
           done: status.done,
           completedAt: status.completedAt,
           isCustom: false
@@ -1203,6 +1333,7 @@ function makeTaskElement(task){
   // Click handler — em todo o elemento
   li.addEventListener('click', function(e){
     if(e.target.classList.contains('task-delete')) return;
+    if(e.target.classList.contains('task-edit')) return;
     toggleTask({
       id: task.id,
       week: task.week,
@@ -1215,18 +1346,33 @@ function makeTaskElement(task){
   li.appendChild(check);
   li.appendChild(content);
 
-  if(task.isCustom){
-    const del = document.createElement('button');
-    del.className = 'task-delete';
-    del.textContent = '×';
-    del.type = 'button';
-    del.title = 'Remover';
-    del.addEventListener('click', function(e){
-      e.stopPropagation();
-      deleteTask(task.id);
-    });
-    li.appendChild(del);
-  }
+  // Botões de ação em TODAS as tarefas
+  const actions = document.createElement('div');
+  actions.className = 'task-actions';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'task-edit';
+  editBtn.textContent = '✏️';
+  editBtn.type = 'button';
+  editBtn.title = 'Editar';
+  editBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    openEditModal(task);
+  });
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'task-delete';
+  delBtn.textContent = '×';
+  delBtn.type = 'button';
+  delBtn.title = 'Remover';
+  delBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    deleteAnyTask(task);
+  });
+
+  actions.appendChild(editBtn);
+  actions.appendChild(delBtn);
+  li.appendChild(actions);
 
   return li;
 }
@@ -1322,6 +1468,22 @@ function setupEvents(){
 
   $('modalAdd').addEventListener('click', function(e){
     if(e.target.id === 'modalAdd') this.classList.remove('open');
+  });
+
+  // Modal editar tarefa
+  $('btnEditCancel').addEventListener('click', function(){
+    $('modalEdit').classList.remove('open');
+  });
+
+  $('btnEditSave').addEventListener('click', saveEditTask);
+
+  $('modalEdit').addEventListener('click', function(e){
+    if(e.target.id === 'modalEdit') this.classList.remove('open');
+  });
+
+  // Enter salva no modal de edição
+  $('editTaskText').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) saveEditTask();
   });
 
   // Debug toggle
