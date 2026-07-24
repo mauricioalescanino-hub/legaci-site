@@ -579,10 +579,11 @@ body{
 
   <div class="filter-tabs" id="filterTabs">
     <button class="filter-tab active" data-filter="all">📋 Todas <span class="tab-count" id="cnt-all">0</span></button>
+    <button class="filter-tab" data-filter="withdate">📅 Com prazo <span class="tab-count" id="cnt-withdate">0</span></button>
     <button class="filter-tab tab-overdue" data-filter="overdue">🔴 Atrasadas <span class="tab-count" id="cnt-overdue">0</span></button>
     <button class="filter-tab tab-today" data-filter="today">🟡 Hoje <span class="tab-count" id="cnt-today">0</span></button>
     <button class="filter-tab tab-week" data-filter="thisweek">🟢 Esta semana <span class="tab-count" id="cnt-thisweek">0</span></button>
-    <button class="filter-tab" data-filter="upcoming">📅 Próximas <span class="tab-count" id="cnt-upcoming">0</span></button>
+    <button class="filter-tab" data-filter="upcoming">🔵 Próximas <span class="tab-count" id="cnt-upcoming">0</span></button>
     <button class="filter-tab" data-filter="nodate">⬜ Sem prazo <span class="tab-count" id="cnt-nodate">0</span></button>
     <button class="filter-tab" data-filter="done">✅ Concluídas <span class="tab-count" id="cnt-done">0</span></button>
   </div>
@@ -1225,14 +1226,15 @@ function matchesFilter(taskId, done){
   const today   = todayStr();
   const eow     = endOfWeekStr();
 
-  if(f === 'all')      return true;
-  if(f === 'done')     return !!done;
-  if(f === 'nodate')   return !dueDate && !done;
-  if(!dueDate)         return false; // filtros de data precisam de prazo
-  if(f === 'overdue')  return dueDate < today && !done;
-  if(f === 'today')    return dueDate === today && !done;
-  if(f === 'thisweek') return dueDate >= today && dueDate <= eow && !done;
-  if(f === 'upcoming') return dueDate > eow && !done;
+  if(f === 'all')       return true;
+  if(f === 'done')      return !!done;
+  if(f === 'withdate')  return !!dueDate && !done;
+  if(f === 'nodate')    return !dueDate && !done;
+  if(!dueDate)          return false; // filtros de data precisam de prazo
+  if(f === 'overdue')   return dueDate < today && !done;
+  if(f === 'today')     return dueDate === today && !done;
+  if(f === 'thisweek')  return dueDate >= today && dueDate <= eow && !done;
+  if(f === 'upcoming')  return dueDate > eow && !done;
   return true;
 }
 
@@ -1253,7 +1255,7 @@ function getFlatTasks(user){
 
 // Contadores para as tabs
 function updateFilterCounts(){
-  const counts = { all:0, overdue:0, today:0, thisweek:0, upcoming:0, nodate:0, done:0 };
+  const counts = { all:0, withdate:0, overdue:0, today:0, thisweek:0, upcoming:0, nodate:0, done:0 };
   const today = todayStr();
   const eow   = endOfWeekStr();
 
@@ -1267,10 +1269,11 @@ function updateFilterCounts(){
 
       counts.all++;
       if(done){ counts.done++; return; }
+      if(dueDate) counts.withdate++;
       if(!dueDate){ counts.nodate++; return; }
-      if(dueDate < today)       counts.overdue++;
+      if(dueDate < today)        counts.overdue++;
       else if(dueDate === today) counts.today++;
-      else if(dueDate <= eow)   counts.thisweek++;
+      else if(dueDate <= eow)    counts.thisweek++;
       else                       counts.upcoming++;
     });
 
@@ -1282,10 +1285,11 @@ function updateFilterCounts(){
       const dueDate = st.dueDate || null;
       counts.all++;
       if(done){ counts.done++; return; }
+      if(dueDate) counts.withdate++;
       if(!dueDate){ counts.nodate++; return; }
-      if(dueDate < today)       counts.overdue++;
+      if(dueDate < today)        counts.overdue++;
       else if(dueDate === today) counts.today++;
-      else if(dueDate <= eow)   counts.thisweek++;
+      else if(dueDate <= eow)    counts.thisweek++;
       else                       counts.upcoming++;
     });
   });
