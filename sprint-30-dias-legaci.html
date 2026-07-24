@@ -174,42 +174,71 @@ body{
 
 .btn-add:hover{background:rgba(255,255,255,0.35)}
 
-.week-tabs{
+.filter-tabs{
   display:flex;
   gap:0.5rem;
   margin-bottom:1.5rem;
   overflow-x:auto;
   padding-bottom:0.5rem;
+  flex-wrap:wrap;
 }
 
-.week-tab{
-  padding:0.75rem 1.25rem;
+.filter-tab{
+  padding:0.5rem 1rem;
   background:#fff;
-  border:1px solid var(--border);
-  border-radius:8px;
+  border:1.5px solid var(--border);
+  border-radius:20px;
   cursor:pointer;
   font-family:inherit;
-  font-size:13px;
-  font-weight:600;
+  font-size:12px;
+  font-weight:700;
   color:var(--ink2);
   white-space:nowrap;
-  min-width:140px;
+  transition:all 0.15s;
+  display:flex;
+  align-items:center;
+  gap:0.35rem;
 }
 
-.week-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+.filter-tab:hover{border-color:var(--copper);color:var(--forest)}
+.filter-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+.filter-tab .tab-count{
+  background:rgba(255,255,255,0.25);
+  padding:0.05rem 0.4rem;
+  border-radius:10px;
+  font-size:10px;
+}
+.filter-tab:not(.active) .tab-count{background:rgba(0,0,0,0.08)}
+.filter-tab.tab-overdue.active{background:var(--danger);border-color:var(--danger)}
+.filter-tab.tab-today.active{background:var(--warning);border-color:var(--warning)}
+.filter-tab.tab-week.active{background:var(--success);border-color:var(--success)}
 
-.week-tab-label{
+/* DATE BADGE */
+.task-due-wrap{
+  margin-top:0.35rem;
+}
+
+.task-due-input{
+  border:none;
+  background:transparent;
   font-family:'JetBrains Mono',monospace;
   font-size:10px;
-  letter-spacing:1px;
-  color:var(--copper);
-  display:block;
-  text-transform:uppercase;
+  font-weight:700;
+  color:var(--ink3);
+  cursor:pointer;
+  padding:0.15rem 0.4rem;
+  border-radius:4px;
+  border:1px solid var(--border);
+  background:#fff;
+  transition:all 0.15s;
 }
 
-.week-tab.active .week-tab-label{color:var(--gold)}
+.task-due-input:hover{border-color:var(--copper)}
+.task-due-input:focus{outline:none;border-color:var(--copper);background:rgba(193,127,74,0.05)}
 
-.week-tab-title{display:block;font-size:14px;margin-top:0.25rem}
+.task-due-input.due-overdue{border-color:rgba(220,38,38,0.4);color:var(--danger);background:rgba(220,38,38,0.05)}
+.task-due-input.due-today{border-color:rgba(217,119,6,0.4);color:var(--warning);background:rgba(217,119,6,0.05)}
+.task-due-input.due-soon{border-color:rgba(45,122,79,0.4);color:var(--success);background:rgba(45,122,79,0.05)}
 
 .columns{
   display:grid;
@@ -548,23 +577,14 @@ body{
     <button class="btn-add" id="btnAdd">+ Adicionar Tarefa</button>
   </div>
 
-  <div class="week-tabs">
-    <button class="week-tab active" data-week="1">
-      <span class="week-tab-label">Semana 1</span>
-      <span class="week-tab-title">Onboarding</span>
-    </button>
-    <button class="week-tab" data-week="2">
-      <span class="week-tab-label">Semana 2</span>
-      <span class="week-tab-title">Aquecimento</span>
-    </button>
-    <button class="week-tab" data-week="3">
-      <span class="week-tab-label">Semana 3</span>
-      <span class="week-tab-title">Conversas</span>
-    </button>
-    <button class="week-tab" data-week="4">
-      <span class="week-tab-label">Semana 4</span>
-      <span class="week-tab-title">Fechar 🎯</span>
-    </button>
+  <div class="filter-tabs" id="filterTabs">
+    <button class="filter-tab active" data-filter="all">📋 Todas <span class="tab-count" id="cnt-all">0</span></button>
+    <button class="filter-tab tab-overdue" data-filter="overdue">🔴 Atrasadas <span class="tab-count" id="cnt-overdue">0</span></button>
+    <button class="filter-tab tab-today" data-filter="today">🟡 Hoje <span class="tab-count" id="cnt-today">0</span></button>
+    <button class="filter-tab tab-week" data-filter="thisweek">🟢 Esta semana <span class="tab-count" id="cnt-thisweek">0</span></button>
+    <button class="filter-tab" data-filter="upcoming">📅 Próximas <span class="tab-count" id="cnt-upcoming">0</span></button>
+    <button class="filter-tab" data-filter="nodate">⬜ Sem prazo <span class="tab-count" id="cnt-nodate">0</span></button>
+    <button class="filter-tab" data-filter="done">✅ Concluídas <span class="tab-count" id="cnt-done">0</span></button>
   </div>
 
   <div id="loading" class="loading">
@@ -633,14 +653,6 @@ body{
     <select id="inUser">
       <option value="dani">Daniela</option>
       <option value="mauricio">Maurício</option>
-    </select>
-
-    <label>Semana</label>
-    <select id="inWeek">
-      <option value="1">Semana 1</option>
-      <option value="2">Semana 2</option>
-      <option value="3">Semana 3</option>
-      <option value="4">Semana 4</option>
     </select>
 
     <label>Categoria</label>
@@ -842,9 +854,9 @@ const TASKS = {
 // ============================================
 const state = {
   supabase: null,
-  week: 1,
+  filter: 'all',
   user: 'both',
-  taskStatus: {}, // { id: { done, completedAt } }
+  taskStatus: {}, // { id: { done, completedAt, deleted, textOverride, dueDate } }
   customTasks: [] // [{ id, week, user, section, text }]
 };
 
@@ -914,7 +926,8 @@ async function loadData(){
           done: row.done,
           completedAt: row.completed_at,
           deleted: row.deleted || false,
-          textOverride: row.text || null
+          textOverride: row.text || null,
+          dueDate: row.due_date || null
         };
 
         if(row.id && row.id.indexOf('custom-') === 0 && !row.deleted){
@@ -1015,47 +1028,36 @@ async function toggleTask(taskData){
 // ADD CUSTOM TASK
 // ============================================
 async function addTask(){
-  const user = $('inUser').value;
-  const week = parseInt($('inWeek').value);
+  const user    = $('inUser').value;
   const section = $('inSection').value.trim() || 'Tarefas Extras';
-  const text = $('inText').value.trim();
+  const text    = $('inText').value.trim();
 
-  if(!text){
-    alert('Escreva a descrição da tarefa!');
-    return;
-  }
+  if(!text){ alert('Escreva a descrição da tarefa!'); return; }
 
-  const id = 'custom-w' + week + '-' + user + '-' + slugify(section) + '-' + Date.now();
-
+  const id = 'custom-' + user + '-' + slugify(section) + '-' + Date.now();
   DEBUG.log('Adicionando: ' + id);
 
   try {
     const { error } = await state.supabase
       .from('legaci_tasks')
       .insert({
-        id: id,
+        id,
         done: false,
         completed_at: null,
         user_owner: user,
-        week: week,
-        section: section,
-        text: text
+        week: 1,
+        section,
+        text,
+        due_date: null
       });
 
     if(error) throw error;
 
-    state.customTasks.push({ id, week, user, section, text });
-    state.taskStatus[id] = { done: false, completedAt: null };
+    state.customTasks.push({ id, week: 1, user, section, text });
+    state.taskStatus[id] = { done: false, completedAt: null, dueDate: null };
 
     $('modalAdd').classList.remove('open');
     $('inText').value = '';
-
-    if(week !== state.week){
-      state.week = week;
-      document.querySelectorAll('.week-tab').forEach(t => {
-        t.classList.toggle('active', parseInt(t.dataset.week) === week);
-      });
-    }
 
     render();
     DEBUG.success('Tarefa adicionada!');
@@ -1186,15 +1188,165 @@ async function deleteAnyTask(task){
 }
 
 // ============================================
+// PRAZOS — HELPERS
+// ============================================
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function endOfWeekStr(){
+  const d = new Date();
+  d.setDate(d.getDate() + (7 - d.getDay() || 7));
+  return d.toISOString().slice(0,10);
+}
+
+function getDueClass(dueDate, done){
+  if(!dueDate) return '';
+  if(done) return '';
+  const today = todayStr();
+  const eow   = endOfWeekStr();
+  if(dueDate < today)       return 'due-overdue';
+  if(dueDate === today)     return 'due-today';
+  if(dueDate <= eow)        return 'due-soon';
+  return '';
+}
+
+function getDueLabel(dueDate){
+  if(!dueDate) return '';
+  const [y,m,d] = dueDate.split('-');
+  return d + '/' + m + '/' + y;
+}
+
+function matchesFilter(taskId, done){
+  const status  = state.taskStatus[taskId] || {};
+  if(status.deleted) return false;
+  const f       = state.filter;
+  const dueDate = status.dueDate || null;
+  const today   = todayStr();
+  const eow     = endOfWeekStr();
+
+  if(f === 'all')      return true;
+  if(f === 'done')     return !!done;
+  if(f === 'nodate')   return !dueDate && !done;
+  if(!dueDate)         return false; // filtros de data precisam de prazo
+  if(f === 'overdue')  return dueDate < today && !done;
+  if(f === 'today')    return dueDate === today && !done;
+  if(f === 'thisweek') return dueDate >= today && dueDate <= eow && !done;
+  if(f === 'upcoming') return dueDate > eow && !done;
+  return true;
+}
+
+// Achata todas as semanas em lista plana
+function getFlatTasks(user){
+  const all = [];
+  Object.keys(TASKS).forEach(w => {
+    const week = parseInt(w);
+    (TASKS[w][user] || []).forEach(section => {
+      section.items.forEach((text, idx) => {
+        const id = makeId(week, user, section.name, idx);
+        all.push({ id, week, user, section: section.name, text });
+      });
+    });
+  });
+  return all;
+}
+
+// Contadores para as tabs
+function updateFilterCounts(){
+  const counts = { all:0, overdue:0, today:0, thisweek:0, upcoming:0, nodate:0, done:0 };
+  const today = todayStr();
+  const eow   = endOfWeekStr();
+
+  ['dani','mauricio'].forEach(user => {
+    const flat = getFlatTasks(user);
+    flat.forEach(t => {
+      const st = state.taskStatus[t.id] || {};
+      if(st.deleted) return;
+      const done    = !!st.done;
+      const dueDate = st.dueDate || null;
+
+      counts.all++;
+      if(done){ counts.done++; return; }
+      if(!dueDate){ counts.nodate++; return; }
+      if(dueDate < today)       counts.overdue++;
+      else if(dueDate === today) counts.today++;
+      else if(dueDate <= eow)   counts.thisweek++;
+      else                       counts.upcoming++;
+    });
+
+    // custom tasks também
+    state.customTasks.filter(t => t.user === user).forEach(t => {
+      const st = state.taskStatus[t.id] || {};
+      if(st.deleted) return;
+      const done    = !!st.done;
+      const dueDate = st.dueDate || null;
+      counts.all++;
+      if(done){ counts.done++; return; }
+      if(!dueDate){ counts.nodate++; return; }
+      if(dueDate < today)       counts.overdue++;
+      else if(dueDate === today) counts.today++;
+      else if(dueDate <= eow)   counts.thisweek++;
+      else                       counts.upcoming++;
+    });
+  });
+
+  Object.keys(counts).forEach(k => {
+    const el = document.getElementById('cnt-' + k);
+    if(el) el.textContent = counts[k];
+  });
+}
+
+// ============================================
+// SALVAR PRAZO
+// ============================================
+async function setDueDate(taskId, dueDate, taskData){
+  DEBUG.log('Salvando prazo: ' + taskId + ' → ' + dueDate);
+
+  if(!state.taskStatus[taskId]) state.taskStatus[taskId] = { done: false };
+  state.taskStatus[taskId].dueDate = dueDate || null;
+
+  try {
+    const st = state.taskStatus[taskId];
+    const { error } = await state.supabase
+      .from('legaci_tasks')
+      .upsert({
+        id:           taskId,
+        done:         st.done || false,
+        completed_at: st.completedAt || null,
+        deleted:      st.deleted || false,
+        user_owner:   taskData.user,
+        week:         taskData.week,
+        section:      taskData.section,
+        text:         st.textOverride || taskData.text,
+        due_date:     dueDate || null
+      });
+
+    if(error) throw error;
+
+    // Atualizar visual da badge sem re-render total
+    const badge = document.querySelector('[data-dueid="' + taskId + '"]');
+    if(badge){
+      badge.className = 'task-due-input ' + getDueClass(dueDate, st.done);
+    }
+
+    updateFilterCounts();
+    DEBUG.success('Prazo salvo!');
+  } catch(err){
+    DEBUG.error('Erro ao salvar prazo: ' + err.message);
+    showToast('Erro: ' + err.message, true);
+  }
+}
+
+// ============================================
 // RENDER
 // ============================================
 function render(){
-  DEBUG.log('Render: semana=' + state.week + ', user=' + state.user);
+  DEBUG.log('Render: filter=' + state.filter + ', user=' + state.user);
 
-  const showDani = state.user === 'both' || state.user === 'dani';
+  const showDani     = state.user === 'both' || state.user === 'dani';
   const showMauricio = state.user === 'both' || state.user === 'mauricio';
 
-  $('col-dani').style.display = showDani ? 'block' : 'none';
+  $('col-dani').style.display     = showDani     ? 'block' : 'none';
   $('col-mauricio').style.display = showMauricio ? 'block' : 'none';
 
   document.querySelector('.columns').style.gridTemplateColumns =
@@ -1203,6 +1355,7 @@ function render(){
   renderColumn('dani');
   renderColumn('mauricio');
   updateStats();
+  updateFilterCounts();
 }
 
 function renderColumn(user){
@@ -1210,91 +1363,80 @@ function renderColumn(user){
   container.innerHTML = '';
 
   let total = 0, done = 0;
+  const sections = {}; // section name → [tasks]
 
-  // Tarefas padrão
-  const weekTasks = TASKS[state.week] && TASKS[state.week][user];
-  if(weekTasks){
-    weekTasks.forEach(section => {
-      const sectionEl = document.createElement('div');
+  // ── Tarefas default (todas as semanas, achatadas) ──
+  getFlatTasks(user).forEach(t => {
+    const status = state.taskStatus[t.id] || { done: false, completedAt: null, deleted: false };
+    if(status.deleted) return;
+    if(!matchesFilter(t.id, status.done)) return;
 
-      const header = document.createElement('div');
-      header.className = 'section-header';
-      header.textContent = section.name;
-      sectionEl.appendChild(header);
+    total++;
+    if(status.done) done++;
 
-      section.items.forEach((text, idx) => {
-        const id = makeId(state.week, user, section.name, idx);
-        const status = state.taskStatus[id] || { done: false, completedAt: null, deleted: false };
-
-        // Pular tarefas deletadas
-        if(status.deleted) return;
-
-        total++;
-        if(status.done) done++;
-
-        // Usar texto editado se existir
-        const displayText = status.textOverride || text;
-
-        const taskEl = makeTaskElement({
-          id: id,
-          week: state.week,
-          user: user,
-          section: section.name,
-          text: displayText,
-          done: status.done,
-          completedAt: status.completedAt,
-          isCustom: false
-        });
-
-        sectionEl.appendChild(taskEl);
-      });
-
-      container.appendChild(sectionEl);
+    const displayText = status.textOverride || t.text;
+    if(!sections[t.section]) sections[t.section] = [];
+    sections[t.section].push({
+      id: t.id, week: t.week, user, section: t.section,
+      text: displayText, done: status.done,
+      completedAt: status.completedAt, dueDate: status.dueDate || null,
+      isCustom: false
     });
+  });
+
+  // ── Tarefas customizadas ──
+  state.customTasks.filter(t => t.user === user).forEach(t => {
+    const status = state.taskStatus[t.id] || { done: false, completedAt: null, deleted: false };
+    if(status.deleted) return;
+    if(!matchesFilter(t.id, status.done)) return;
+
+    total++;
+    if(status.done) done++;
+
+    const sec = '⭐ ' + t.section;
+    if(!sections[sec]) sections[sec] = [];
+    sections[sec].push({
+      id: t.id, week: t.week, user, section: t.section,
+      text: t.text, done: status.done,
+      completedAt: status.completedAt, dueDate: status.dueDate || null,
+      isCustom: true
+    });
+  });
+
+  // ── Ordenar tarefas por prazo dentro de cada seção ──
+  Object.keys(sections).forEach(secName => {
+    sections[secName].sort((a, b) => {
+      if(!a.dueDate && !b.dueDate) return 0;
+      if(!a.dueDate) return 1;
+      if(!b.dueDate) return -1;
+      return a.dueDate.localeCompare(b.dueDate);
+    });
+  });
+
+  if(Object.keys(sections).length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = state.filter === 'all'
+      ? 'Nenhuma tarefa ainda.'
+      : 'Nenhuma tarefa nesta categoria.';
+    container.appendChild(empty);
+    $('progress-' + user).textContent = '0/0';
+    return;
   }
 
-  // Tarefas customizadas dessa semana/user
-  const userCustom = state.customTasks.filter(t =>
-    t.week === state.week && t.user === user
-  );
+  Object.keys(sections).forEach(secName => {
+    const sectionEl = document.createElement('div');
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.textContent = secName;
+    sectionEl.appendChild(header);
 
-  if(userCustom.length > 0){
-    const groups = {};
-    userCustom.forEach(t => {
-      if(!groups[t.section]) groups[t.section] = [];
-      groups[t.section].push(t);
+    sections[secName].forEach(task => {
+      sectionEl.appendChild(makeTaskElement(task));
     });
 
-    Object.keys(groups).forEach(sectionName => {
-      const sectionEl = document.createElement('div');
-
-      const header = document.createElement('div');
-      header.className = 'section-header';
-      header.textContent = '⭐ ' + sectionName;
-      sectionEl.appendChild(header);
-
-      groups[sectionName].forEach(task => {
-        const status = state.taskStatus[task.id] || { done: false, completedAt: null };
-        total++;
-        if(status.done) done++;
-
-        const taskEl = makeTaskElement({
-          id: task.id,
-          week: task.week,
-          user: task.user,
-          section: task.section,
-          text: task.text,
-          done: status.done,
-          completedAt: status.completedAt,
-          isCustom: true
-        });
-
-        sectionEl.appendChild(taskEl);
-      });
-
-      container.appendChild(sectionEl);
-    });
-  }
+    container.appendChild(sectionEl);
+  });
 
   $('progress-' + user).textContent = done + '/' + total;
 }
@@ -1329,6 +1471,26 @@ function makeTaskElement(task){
     dateEl.textContent = '✓ ' + formatDate(task.completedAt);
     content.appendChild(dateEl);
   }
+
+  // DATE PICKER — prazo editável
+  const dueWrap = document.createElement('div');
+  dueWrap.className = 'task-due-wrap';
+
+  const dueInput = document.createElement('input');
+  dueInput.type = 'date';
+  dueInput.className = 'task-due-input ' + getDueClass(task.dueDate, task.done);
+  dueInput.value = task.dueDate || '';
+  dueInput.setAttribute('data-dueid', task.id);
+  dueInput.title = task.dueDate ? ('Prazo: ' + getDueLabel(task.dueDate)) : 'Definir prazo';
+
+  dueInput.addEventListener('click', e => e.stopPropagation());
+  dueInput.addEventListener('change', function(e){
+    e.stopPropagation();
+    setDueDate(task.id, this.value, task);
+  });
+
+  dueWrap.appendChild(dueInput);
+  content.appendChild(dueWrap);
 
   // Click handler — em todo o elemento
   li.addEventListener('click', function(e){
@@ -1424,14 +1586,14 @@ function updateStats(){
 function setupEvents(){
   DEBUG.log('Configurando event listeners...');
 
-  // Week tabs
-  document.querySelectorAll('.week-tab').forEach(btn => {
+  // Filter tabs
+  document.querySelectorAll('.filter-tab').forEach(btn => {
     btn.addEventListener('click', function(){
-      const week = parseInt(this.dataset.week);
-      DEBUG.log('Click week: ' + week);
-      state.week = week;
-      document.querySelectorAll('.week-tab').forEach(t => {
-        t.classList.toggle('active', parseInt(t.dataset.week) === week);
+      const filter = this.dataset.filter;
+      DEBUG.log('Click filter: ' + filter);
+      state.filter = filter;
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.filter === filter);
       });
       render();
     });
@@ -1450,13 +1612,11 @@ function setupEvents(){
     });
   });
 
-  // Add button
   $('btnAdd').addEventListener('click', function(){
     DEBUG.log('Abrindo modal de adicionar');
-    $('inUser').value = state.user === 'mauricio' ? 'mauricio' : 'dani';
-    $('inWeek').value = state.week;
+    $('inUser').value    = state.user === 'mauricio' ? 'mauricio' : 'dani';
     $('inSection').value = 'Tarefas Extras';
-    $('inText').value = '';
+    $('inText').value    = '';
     $('modalAdd').classList.add('open');
   });
 
